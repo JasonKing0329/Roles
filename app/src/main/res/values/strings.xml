@@ -19,5 +19,6 @@
     <string name="app_init">Initializing application&#8230;&#8230;</string>
 
     <string name="login_finger_not_register">Fingerprint has never been registered in device, please register first!</string>
+    <string name="warning">warning</string>
 
 </resources>

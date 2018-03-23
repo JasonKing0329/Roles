@@ -1,6 +1,6 @@
 package com.king.app.roles.page.story;
 
-import android.support.v4.content.ContextCompat;
+import android.content.DialogInterface;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -11,6 +11,7 @@ import com.king.app.roles.base.BaseRecyclerAdapter;
 import com.king.app.roles.base.MvpActivity;
 import com.king.app.roles.model.entity.Story;
 import com.king.app.roles.utils.DebugLog;
+import com.king.app.roles.view.dialog.SimpleDialogs;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemStateChangedListener;
@@ -35,6 +36,9 @@ public class StoryListActivity extends MvpActivity<StoryListPresenter> implement
     LinearLayout groupConfirm;
 
     private StoryListAdapter storyListAdapter;
+
+    private boolean isDeleteAction;
+    private boolean isDragAction;
 
     @Override
     protected int getContentView() {
@@ -76,12 +80,11 @@ public class StoryListActivity extends MvpActivity<StoryListPresenter> implement
                 if (actionState == OnItemStateChangedListener.ACTION_STATE_DRAG) {
                     DebugLog.e("状态：拖拽");
                     // 拖拽的时候背景就透明了，这里我们可以添加一个特殊背景。
-                    viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(StoryListActivity.this, R.color.drag_bg));
+//                    viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(StoryListActivity.this, R.color.grayef));
                 } else if (actionState == OnItemStateChangedListener.ACTION_STATE_SWIPE) {
                     DebugLog.e("状态：滑动删除");
                 } else if (actionState == OnItemStateChangedListener.ACTION_STATE_IDLE) {
                     DebugLog.e("状态：手指松开");
-
                     // 在手松开的时候还原背景。
 //                ViewCompat.setBackground(viewHolder.itemView, ContextCompat.getDrawable(RecordOrderPadActivity.this, R.drawable.white));
                 }
@@ -122,32 +125,101 @@ public class StoryListActivity extends MvpActivity<StoryListPresenter> implement
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_add:
+                addNewStory();
                 break;
             case R.id.iv_delete:
+                isDeleteAction = true;
                 storyListAdapter.setSelect(true);
-                groupConfirm.setVisibility(View.VISIBLE);
-                groupIcon.setVisibility(View.GONE);
+                storyListAdapter.notifyDataSetChanged();
+                showActionConfirm(true);
                 break;
             case R.id.iv_move:
+                isDragAction = true;
                 storyListAdapter.setDrag(true);
-                groupConfirm.setVisibility(View.VISIBLE);
-                groupIcon.setVisibility(View.GONE);
+                storyListAdapter.notifyDataSetChanged();
+                showActionConfirm(true);
                 break;
             case R.id.tv_cancel:
-                storyListAdapter.setDrag(false);
-                storyListAdapter.setSelect(false);
-                storyListAdapter.notifyDataSetChanged();
-                groupConfirm.setVisibility(View.GONE);
-                groupIcon.setVisibility(View.VISIBLE);
+                if (isDeleteAction) {
+                    cancelDelete();
+                }
+                else if (isDragAction) {
+                    cancelDrag();
+                }
                 break;
             case R.id.tv_ok:
-                storyListAdapter.setDrag(false);
-                storyListAdapter.setSelect(false);
-                storyListAdapter.notifyDataSetChanged();
-                groupConfirm.setVisibility(View.GONE);
-                groupIcon.setVisibility(View.VISIBLE);
+                if (isDeleteAction) {
+                    doDelete();
+                }
+                else if (isDragAction) {
+                    doDrag();
+                }
                 break;
         }
+    }
+
+    private void cancelDelete() {
+        isDeleteAction = false;
+        storyListAdapter.setSelect(false);
+        storyListAdapter.notifyDataSetChanged();
+        showActionConfirm(false);
+    }
+
+    private void cancelDrag() {
+        isDragAction = false;
+        storyListAdapter.setDrag(false);
+        storyListAdapter.notifyDataSetChanged();
+        showActionConfirm(false);
+    }
+
+    private void doDrag() {
+        presenter.updateSequences(storyListAdapter.getList());
+    }
+
+    @Override
+    public void updateDone() {
+        cancelDrag();
+    }
+
+    private void doDelete() {
+        new SimpleDialogs().showWarningActionDialog(this, "Delete story will delete all information related, click ok to continue"
+                , getString(R.string.ok), null
+                , new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (i == DialogInterface.BUTTON_POSITIVE) {
+                            presenter.deleteStory(storyListAdapter.getSelectedData());
+                        }
+                        else {
+                            cancelDelete();
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void deleteDone() {
+        cancelDelete();
+    }
+
+    private void showActionConfirm(boolean show) {
+        if (show) {
+            groupConfirm.setVisibility(View.VISIBLE);
+            groupIcon.setVisibility(View.GONE);
+        }
+        else {
+            groupConfirm.setVisibility(View.GONE);
+            groupIcon.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void addNewStory() {
+        new SimpleDialogs().openInputDialog(this, "Story name", new SimpleDialogs.OnDialogActionListener() {
+            @Override
+            public void onOk(String name) {
+                presenter.addStory(name);
+            }
+        });
     }
 
 }

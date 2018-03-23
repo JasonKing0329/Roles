@@ -12,4 +12,8 @@ import java.util.List;
  */
 public interface StoryListView extends BaseView {
     void showStories(List<Story> stories);
+
+    void deleteDone();
+
+    void updateDone();
 }

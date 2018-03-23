@@ -14,7 +14,9 @@ import com.king.app.roles.base.BaseRecyclerAdapter;
 import com.king.app.roles.model.entity.Story;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -100,11 +102,24 @@ public class StoryListAdapter extends BaseRecyclerAdapter<StoryListAdapter.Story
             checkMap.put(position, !checkMap.get(position));
             notifyItemChanged(position);
         }
+        else if (isDrag) {
+
+        }
         else {
             if (onItemClickListener != null) {
                 onItemClickListener.onClickItem(position, list.get(position));
             }
         }
+    }
+
+    public List<Story> getSelectedData() {
+        List<Story> stories = new ArrayList<>();
+        for (int i = 0; i < getItemCount(); i ++) {
+            if (checkMap.get(i)) {
+                stories.add(list.get(i));
+            }
+        }
+        return stories;
     }
 
     public static class StoryHolder extends RecyclerView.ViewHolder implements View.OnTouchListener {

@@ -37,4 +37,8 @@ public abstract class BasePresenter<T extends BaseView> {
         view.showMessage("Load error: " + e.getMessage());
     }
 
+    protected void dispatchCommonError(String errorTitle, Throwable e) {
+        view.showMessage(errorTitle + ": " + e.getMessage());
+    }
+
 }
