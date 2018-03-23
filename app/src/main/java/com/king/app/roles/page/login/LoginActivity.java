@@ -1,6 +1,7 @@
-package com.king.app.roles.page;
+package com.king.app.roles.page.login;
 
 import android.Manifest;
+import android.content.Intent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -8,8 +9,7 @@ import android.widget.LinearLayout;
 import com.king.app.roles.R;
 import com.king.app.roles.base.MvpActivity;
 import com.king.app.roles.model.FingerPrintController;
-import com.king.app.roles.page.login.LoginPresenter;
-import com.king.app.roles.page.login.LoginView;
+import com.king.app.roles.page.story.StoryListActivity;
 import com.king.app.roles.utils.DBExportor;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -126,8 +126,8 @@ public class LoginActivity extends MvpActivity<LoginPresenter> implements LoginV
     }
 
     private void startHome() {
-//        Intent intent = new Intent(this, HomeActivity.class);
-//        startActivity(intent);
-//        finish();
+        Intent intent = new Intent(this, StoryListActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

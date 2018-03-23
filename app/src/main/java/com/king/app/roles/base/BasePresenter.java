@@ -33,4 +33,8 @@ public abstract class BasePresenter<T extends BaseView> {
         compositeDisposable.add(disposable);
     }
 
+    protected void dispatchCommonError(Throwable e) {
+        view.showMessage("Load error: " + e.getMessage());
+    }
+
 }

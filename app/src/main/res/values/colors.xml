@@ -9,5 +9,8 @@
     <color name="yellowF7D23E">#FFF7D23E</color>
     <color name="green34A350">#FF34A350</color>
 
+    <color name="drag_bg">#a0a0a0</color>
     <color name="grayef">#efefef</color>
+    <color name="actionbar_bg">#fa7198</color>
+    <color name="white">#ffffff</color>
 </resources>
