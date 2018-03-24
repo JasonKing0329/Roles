@@ -16,7 +16,7 @@
     </style>
 
     <!--透明Dialog-->
-    <style name="BaseDialogFragment" parent="@android:style/Theme.Dialog">
+    <style name="BaseDialogFragment" parent="Theme.AppCompat.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -63,6 +63,24 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">18dp</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CardStoryItem">
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_height">120dp</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="TvDialogConfirm">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">15dp</item>
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">20dp</item>
     </style>
 
 </resources>

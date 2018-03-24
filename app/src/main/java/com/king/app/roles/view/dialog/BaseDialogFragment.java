@@ -12,6 +12,9 @@ import android.view.WindowManager;
 
 import com.king.app.roles.R;
 
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * 描述:DialogFragment基类
  *
@@ -20,6 +23,8 @@ import com.king.app.roles.R;
 public abstract class BaseDialogFragment extends DialogFragment {
 
     private WindowManager.LayoutParams windowParams;
+
+    Unbinder unbinder;
 
     @Override
     public void onAttach(Context context) {
@@ -43,6 +48,7 @@ public abstract class BaseDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         windowParams = getDialog().getWindow().getAttributes();
         View view = inflater.inflate(getLayoutResource(), container, false);
+        unbinder = ButterKnife.bind(this, view);
         initView(view);
         return view;
     }
@@ -101,4 +107,11 @@ public abstract class BaseDialogFragment extends DialogFragment {
         getDialog().getWindow().setAttributes(windowParams);//must have
     }
 
+    @Override
+    public void onDestroy() {
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
+        super.onDestroy();
+    }
 }

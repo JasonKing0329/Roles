@@ -42,6 +42,11 @@ public abstract class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (getParentFragment() != null) {
+            if (getParentFragment() instanceof IFragmentHolder) {
+                bindFragmentHolder((IFragmentHolder) getParentFragment());
+            }
+        }
         View view = inflater.inflate(getContentLayoutRes(), container, false);
         unbinder = ButterKnife.bind(this, view);
         onCreate(view);

@@ -1,6 +1,7 @@
 package com.king.app.roles.page.story;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -110,7 +111,7 @@ public class StoryListActivity extends MvpActivity<StoryListPresenter> implement
             storyListAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<Story>() {
                 @Override
                 public void onClickItem(int position, Story data) {
-
+                    startStoryPage(data.getId());
                 }
             });
             storyListAdapter.setSwipeMenuRecyclerView(rvStories);
@@ -119,6 +120,12 @@ public class StoryListActivity extends MvpActivity<StoryListPresenter> implement
             storyListAdapter.setList(stories);
             storyListAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void startStoryPage(long storyId) {
+        Intent intent = new Intent().setClass(this, StoryPageActivity.class);
+        intent.putExtra(StoryPageActivity.KEY_STORY_ID, storyId);
+        startActivity(intent);
     }
 
     @OnClick({R.id.iv_add, R.id.iv_delete, R.id.iv_move, R.id.tv_cancel, R.id.tv_ok})
