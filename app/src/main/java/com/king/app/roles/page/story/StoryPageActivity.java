@@ -1,11 +1,13 @@
 package com.king.app.roles.page.story;
 
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
 import com.king.app.roles.R;
 import com.king.app.roles.base.MvpActivity;
+import com.king.app.roles.page.module.ModuleActivity;
 import com.king.app.roles.view.dialog.DescriptionEditor;
 import com.king.app.roles.view.dialog.DraggableDialogFragment;
 
@@ -60,7 +62,7 @@ public class StoryPageActivity extends MvpActivity<StoryPagePresenter> implement
         }
     }
 
-    @OnClick({R.id.iv_back, R.id.group_race, R.id.group_kingdom, R.id.group_chapters, R.id.group_characters, R.id.group_modules
+    @OnClick({R.id.iv_back, R.id.group_race, R.id.group_kingdom, R.id.group_chapters, R.id.group_characters
         , R.id.tv_description})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -68,19 +70,28 @@ public class StoryPageActivity extends MvpActivity<StoryPagePresenter> implement
                 onBackPressed();
                 break;
             case R.id.group_race:
+                startModuleActivity(ModuleActivity.PAGE_TYPE_RACE);
                 break;
             case R.id.group_kingdom:
+                startModuleActivity(ModuleActivity.PAGE_TYPE_KINGDOM);
                 break;
             case R.id.group_chapters:
+                startModuleActivity(ModuleActivity.PAGE_TYPE_CHAPTER);
                 break;
             case R.id.group_characters:
-                break;
-            case R.id.group_modules:
+                startModuleActivity(ModuleActivity.PAGE_TYPE_CHARACTER);
                 break;
             case R.id.tv_description:
                 editDescription();
                 break;
         }
+    }
+
+    private void startModuleActivity(int type) {
+        Intent intent = new Intent().setClass(this, ModuleActivity.class);
+        intent.putExtra(ModuleActivity.KEY_PAGE_TYPE, getIntent().getLongExtra(KEY_STORY_ID, -1));
+        intent.putExtra(ModuleActivity.KEY_PAGE_TYPE, type);
+        startActivity(intent);
     }
 
     private void editDescription() {

@@ -53,6 +53,10 @@
             android:theme="@style/CustomActionBarTheme"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".page.module.ModuleActivity"
+            android:theme="@style/CustomActionBarTheme"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

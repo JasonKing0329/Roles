@@ -20,12 +20,16 @@ public class Kingdom {
 
     private String description;
 
-    @Generated(hash = 1572364575)
-    public Kingdom(Long id, long storyId, String name, String description) {
+    private int sequence;
+
+    @Generated(hash = 894748017)
+    public Kingdom(Long id, long storyId, String name, String description,
+            int sequence) {
         this.id = id;
         this.storyId = storyId;
         this.name = name;
         this.description = description;
+        this.sequence = sequence;
     }
 
     @Generated(hash = 1825001849)
@@ -62,5 +66,13 @@ public class Kingdom {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getSequence() {
+        return this.sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
     }
 }

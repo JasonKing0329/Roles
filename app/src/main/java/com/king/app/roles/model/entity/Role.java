@@ -42,6 +42,8 @@ public class Role {
 
     private String description;
 
+    private int sequence;
+
     @ToOne(joinProperty = "chapterId")
     private Chapter chapter;
 
@@ -67,10 +69,9 @@ public class Role {
     @Generated(hash = 1785861362)
     private transient RoleDao myDao;
 
-    @Generated(hash = 423617128)
-    public Role(Long id, String name, String nickname, long storyId, long kingdomId,
-            long raceId, long chapterId, int coreLevel, String power,
-            String description) {
+    @Generated(hash = 1243681789)
+    public Role(Long id, String name, String nickname, long storyId, long kingdomId, long raceId,
+            long chapterId, int coreLevel, String power, String description, int sequence) {
         this.id = id;
         this.name = name;
         this.nickname = nickname;
@@ -81,6 +82,7 @@ public class Role {
         this.coreLevel = coreLevel;
         this.power = power;
         this.description = description;
+        this.sequence = sequence;
     }
 
     @Generated(hash = 844947497)
@@ -337,6 +339,14 @@ public class Role {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    public int getSequence() {
+        return this.sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
     }
 
     /** called by internal mechanisms, do not call yourself. */

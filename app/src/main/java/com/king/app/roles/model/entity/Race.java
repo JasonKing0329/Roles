@@ -21,14 +21,18 @@ public class Race {
 
     private int type;
 
+    private int sequence;
+
     private String description;
 
-    @Generated(hash = 562397227)
-    public Race(Long id, long storyId, String name, int type, String description) {
+    @Generated(hash = 658109193)
+    public Race(Long id, long storyId, String name, int type, int sequence,
+            String description) {
         this.id = id;
         this.storyId = storyId;
         this.name = name;
         this.type = type;
+        this.sequence = sequence;
         this.description = description;
     }
 
@@ -74,6 +78,14 @@ public class Race {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getSequence() {
+        return this.sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
     }
 
 }
