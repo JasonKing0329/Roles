@@ -90,6 +90,14 @@ public class RoleEditor extends BaseFragment {
                 etNickname.setText(mRole.getNickname());
                 etPower.setText(mRole.getPower());
                 etDescription.setText(mRole.getDescription());
+                if (mRole.getChapter() != null) {
+                    if (mRole.getChapter().getLevel() == AppConstants.CHAPTER_LEVEL_SECOND) {
+                        tvChapter.setText("Chapter   第" + mRole.getChapter().getParent().getIndex() + "章 - (" + mRole.getChapter().getIndex() + ")");
+                    }
+                    else {
+                        tvChapter.setText("Chapter   第" + mRole.getChapter().getIndex() + "章");
+                    }
+                }
             }
         }
 

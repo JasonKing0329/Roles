@@ -1,12 +1,15 @@
 package com.king.app.roles.page.chapter;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
+import com.king.app.roles.R;
 import com.king.app.roles.model.entity.Chapter;
 import com.king.app.roles.page.module.ModuleAdapter;
 import com.king.app.roles.page.module.ModuleFragment;
 import com.king.app.roles.view.dialog.DraggableDialogFragment;
+import com.king.app.roles.view.dialog.SimpleDialogs;
 
 import java.util.List;
 
@@ -27,6 +30,7 @@ public class ChapterFragment extends ModuleFragment<ChapterPresenter> implements
     }
 
     private ChapterAdapter chapterAdapter;
+    private DraggableDialogFragment editorDialog;
 
     @Override
     protected boolean isSupportDragList() {
@@ -40,7 +44,8 @@ public class ChapterFragment extends ModuleFragment<ChapterPresenter> implements
 
     @Override
     protected void onCreate(View view) {
-
+        holder.hideDeleteAction();
+        holder.hideDragAction();
     }
 
     @Override
@@ -60,6 +65,11 @@ public class ChapterFragment extends ModuleFragment<ChapterPresenter> implements
                 else {
                     editChapter(chapter);
                 }
+            }
+
+            @Override
+            public void onEditItem(Chapter chapter, int position) {
+                editChapter(chapter);
             }
         });
         rvItemsNormal.setAdapter(chapterAdapter);
@@ -95,11 +105,36 @@ public class ChapterFragment extends ModuleFragment<ChapterPresenter> implements
                 return chapter;
             }
         });
-        DraggableDialogFragment dialogFragment = new DraggableDialogFragment.Builder()
+        DraggableDialogFragment.Builder builder = new DraggableDialogFragment.Builder()
                 .setTitle("Chapter")
-                .setContentFragment(editor)
-                .build();
-        dialogFragment.show(getChildFragmentManager(), "DraggableDialogFragment");
+                .setContentFragment(editor);
+        if (chapter.getId() != null) {
+            builder.setShowDelete(true)
+                    .setOnDeleteListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteChapter(chapter);
+                        }
+                    });
+        }
+        editorDialog = builder.build();
+        editorDialog.show(getChildFragmentManager(), "DraggableDialogFragment");
+    }
+
+    private void deleteChapter(final Chapter chapter) {
+        new SimpleDialogs().showWarningActionDialog(getActivity()
+                , "Delete chapter will delete all related data, click ok to continue"
+                , getString(R.string.ok), null
+                , new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (i == DialogInterface.BUTTON_POSITIVE) {
+                            presenter.delete(chapter);
+                            loadData();
+                            editorDialog.dismiss();
+                        }
+                    }
+                });
     }
 
     @Override

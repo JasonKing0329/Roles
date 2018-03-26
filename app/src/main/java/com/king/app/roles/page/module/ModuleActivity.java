@@ -173,4 +173,14 @@ public class ModuleActivity extends BaseActivity implements ModuleFragmentHolder
         setResult(RESULT_OK, data);
         finish();
     }
+
+    @Override
+    public void hideDeleteAction() {
+        ivDelete.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void hideDragAction() {
+        ivMove.setVisibility(View.GONE);
+    }
 }

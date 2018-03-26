@@ -109,9 +109,14 @@ public class ChapterPresenter extends BasePresenter<ChapterView> {
         dao.detachAll();
     }
 
-    public void confirmDelete(List<Chapter> list) {
+    public void delete(Chapter chapter) {
         ChapterDao dao = RApplication.getInstance().getDaoSession().getChapterDao();
-        dao.deleteInTx(list);
+        // delete all sub chapters
+        dao.deleteInTx(chapter.getChildren());
+        // delete from chapter
+        dao.delete(chapter);
         dao.detachAll();
+
+        // TODO update chapter of role
     }
 }

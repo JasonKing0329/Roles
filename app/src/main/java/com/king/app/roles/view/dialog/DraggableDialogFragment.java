@@ -29,6 +29,8 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
     TextView tvTitle;
     @BindView(R.id.iv_close)
     ImageView ivClose;
+    @BindView(R.id.iv_delete)
+    ImageView ivDelete;
     @BindView(R.id.group_ft_container)
     ViewGroup groupFtContent;
 
@@ -40,9 +42,13 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
 
     private boolean hideClose;
 
+    private boolean showDelete;
+
     private Fragment contentFragment;
 
-    private int maxHieight;
+    private int maxHeight;
+
+    private View.OnClickListener onDeleteListener;
 
     @Override
     protected int getLayoutResource() {
@@ -62,6 +68,10 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
         if (hideClose) {
             ivClose.setVisibility(View.GONE);
         }
+        if (showDelete) {
+            ivDelete.setVisibility(View.VISIBLE);
+            ivDelete.setOnClickListener(onDeleteListener);
+        }
 
         initDragParams();
 
@@ -73,7 +83,7 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
             @Override
             public void run() {
                 DebugLog.e("groupFtContent height=" + groupFtContent.getHeight());
-                limitMaxHeihgt();
+                limitMaxHeight();
             }
         });
     }
@@ -86,7 +96,7 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
         }
     }
 
-    private void limitMaxHeihgt() {
+    private void limitMaxHeight() {
         int maxContentHeight = getMaxHeight();
         if (groupFtContent.getHeight() > maxContentHeight) {
             ViewGroup.LayoutParams params = groupFtContent.getLayoutParams();
@@ -100,8 +110,8 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
      * @return
      */
     protected int getMaxHeight() {
-        if (maxHieight != 0) {
-            return maxHieight;
+        if (maxHeight != 0) {
+            return maxHeight;
         }
         else {
             return ScreenUtils.getScreenHeight() * 3 / 5;
@@ -130,8 +140,16 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
         this.contentFragment = contentFragment;
     }
 
-    public void setMaxHieight(int maxHieight) {
-        this.maxHieight = maxHieight;
+    public void setShowDelete(boolean showDelete) {
+        this.showDelete = showDelete;
+    }
+
+    public void setMaxHeight(int maxHeight) {
+        this.maxHeight = maxHeight;
+    }
+
+    public void setOnDeleteListener(View.OnClickListener onDeleteListener) {
+        this.onDeleteListener = onDeleteListener;
     }
 
     @OnClick({R.id.iv_close})
@@ -195,7 +213,11 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
 
         private boolean hideClose;
 
-        private int maxHieight;
+        private int maxHeight;
+
+        private boolean showDelete;
+
+        private View.OnClickListener onDeleteListener;
 
         private Fragment contentFragment;
 
@@ -214,19 +236,31 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
             return this;
         }
 
+        public Builder setShowDelete(boolean showDelete) {
+            this.showDelete = showDelete;
+            return this;
+        }
+
         public Builder setContentFragment(Fragment contentFragment) {
             this.contentFragment = contentFragment;
             return this;
         }
 
-        public Builder setMaxHieight(int maxHieight) {
-            this.maxHieight = maxHieight;
+        public Builder setMaxHeight(int maxHeight) {
+            this.maxHeight = maxHeight;
+            return this;
+        }
+
+        public Builder setOnDeleteListener(View.OnClickListener onDeleteListener) {
+            this.onDeleteListener = onDeleteListener;
             return this;
         }
 
         public DraggableDialogFragment build() {
             DraggableDialogFragment fragment = new DraggableDialogFragment();
             fragment.setHideClose(hideClose);
+            fragment.setShowDelete(showDelete);
+            fragment.setOnDeleteListener(onDeleteListener);
             if (title != null) {
                 fragment.setTitle(title);
             }
@@ -236,11 +270,10 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
             if (contentFragment != null) {
                 fragment.setContentFragment(contentFragment);
             }
-            if (maxHieight != 0) {
-                fragment.setMaxHieight(maxHieight);
+            if (maxHeight != 0) {
+                fragment.setMaxHeight(maxHeight);
             }
             return fragment;
         }
     }
-
 }

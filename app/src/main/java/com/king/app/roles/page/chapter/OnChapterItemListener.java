@@ -9,4 +9,6 @@ import com.king.app.roles.model.entity.Chapter;
  */
 public interface OnChapterItemListener {
     void onClickChapter(Chapter chapter, int positionInList);
+
+    void onEditItem(Chapter chapter, int position);
 }

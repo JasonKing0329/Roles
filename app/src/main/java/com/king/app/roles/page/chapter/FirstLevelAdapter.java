@@ -3,6 +3,7 @@ package com.king.app.roles.page.chapter;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -26,6 +27,15 @@ public class FirstLevelAdapter extends AbstractExpandableAdapterItem {
     TextView tvDescription;
     @BindView(R.id.group_item)
     LinearLayout groupItem;
+    @BindView(R.id.iv_edit)
+    ImageView ivEdit;
+
+    private OnChapterItemListener onChapterItemListener;
+
+    public FirstLevelAdapter(OnChapterItemListener onChapterItemListener) {
+        super();
+        this.onChapterItemListener = onChapterItemListener;
+    }
 
     @Override
     public int getLayoutResId() {
@@ -49,10 +59,10 @@ public class FirstLevelAdapter extends AbstractExpandableAdapterItem {
     }
 
     @Override
-    public void onUpdateViews(Object model, int position) {
+    public void onUpdateViews(Object model, final int position) {
         super.onUpdateViews(model, position);
         FirstLevelItem item = (FirstLevelItem) model;
-        Chapter chapter = item.getChapter();
+        final Chapter chapter = item.getChapter();
         tvName.setText("第" + chapter.getIndex() + "章 " + chapter.getName());
         if (TextUtils.isEmpty(chapter.getDescription())) {
             tvDescription.setVisibility(View.GONE);
@@ -60,6 +70,13 @@ public class FirstLevelAdapter extends AbstractExpandableAdapterItem {
             tvDescription.setVisibility(View.VISIBLE);
             tvDescription.setText(chapter.getDescription());
         }
+
+        ivEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onChapterItemListener.onEditItem(chapter, position);
+            }
+        });
     }
 
     @Override

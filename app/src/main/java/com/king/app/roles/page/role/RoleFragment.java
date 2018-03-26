@@ -116,7 +116,7 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment.Builder()
                 .setTitle("Role")
                 .setContentFragment(roleEditor)
-                .setMaxHieight(ScreenUtils.getScreenHeight() * 4 / 5)
+                .setMaxHeight(ScreenUtils.getScreenHeight() * 4 / 5)
                 .build();
         dialogFragment.show(getChildFragmentManager(), "DraggableDialogFragment");
     }

@@ -28,4 +28,10 @@
             android:textSize="12dp"
             android:textColor="@color/recycler_swipe_color_text_gray"/>
     </LinearLayout>
+    <ImageView
+        android:id="@+id/iv_edit"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:src="@drawable/ic_edit_grey_700_24dp"/>
 </LinearLayout>

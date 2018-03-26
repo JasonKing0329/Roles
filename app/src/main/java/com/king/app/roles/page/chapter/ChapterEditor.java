@@ -80,6 +80,10 @@ public class ChapterEditor extends BaseFragment {
             mChapter = onChapterListener.getInitChapter();
             if (mChapter != null) {
                 etName.setText(mChapter.getName());
+                etIndex.setText(String.valueOf(mChapter.getIndex()));
+                if (mChapter.getParentId() != 0) {
+                    etParentIndex.setText(String.valueOf(mChapter.getParent().getIndex()));
+                }
                 etDescription.setText(mChapter.getDescription());
                 if (mChapter.getLevel() == AppConstants.CHAPTER_LEVEL_FIRST) {
                     spLevel.setSelection(0);

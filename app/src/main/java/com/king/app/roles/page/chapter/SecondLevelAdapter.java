@@ -2,6 +2,7 @@ package com.king.app.roles.page.chapter;
 
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,6 +26,8 @@ public class SecondLevelAdapter extends AbstractExpandableAdapterItem implements
     TextView tvDescription;
     @BindView(R.id.group_item)
     LinearLayout groupItem;
+    @BindView(R.id.iv_edit)
+    ImageView ivEdit;
 
     private OnChapterItemListener onChapterItemListener;
 
@@ -50,6 +53,7 @@ public class SecondLevelAdapter extends AbstractExpandableAdapterItem implements
     @Override
     public void onUpdateViews(Object model, int position) {
         super.onUpdateViews(model, position);
+        ivEdit.setVisibility(View.GONE);
         Chapter chapter = (Chapter) model;
         tvName.setText("    (" + chapter.getIndex() + ") " + chapter.getName());
         if (TextUtils.isEmpty(chapter.getDescription())) {

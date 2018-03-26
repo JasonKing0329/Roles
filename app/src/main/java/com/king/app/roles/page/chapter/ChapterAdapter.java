@@ -38,7 +38,7 @@ public class ChapterAdapter extends BaseExpandableAdapter {
         int itemType = (int) type;
         switch (itemType) {
             case ITEM_TYPE_HEAD:
-                return new FirstLevelAdapter();
+                return new FirstLevelAdapter(onChapterItemListener);
             case ITEM_TYPE_ITEM:
                 return new SecondLevelAdapter(onChapterItemListener);
         }
