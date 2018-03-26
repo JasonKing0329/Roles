@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="chapter_level">
+        <item>Level 1</item>
+        <item>Level 2</item>
+    </array>
+</resources>

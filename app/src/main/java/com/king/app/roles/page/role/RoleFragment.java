@@ -1,6 +1,8 @@
 package com.king.app.roles.page.role;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -9,6 +11,7 @@ import com.king.app.roles.base.BaseRecyclerAdapter;
 import com.king.app.roles.model.entity.Kingdom;
 import com.king.app.roles.model.entity.Race;
 import com.king.app.roles.model.entity.Role;
+import com.king.app.roles.page.module.ModuleActivity;
 import com.king.app.roles.page.module.ModuleAdapter;
 import com.king.app.roles.page.module.ModuleFragment;
 import com.king.app.roles.utils.ScreenUtils;
@@ -25,9 +28,11 @@ import java.util.List;
 
 public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleView {
 
-    private static final String KEY_STORY_ID = "story_id";
+    private final int REQUEST_CHAPTER = 151;
 
     private RoleAdapter roleAdapter;
+
+    private RoleEditor roleEditor;
 
     public static RoleFragment newInstance(long storyId) {
         RoleFragment fragment = new RoleFragment();
@@ -49,7 +54,7 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
 
     @Override
     protected void loadData() {
-        presenter.loadRoles(getArguments().getLong(KEY_STORY_ID));
+        presenter.loadRoles(getStoryId());
     }
 
     @Override
@@ -84,8 +89,8 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
     }
 
     private void showRoleEditor(final Role role) {
-        RoleEditor editor = new RoleEditor();
-        editor.setOnRoleListener(new RoleEditor.OnRoleListener() {
+        roleEditor = new RoleEditor();
+        roleEditor.setOnRoleListener(new RoleEditor.OnRoleListener() {
             @Override
             public void onSaveRole(Role role, List<Race> raceList, Kingdom kingdom) {
                 presenter.insertOrUpdate(role, raceList, kingdom);
@@ -95,17 +100,22 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
 
             @Override
             public long getStoryId() {
-                return getArguments().getLong(KEY_STORY_ID);
+                return RoleFragment.this.getStoryId();
             }
 
             @Override
             public Role getInitKingdom() {
                 return role;
             }
+
+            @Override
+            public void selectChapter() {
+                RoleFragment.this.selectChapter();
+            }
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment.Builder()
                 .setTitle("Role")
-                .setContentFragment(editor)
+                .setContentFragment(roleEditor)
                 .setMaxHieight(ScreenUtils.getScreenHeight() * 4 / 5)
                 .build();
         dialogFragment.show(getChildFragmentManager(), "DraggableDialogFragment");
@@ -138,4 +148,22 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
                 });
     }
 
+    private void selectChapter() {
+
+        Intent intent = new Intent().setClass(getActivity(), ModuleActivity.class);
+        intent.putExtra(ModuleActivity.KEY_STORY_ID, getStoryId());
+        intent.putExtra(ModuleActivity.KEY_PAGE_TYPE, ModuleActivity.PAGE_TYPE_CHAPTER);
+        intent.putExtra(ModuleActivity.KEY_SELECT_MODE, true);
+        startActivityForResult(intent, REQUEST_CHAPTER);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CHAPTER) {
+            if (resultCode == Activity.RESULT_OK) {
+                long chapterId = data.getLongExtra(ModuleActivity.KEY_RESULT_ID, -1);
+                roleEditor.onChapterSelected(chapterId);
+            }
+        }
+    }
 }

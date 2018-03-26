@@ -19,8 +19,6 @@ import java.util.List;
 
 public class KingdomFragment extends ModuleFragment<KingdomPresenter> implements KingdomView {
 
-    private static final String KEY_STORY_ID = "story_id";
-
     private KingdomAdapter kingdomAdapter;
 
     public static KingdomFragment newInstance(long storyId) {
@@ -43,7 +41,7 @@ public class KingdomFragment extends ModuleFragment<KingdomPresenter> implements
 
     @Override
     protected void loadData() {
-        presenter.loadKingdoms(getArguments().getLong(KEY_STORY_ID));
+        presenter.loadKingdoms(getStoryId());
     }
 
     @Override

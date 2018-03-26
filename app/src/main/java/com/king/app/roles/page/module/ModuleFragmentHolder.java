@@ -12,4 +12,6 @@ public interface ModuleFragmentHolder extends IFragmentHolder {
     void cancelDrag();
 
     void cancelDelete();
+
+    void onSelectId(long id);
 }

@@ -10,6 +10,9 @@ import com.king.app.roles.R;
 import com.king.app.roles.base.BaseFragment;
 import com.king.app.roles.base.IFragmentHolder;
 import com.king.app.roles.base.RApplication;
+import com.king.app.roles.conf.AppConstants;
+import com.king.app.roles.model.entity.Chapter;
+import com.king.app.roles.model.entity.ChapterDao;
 import com.king.app.roles.model.entity.Kingdom;
 import com.king.app.roles.model.entity.KingdomDao;
 import com.king.app.roles.model.entity.Race;
@@ -45,6 +48,8 @@ public class RoleEditor extends BaseFragment {
     RecyclerView rvKingdom;
     @BindView(R.id.et_power)
     EditText etPower;
+    @BindView(R.id.tv_chapter)
+    TextView tvChapter;
 
     private Role mRole;
 
@@ -55,6 +60,8 @@ public class RoleEditor extends BaseFragment {
     private TagAdapter<Race> raceAdapter;
 
     private TagAdapter<Kingdom> kingdomAdapter;
+
+    private long mChapterId;
 
     @Override
     protected void bindFragmentHolder(IFragmentHolder holder) {
@@ -161,6 +168,7 @@ public class RoleEditor extends BaseFragment {
             mRole.setNickname(etNickname.getText().toString());
             mRole.setPower(etPower.getText().toString());
             mRole.setDescription(etDescription.getText().toString());
+            mRole.setChapterId(mChapterId);
 
             Kingdom kingdom = null;
             List<Kingdom> kingdoms = kingdomAdapter.getSelectedData();
@@ -178,10 +186,34 @@ public class RoleEditor extends BaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_chapter:
+                selectChapter();
                 break;
             case R.id.tv_relations:
                 break;
         }
+    }
+
+    private void selectChapter() {
+        onRoleListener.selectChapter();
+    }
+
+    public void onChapterSelected(long chapterId) {
+        mChapterId = chapterId;
+        Chapter chapter = loadChapter();
+        if (chapter.getLevel() == AppConstants.CHAPTER_LEVEL_SECOND) {
+            tvChapter.setText("Chapter   第" + chapter.getParent().getIndex() + "章 - (" + chapter.getIndex() + ")");
+        }
+        else {
+            tvChapter.setText("Chapter   第" + chapter.getIndex() + "章");
+        }
+    }
+
+    private Chapter loadChapter() {
+        ChapterDao dao = RApplication.getInstance().getDaoSession().getChapterDao();
+        Chapter chapter = dao.queryBuilder()
+                .where(ChapterDao.Properties.Id.eq(mChapterId))
+                .unique();
+        return chapter;
     }
 
     public interface OnRoleListener {
@@ -190,5 +222,7 @@ public class RoleEditor extends BaseFragment {
         long getStoryId();
 
         Role getInitKingdom();
+
+        void selectChapter();
     }
 }

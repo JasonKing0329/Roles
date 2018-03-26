@@ -19,8 +19,6 @@ import java.util.List;
 
 public class RaceFragment extends ModuleFragment<RacePresenter> implements RaceView {
 
-    private static final String KEY_STORY_ID = "story_id";
-
     private RaceAdapter raceAdapter;
 
     public static RaceFragment newInstance(long storyId) {
@@ -43,7 +41,7 @@ public class RaceFragment extends ModuleFragment<RacePresenter> implements RaceV
 
     @Override
     protected void loadData() {
-        presenter.loadRaces(getArguments().getLong(KEY_STORY_ID));
+        presenter.loadRaces(getStoryId());
     }
 
     @Override

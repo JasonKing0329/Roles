@@ -89,7 +89,7 @@ public class StoryPageActivity extends MvpActivity<StoryPagePresenter> implement
 
     private void startModuleActivity(int type) {
         Intent intent = new Intent().setClass(this, ModuleActivity.class);
-        intent.putExtra(ModuleActivity.KEY_PAGE_TYPE, getIntent().getLongExtra(KEY_STORY_ID, -1));
+        intent.putExtra(ModuleActivity.KEY_STORY_ID, getIntent().getLongExtra(KEY_STORY_ID, -1));
         intent.putExtra(ModuleActivity.KEY_PAGE_TYPE, type);
         startActivity(intent);
     }

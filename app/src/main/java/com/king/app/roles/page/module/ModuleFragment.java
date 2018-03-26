@@ -2,6 +2,7 @@ package com.king.app.roles.page.module;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.king.app.roles.R;
 import com.king.app.roles.base.BasePresenter;
@@ -22,8 +23,13 @@ import butterknife.BindView;
 
 public abstract class ModuleFragment<P extends BasePresenter> extends MvpFragment<P> {
 
+    protected static final String KEY_STORY_ID = "story_id";
+    protected static final String KEY_SELECT_MODE = "select_mode";
+
     @BindView(R.id.rv_items)
     public SwipeMenuRecyclerView rvItems;
+    @BindView(R.id.rv_items_normal)
+    public RecyclerView rvItemsNormal;
 
     protected ModuleFragmentHolder holder;
 
@@ -40,6 +46,35 @@ public abstract class ModuleFragment<P extends BasePresenter> extends MvpFragmen
     @Override
     protected void onCreateData() {
 
+        if (isSupportDragList()) {
+            rvItemsNormal.setVisibility(View.GONE);
+            rvItems.setVisibility(View.VISIBLE);
+            initDraggableList();
+        }
+        else {
+            rvItemsNormal.setVisibility(View.VISIBLE);
+            rvItems.setVisibility(View.GONE);
+            initNormalList();
+        }
+
+        loadData();
+    }
+
+    private void initNormalList() {
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        manager.setOrientation(LinearLayoutManager.VERTICAL);
+        rvItemsNormal.setLayoutManager(manager);
+    }
+
+    /**
+     * 子类选择覆盖
+     * @return
+     */
+    protected boolean isSupportDragList() {
+        return true;
+    }
+
+    private void initDraggableList() {
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         rvItems.setLayoutManager(manager);
@@ -81,8 +116,18 @@ public abstract class ModuleFragment<P extends BasePresenter> extends MvpFragmen
                 }
             }
         });
+    }
 
-        loadData();
+    protected long getStoryId() {
+        return getArguments().getLong(KEY_STORY_ID);
+    }
+
+    protected boolean isSelectMode() {
+        return getArguments().getBoolean(KEY_SELECT_MODE);
+    }
+
+    protected void onSelectId(long id) {
+        holder.onSelectId(id);
     }
 
     protected abstract void loadData();
@@ -91,11 +136,19 @@ public abstract class ModuleFragment<P extends BasePresenter> extends MvpFragmen
 
     public abstract void addNewItem();
 
+    /**
+     * 子类选择覆盖
+     * @param delete
+     */
     public void setDeleteMode(boolean delete) {
         getAdapter().setSelect(delete);
         getAdapter().notifyDataSetChanged();
     }
 
+    /**
+     * 子类选择覆盖
+     * @param drag
+     */
     public void setDragMode(boolean drag) {
         getAdapter().setDrag(drag);
         getAdapter().notifyDataSetChanged();

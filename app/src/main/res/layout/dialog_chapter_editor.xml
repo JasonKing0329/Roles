@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <EditText
+        android:id="@+id/et_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="Name"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
+        <Spinner
+            android:id="@+id/sp_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/chapter_level"
+            android:layout_marginTop="10dp"/>
+        <EditText
+            android:id="@+id/et_index"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:inputType="number"
+            android:gravity="center"
+            android:hint="Index"/>
+    </RelativeLayout>
+    <EditText
+        android:id="@+id/et_parent_index"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:inputType="number"
+        android:gravity="center"
+        android:hint="Parent index"/>
+    <EditText
+        android:id="@+id/et_description"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/shape_et_description_border"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:padding="10dp"
+        android:textColor="#666666"
+        android:gravity="left|top"/>
+    <TextView
+        android:id="@+id/tv_ok"
+        style="@style/TvDialogConfirm"
+        android:text="OK"/>
+</LinearLayout>
