@@ -3,6 +3,7 @@ package com.king.app.roles.page.race;
 import android.os.Bundle;
 import android.view.View;
 
+import com.king.app.roles.base.BaseRecyclerAdapter;
 import com.king.app.roles.model.entity.Race;
 import com.king.app.roles.page.module.ModuleAdapter;
 import com.king.app.roles.page.module.ModuleFragment;
@@ -51,6 +52,12 @@ public class RaceFragment extends ModuleFragment<RacePresenter> implements RaceV
             raceAdapter = new RaceAdapter();
             raceAdapter.setList(races);
             raceAdapter.setSwipeMenuRecyclerView(rvItems);
+            raceAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<Race>() {
+                @Override
+                public void onClickItem(int position, Race data) {
+                    showRaceEditor(data);
+                }
+            });
             rvItems.setAdapter(raceAdapter);
         }
         else {
@@ -67,13 +74,22 @@ public class RaceFragment extends ModuleFragment<RacePresenter> implements RaceV
     @Override
     public void addNewItem() {
 
+        showRaceEditor(null);
+    }
+
+    private void showRaceEditor(final Race race) {
         RaceEditor editor = new RaceEditor();
         editor.setOnRaceListener(new RaceEditor.OnRaceListener() {
             @Override
-            public void onSaveRace(String name, String description) {
-                presenter.addNewRace(name, description);
+            public void onSaveRace(Race race) {
+                presenter.insertOrUpdate(race);
                 loadData();
                 showMessage("Save successfully");
+            }
+
+            @Override
+            public Race getInitRace() {
+                return race;
             }
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment.Builder()

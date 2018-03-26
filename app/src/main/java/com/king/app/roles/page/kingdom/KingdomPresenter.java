@@ -1,9 +1,9 @@
-package com.king.app.roles.page.race;
+package com.king.app.roles.page.kingdom;
 
 import com.king.app.roles.base.BasePresenter;
 import com.king.app.roles.base.RApplication;
-import com.king.app.roles.model.entity.Race;
-import com.king.app.roles.model.entity.RaceDao;
+import com.king.app.roles.model.entity.Kingdom;
+import com.king.app.roles.model.entity.KingdomDao;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import io.reactivex.schedulers.Schedulers;
  * @time 2018/3/25 0025 21:43
  */
 
-public class RacePresenter extends BasePresenter<RaceView> {
+public class KingdomPresenter extends BasePresenter<KingdomView> {
 
     private long mStoryId;
 
@@ -30,20 +30,20 @@ public class RacePresenter extends BasePresenter<RaceView> {
 
     }
 
-    public void loadRaces(long storyId) {
+    public void loadKingdoms(long storyId) {
         mStoryId = storyId;
-        queryRaces(storyId)
+        queryKingdoms(storyId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<Race>>() {
+                .subscribe(new Observer<List<Kingdom>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         addDisposable(d);
                     }
 
                     @Override
-                    public void onNext(List<Race> races) {
-                        view.showRaces(races);
+                    public void onNext(List<Kingdom> kingdoms) {
+                        view.showKingdoms(kingdoms);
                     }
 
                     @Override
@@ -58,41 +58,41 @@ public class RacePresenter extends BasePresenter<RaceView> {
                 });
     }
 
-    private Observable<List<Race>> queryRaces(final long storyId) {
-        return Observable.create(new ObservableOnSubscribe<List<Race>>() {
+    private Observable<List<Kingdom>> queryKingdoms(final long storyId) {
+        return Observable.create(new ObservableOnSubscribe<List<Kingdom>>() {
             @Override
-            public void subscribe(ObservableEmitter<List<Race>> e) throws Exception {
-                RaceDao dao = RApplication.getInstance().getDaoSession().getRaceDao();
-                List<Race> list = dao.queryBuilder()
-                        .where(RaceDao.Properties.StoryId.eq(storyId))
-                        .orderAsc(RaceDao.Properties.Sequence)
+            public void subscribe(ObservableEmitter<List<Kingdom>> e) throws Exception {
+                KingdomDao dao = RApplication.getInstance().getDaoSession().getKingdomDao();
+                List<Kingdom> list = dao.queryBuilder()
+                        .where(KingdomDao.Properties.StoryId.eq(storyId))
+                        .orderAsc(KingdomDao.Properties.Sequence)
                         .build().list();
                 e.onNext(list);
             }
         });
     }
 
-    public void insertOrUpdate(Race race) {
-        RaceDao dao = RApplication.getInstance().getDaoSession().getRaceDao();
-        if (race.getId() == null) {
-            race.setStoryId(mStoryId);
-            race.setSequence((int) dao.count());
+    public void insertOrUpdate(Kingdom kingdom) {
+        KingdomDao dao = RApplication.getInstance().getDaoSession().getKingdomDao();
+        if (kingdom.getId() == null) {
+            kingdom.setStoryId(mStoryId);
+            kingdom.setSequence((int) dao.count());
         }
-        dao.insertOrReplace(race);
+        dao.insertOrReplace(kingdom);
         dao.detachAll();
     }
 
-    public void confirmDrag(List<Race> list) {
+    public void confirmDrag(List<Kingdom> list) {
         for (int i = 0; i < list.size(); i ++) {
             list.get(i).setSequence(i + 1);
         }
-        RaceDao dao = RApplication.getInstance().getDaoSession().getRaceDao();
+        KingdomDao dao = RApplication.getInstance().getDaoSession().getKingdomDao();
         dao.updateInTx(list);
         dao.detachAll();
     }
 
-    public void confirmDelete(List<Race> list) {
-        RaceDao dao = RApplication.getInstance().getDaoSession().getRaceDao();
+    public void confirmDelete(List<Kingdom> list) {
+        KingdomDao dao = RApplication.getInstance().getDaoSession().getKingdomDao();
         dao.deleteInTx(list);
         dao.detachAll();
     }

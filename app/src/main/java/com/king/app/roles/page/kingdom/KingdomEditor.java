@@ -1,4 +1,4 @@
-package com.king.app.roles.page.race;
+package com.king.app.roles.page.kingdom;
 
 import android.view.View;
 import android.widget.EditText;
@@ -6,7 +6,7 @@ import android.widget.EditText;
 import com.king.app.roles.R;
 import com.king.app.roles.base.BaseFragment;
 import com.king.app.roles.base.IFragmentHolder;
-import com.king.app.roles.model.entity.Race;
+import com.king.app.roles.model.entity.Kingdom;
 import com.king.app.roles.view.dialog.DraggableHolder;
 
 import butterknife.BindView;
@@ -18,16 +18,16 @@ import butterknife.OnClick;
  * @time 2018/3/25 0025 22:03
  */
 
-public class RaceEditor extends BaseFragment {
+public class KingdomEditor extends BaseFragment {
 
     @BindView(R.id.et_name)
     EditText etName;
     @BindView(R.id.et_description)
     EditText etDescription;
 
-    private Race mRace;
+    private Kingdom mKingdom;
 
-    private OnRaceListener onRaceListener;
+    private OnKingdomListener onRaceListener;
 
     private DraggableHolder draggableHolder;
 
@@ -46,36 +46,36 @@ public class RaceEditor extends BaseFragment {
     @Override
     protected void onCreate(View view) {
         if (onRaceListener != null) {
-            mRace = onRaceListener.getInitRace();
-            if (mRace != null) {
-                etName.setText(mRace.getName());
-                etDescription.setText(mRace.getDescription());
+            mKingdom = onRaceListener.getInitKingdom();
+            if (mKingdom != null) {
+                etName.setText(mKingdom.getName());
+                etDescription.setText(mKingdom.getDescription());
             }
         }
     }
 
-    public void setOnRaceListener(OnRaceListener onRaceListener) {
+    public void setOnRaceListener(OnKingdomListener onRaceListener) {
         this.onRaceListener = onRaceListener;
     }
 
     @OnClick(R.id.tv_ok)
     public void onClick() {
         if (onRaceListener != null) {
-            if (mRace == null) {
-                mRace = new Race();
+            if (mKingdom == null) {
+                mKingdom = new Kingdom();
             }
-            mRace.setName(etName.getText().toString());
-            mRace.setDescription(etDescription.getText().toString());
-            onRaceListener.onSaveRace(mRace);
+            mKingdom.setName(etName.getText().toString());
+            mKingdom.setDescription(etDescription.getText().toString());
+            onRaceListener.onSaveKingdom(mKingdom);
         }
         if (draggableHolder != null) {
             draggableHolder.dismiss();
         }
     }
 
-    public interface OnRaceListener {
-        void onSaveRace(Race race);
+    public interface OnKingdomListener {
+        void onSaveKingdom(Kingdom kingdom);
 
-        Race getInitRace();
+        Kingdom getInitKingdom();
     }
 }

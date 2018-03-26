@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.king.app.roles.R;
 import com.king.app.roles.base.BaseActivity;
+import com.king.app.roles.page.kingdom.KingdomFragment;
 import com.king.app.roles.page.race.RaceFragment;
 
 import butterknife.BindView;
@@ -71,6 +72,7 @@ public class ModuleActivity extends BaseActivity implements ModuleFragmentHolder
                 tvTitle.setText("Races");
                 break;
             case PAGE_TYPE_KINGDOM:
+                mFragment = KingdomFragment.newInstance(storyId);
                 tvTitle.setText("Kingdoms");
                 break;
             case PAGE_TYPE_CHAPTER:
