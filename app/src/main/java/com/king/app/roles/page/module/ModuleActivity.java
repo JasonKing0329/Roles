@@ -10,6 +10,7 @@ import com.king.app.roles.R;
 import com.king.app.roles.base.BaseActivity;
 import com.king.app.roles.page.kingdom.KingdomFragment;
 import com.king.app.roles.page.race.RaceFragment;
+import com.king.app.roles.page.role.RoleFragment;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -79,6 +80,7 @@ public class ModuleActivity extends BaseActivity implements ModuleFragmentHolder
                 tvTitle.setText("Chapters");
                 break;
             case PAGE_TYPE_CHARACTER:
+                mFragment = RoleFragment.newInstance(storyId);
                 tvTitle.setText("Characters");
                 break;
         }

@@ -40,7 +40,7 @@ public class KingdomEditor extends BaseFragment {
 
     @Override
     protected int getContentLayoutRes() {
-        return R.layout.dialog_race_editor;
+        return R.layout.dialog_kingdom_editor;
     }
 
     @Override

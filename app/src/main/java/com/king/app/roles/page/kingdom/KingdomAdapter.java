@@ -1,5 +1,6 @@
 package com.king.app.roles.page.kingdom;
 
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -49,7 +50,13 @@ public class KingdomAdapter extends ModuleAdapter<KingdomAdapter.KingdomHolder, 
     @Override
     protected void onBindSubHolder(KingdomHolder holder, int position) {
         holder.tvName.setText(list.get(position).getName());
-        holder.tvDescription.setText(list.get(position).getDescription());
+        if (TextUtils.isEmpty(list.get(position).getDescription())) {
+            holder.tvDescription.setVisibility(View.GONE);
+        }
+        else {
+            holder.tvDescription.setVisibility(View.VISIBLE);
+            holder.tvDescription.setText(list.get(position).getDescription());
+        }
     }
 
     public static class KingdomHolder extends ModuleViewHolder {

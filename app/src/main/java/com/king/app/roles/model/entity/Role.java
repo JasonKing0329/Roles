@@ -1,11 +1,15 @@
 package com.king.app.roles.model.entity;
 
-import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.NotNull;
+import org.greenrobot.greendao.annotation.JoinEntity;
+import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.annotation.ToOne;
+
+import java.util.List;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.annotation.NotNull;
 
 /**
  * @desc
@@ -24,8 +28,6 @@ public class Role {
     private long storyId;
 
     private long kingdomId;
-
-    private long raceId;
 
     private long chapterId;
 
@@ -46,8 +48,13 @@ public class Role {
     @ToOne(joinProperty = "kingdomId")
     private Kingdom kingdom;
 
-    @ToOne(joinProperty = "raceId")
-    private Race race;
+    @ToMany
+    @JoinEntity(
+            entity = RoleRaces.class,
+            sourceProperty = "roleId",
+            targetProperty = "raceId"
+    )
+    private List<Race> raceList;
 
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
@@ -57,15 +64,15 @@ public class Role {
     @Generated(hash = 1785861362)
     private transient RoleDao myDao;
 
-    @Generated(hash = 1243681789)
-    public Role(Long id, String name, String nickname, long storyId, long kingdomId, long raceId,
-            long chapterId, int coreLevel, String power, String description, int sequence) {
+    @Generated(hash = 1292444952)
+    public Role(Long id, String name, String nickname, long storyId, long kingdomId,
+            long chapterId, int coreLevel, String power, String description,
+            int sequence) {
         this.id = id;
         this.name = name;
         this.nickname = nickname;
         this.storyId = storyId;
         this.kingdomId = kingdomId;
-        this.raceId = raceId;
         this.chapterId = chapterId;
         this.coreLevel = coreLevel;
         this.power = power;
@@ -117,14 +124,6 @@ public class Role {
         this.kingdomId = kingdomId;
     }
 
-    public long getRaceId() {
-        return this.raceId;
-    }
-
-    public void setRaceId(long raceId) {
-        this.raceId = raceId;
-    }
-
     public long getChapterId() {
         return this.chapterId;
     }
@@ -155,6 +154,14 @@ public class Role {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getSequence() {
+        return this.sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
     }
 
     @Generated(hash = 647692238)
@@ -229,42 +236,6 @@ public class Role {
         }
     }
 
-    @Generated(hash = 661079782)
-    private transient Long race__resolvedKey;
-
-    /** To-one relationship, resolved on first access. */
-    @Generated(hash = 487172066)
-    public Race getRace() {
-        long __key = this.raceId;
-        if (race__resolvedKey == null || !race__resolvedKey.equals(__key)) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            RaceDao targetDao = daoSession.getRaceDao();
-            Race raceNew = targetDao.load(__key);
-            synchronized (this) {
-                race = raceNew;
-                race__resolvedKey = __key;
-            }
-        }
-        return race;
-    }
-
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1946042495)
-    public void setRace(@NotNull Race race) {
-        if (race == null) {
-            throw new DaoException(
-                    "To-one property 'raceId' has not-null constraint; cannot set to-one to null");
-        }
-        synchronized (this) {
-            this.race = race;
-            raceId = race.getId();
-            race__resolvedKey = raceId;
-        }
-    }
-
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
      * Entity must attached to an entity context.
@@ -301,12 +272,32 @@ public class Role {
         myDao.update(this);
     }
 
-    public int getSequence() {
-        return this.sequence;
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 1109823512)
+    public List<Race> getRaceList() {
+        if (raceList == null) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            RaceDao targetDao = daoSession.getRaceDao();
+            List<Race> raceListNew = targetDao._queryRole_RaceList(id);
+            synchronized (this) {
+                if (raceList == null) {
+                    raceList = raceListNew;
+                }
+            }
+        }
+        return raceList;
     }
 
-    public void setSequence(int sequence) {
-        this.sequence = sequence;
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 1193781830)
+    public synchronized void resetRaceList() {
+        raceList = null;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -315,4 +306,5 @@ public class Role {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getRoleDao() : null;
     }
+
 }

@@ -104,7 +104,7 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
             return maxHieight;
         }
         else {
-            return ScreenUtils.getScreenHeight(getActivity()) * 3 / 5;
+            return ScreenUtils.getScreenHeight() * 3 / 5;
         }
     }
 
@@ -235,6 +235,9 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
             }
             if (contentFragment != null) {
                 fragment.setContentFragment(contentFragment);
+            }
+            if (maxHieight != 0) {
+                fragment.setMaxHieight(maxHieight);
             }
             return fragment;
         }
