@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
 import com.king.app.roles.R;
 import com.king.app.roles.base.BaseRecyclerAdapter;
 import com.king.app.roles.base.MvpActivity;
+import com.king.app.roles.model.SettingProperty;
 import com.king.app.roles.model.entity.Story;
 import com.king.app.roles.utils.DebugLog;
 import com.king.app.roles.view.dialog.SimpleDialogs;
@@ -35,6 +38,8 @@ public class StoryListActivity extends MvpActivity<StoryListPresenter> implement
     LinearLayout groupIcon;
     @BindView(R.id.group_confirm)
     LinearLayout groupConfirm;
+    @BindView(R.id.cb_fingerprint)
+    CheckBox cbFingerprint;
 
     private StoryListAdapter storyListAdapter;
 
@@ -50,6 +55,13 @@ public class StoryListActivity extends MvpActivity<StoryListPresenter> implement
     protected void initView() {
 
         groupConfirm.setVisibility(View.GONE);
+        cbFingerprint.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean check) {
+                SettingProperty.setEnableFingerPrint(check);
+            }
+        });
+        cbFingerprint.setChecked(SettingProperty.isEnableFingerPrint());
 
         GridLayoutManager manager = new GridLayoutManager(this, 2);
         rvStories.setLayoutManager(manager);

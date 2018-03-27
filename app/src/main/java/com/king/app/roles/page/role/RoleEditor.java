@@ -18,9 +18,13 @@ import com.king.app.roles.model.entity.KingdomDao;
 import com.king.app.roles.model.entity.Race;
 import com.king.app.roles.model.entity.RaceDao;
 import com.king.app.roles.model.entity.Role;
+import com.king.app.roles.model.entity.RoleRelations;
+import com.king.app.roles.model.entity.RoleRelationsDao;
 import com.king.app.roles.utils.ListUtil;
 import com.king.app.roles.view.adapter.TagAdapter;
 import com.king.app.roles.view.dialog.DraggableHolder;
+
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +54,8 @@ public class RoleEditor extends BaseFragment {
     EditText etPower;
     @BindView(R.id.tv_chapter)
     TextView tvChapter;
+    @BindView(R.id.tv_relations)
+    TextView tvRelations;
 
     private Role mRole;
 
@@ -83,9 +89,12 @@ public class RoleEditor extends BaseFragment {
         manager = new GridLayoutManager(getActivity(), 3);
         rvKingdom.setLayoutManager(manager);
 
+        tvRelations.setVisibility(View.GONE);
         if (onRoleListener != null) {
             mRole = onRoleListener.getInitKingdom();
+            // 编辑模式才显示Relations
             if (mRole != null) {
+                tvRelations.setVisibility(View.VISIBLE);
                 etName.setText(mRole.getName());
                 etNickname.setText(mRole.getNickname());
                 etPower.setText(mRole.getPower());
@@ -98,11 +107,27 @@ public class RoleEditor extends BaseFragment {
                         tvChapter.setText("Chapter   第" + mRole.getChapter().getIndex() + "章");
                     }
                 }
+
+                // 加载Relation人数
+                loadRelationNumber();
             }
         }
 
         loadRaces();
         loadKingdoms();
+    }
+
+    private void loadRelationNumber() {
+        RoleRelationsDao dao = RApplication.getInstance().getDaoSession().getRoleRelationsDao();
+        QueryBuilder<RoleRelations> builder = dao.queryBuilder();
+        int count = (int) builder
+                .where(builder.or(RoleRelationsDao.Properties.RoleId.eq(mRole.getId()), RoleRelationsDao.Properties.RelationId.eq(mRole.getId())))
+                .buildCount().count();
+        tvRelations.setText("Relations (" + count + " persons)");
+    }
+
+    public void refreshRelations() {
+        loadRelationNumber();
     }
 
     /**
@@ -197,6 +222,9 @@ public class RoleEditor extends BaseFragment {
                 selectChapter();
                 break;
             case R.id.tv_relations:
+                if (onRoleListener != null) {
+                    onRoleListener.showRelations(mRole);
+                }
                 break;
         }
     }
@@ -232,5 +260,7 @@ public class RoleEditor extends BaseFragment {
         Role getInitKingdom();
 
         void selectChapter();
+
+        void showRelations(Role role);
     }
 }

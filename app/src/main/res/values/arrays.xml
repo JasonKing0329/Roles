@@ -4,4 +4,10 @@
         <item>Level 1</item>
         <item>Level 2</item>
     </array>
+    <array name="relation_type">
+        <item>Relative</item>
+        <item>Lover</item>
+        <item>Friend</item>
+        <item>Relative in law</item>
+    </array>
 </resources>

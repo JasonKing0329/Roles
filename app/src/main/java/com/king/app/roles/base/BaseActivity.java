@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.king.app.roles.R;
+import com.king.app.roles.utils.ScreenUtils;
 import com.king.app.roles.view.dialog.ProgressDialogFragment;
 
 import butterknife.ButterKnife;
@@ -35,6 +36,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         //also prevent from system screenshot
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
+        if (updateStatusBarColor()) {
+            ScreenUtils.setStatusBarColor(this, getResources().getColor(R.color.status_bar_bg));
+        }
+
         super.onCreate(savedInstanceState);
 
         setContentView(getContentView());
@@ -42,6 +47,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         unbinder = ButterKnife.bind(this);
 
         initView();
+    }
+
+    /**
+     * 仅LoginActivity不应用，单独覆写
+     * @return
+     */
+    protected boolean updateStatusBarColor() {
+        return true;
     }
 
     protected abstract int getContentView();

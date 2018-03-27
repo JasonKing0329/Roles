@@ -9,4 +9,9 @@ public class AppConstants {
 
     public static final int CHAPTER_LEVEL_FIRST = 1;
     public static final int CHAPTER_LEVEL_SECOND = 2;
+
+    public static final int RELATION_RELATIVE = 1;
+    public static final int RELATION_LOVER = 2;
+    public static final int RELATION_FRIEND = 3;
+    public static final int RELATION_RELATIVE_IN_LAW = 4;
 }

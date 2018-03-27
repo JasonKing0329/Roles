@@ -8,8 +8,11 @@ import com.king.app.roles.model.entity.Role;
 import com.king.app.roles.model.entity.RoleDao;
 import com.king.app.roles.model.entity.RoleRaces;
 import com.king.app.roles.model.entity.RoleRacesDao;
+import com.king.app.roles.model.entity.RoleRelations;
 import com.king.app.roles.model.entity.RoleRelationsDao;
 import com.king.app.roles.utils.ListUtil;
+
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.List;
 
@@ -137,8 +140,8 @@ public class RolePresenter extends BasePresenter<RoleView> {
             roleRacesDao.detachAll();
 
             // delete from role_relations
-            relationsDao.queryBuilder()
-                    .where(RoleRelationsDao.Properties.RoleId.eq(role.getId()))
+            QueryBuilder<RoleRelations> builder = relationsDao.queryBuilder();
+            builder.where(builder.or(RoleRelationsDao.Properties.RoleId.eq(role.getId()), RoleRelationsDao.Properties.RelationId.eq(role.getId())))
                     .buildDelete()
                     .executeDeleteWithoutDetachingEntities();
             relationsDao.detachAll();

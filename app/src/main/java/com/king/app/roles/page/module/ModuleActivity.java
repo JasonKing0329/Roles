@@ -86,7 +86,7 @@ public class ModuleActivity extends BaseActivity implements ModuleFragmentHolder
                 tvTitle.setText("Chapters");
                 break;
             case PAGE_TYPE_CHARACTER:
-                mFragment = RoleFragment.newInstance(storyId);
+                mFragment = RoleFragment.newInstance(storyId, selectMode);
                 tvTitle.setText("Characters");
                 break;
         }

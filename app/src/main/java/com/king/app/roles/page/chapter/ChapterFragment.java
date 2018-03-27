@@ -108,7 +108,7 @@ public class ChapterFragment extends ModuleFragment<ChapterPresenter> implements
         DraggableDialogFragment.Builder builder = new DraggableDialogFragment.Builder()
                 .setTitle("Chapter")
                 .setContentFragment(editor);
-        if (chapter.getId() != null) {
+        if (chapter != null && chapter.getId() != null) {
             builder.setShowDelete(true)
                     .setOnDeleteListener(new View.OnClickListener() {
                         @Override
