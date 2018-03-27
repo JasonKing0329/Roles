@@ -1,5 +1,7 @@
 package com.king.app.roles.page.module;
 
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +30,21 @@ public abstract class ModuleAdapter<VH extends ModuleViewHolder, T> extends Base
 
     protected SparseBooleanArray checkMap;
 
+    private String mKeyword;
+
+    private List<T> originList;
+
     public ModuleAdapter() {
         checkMap = new SparseBooleanArray();
+    }
+
+    @Override
+    public void setList(@NonNull List<T> data) {
+        originList = data;
+        list = new ArrayList<>();
+        for (T t:originList) {
+            list.add(t);
+        }
     }
 
     public void setDrag(boolean drag) {
@@ -104,4 +119,25 @@ public abstract class ModuleAdapter<VH extends ModuleViewHolder, T> extends Base
     protected abstract View getDragView(VH holder);
 
     protected abstract void onBindSubHolder(VH holder, int position);
+
+    public void filter(String text) {
+        if (!text.equals(mKeyword)) {
+            list.clear();
+            mKeyword = text;
+            for (int i = 0; i < originList.size(); i ++) {
+                if (TextUtils.isEmpty(text)) {
+                    list.add(originList.get(i));
+                }
+                else {
+                    if (isMatchForKeyword(originList.get(i), text)) {
+                        list.add(originList.get(i));
+                    }
+                }
+            }
+            notifyDataSetChanged();
+        }
+    }
+
+    protected abstract boolean isMatchForKeyword(T t, String text);
+
 }

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 
 import com.king.app.roles.R;
@@ -54,6 +56,25 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
             holder.hideDeleteAction();
             holder.hideDragAction();
         }
+
+        holder.registerTextWatcher(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (roleAdapter != null) {
+                    roleAdapter.filter(charSequence.toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
     @Override

@@ -83,4 +83,8 @@
         <item name="android:textSize">20dp</item>
     </style>
 
+    <style name="EtActionSearch" parent="CustomActionBarTheme">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
+    </style>
 </resources>

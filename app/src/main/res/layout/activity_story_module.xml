@@ -39,6 +39,10 @@
                 android:id="@+id/iv_add"
                 style="@style/IvActionIcon"
                 android:src="@drawable/ic_add_white_24dp" />
+            <ImageView
+                android:id="@+id/iv_search"
+                style="@style/IvActionIcon"
+                android:src="@drawable/ic_search_white_24dp" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/group_confirm"
@@ -56,6 +60,29 @@
                 style="@style/TvActionText"
                 android:text="@string/ok"/>
         </LinearLayout>
+        <RelativeLayout
+            android:id="@+id/group_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@color/actionbar_bg"
+            android:layout_marginRight="40dp">
+            <EditText
+                android:id="@+id/et_search"
+                android:theme="@style/EtActionSearch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@color/white"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_centerVertical="true"/>
+            <ImageView
+                android:id="@+id/iv_search_close"
+                style="@style/IvActionIcon"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_close_white_24dp" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <FrameLayout

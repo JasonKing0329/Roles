@@ -53,6 +53,11 @@ public class RaceAdapter extends ModuleAdapter<RaceAdapter.RaceHolder, Race> {
         holder.tvDescription.setText(list.get(position).getDescription());
     }
 
+    @Override
+    protected boolean isMatchForKeyword(Race race, String text) {
+        return false;
+    }
+
     public static class RaceHolder extends ModuleViewHolder {
 
         @BindView(R.id.tv_name)

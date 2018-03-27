@@ -90,6 +90,19 @@ public class RoleAdapter extends ModuleAdapter<RoleAdapter.RoleHolder, Role> {
         return "";
     }
 
+    @Override
+    protected boolean isMatchForKeyword(Role role, String text) {
+        if (TextUtils.isEmpty(role.getName())) {
+            if (text.equals(role.getName())) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        return role.getName().toLowerCase().contains(text.toLowerCase());
+    }
+
     public static class RoleHolder extends ModuleViewHolder {
 
         @BindView(R.id.tv_name)

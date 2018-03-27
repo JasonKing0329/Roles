@@ -59,6 +59,11 @@ public class KingdomAdapter extends ModuleAdapter<KingdomAdapter.KingdomHolder, 
         }
     }
 
+    @Override
+    protected boolean isMatchForKeyword(Kingdom kingdom, String text) {
+        return false;
+    }
+
     public static class KingdomHolder extends ModuleViewHolder {
 
         @BindView(R.id.tv_name)

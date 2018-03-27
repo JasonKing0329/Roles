@@ -1,10 +1,17 @@
 package com.king.app.roles.page.module;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextWatcher;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.king.app.roles.R;
@@ -15,6 +22,7 @@ import com.king.app.roles.page.race.RaceFragment;
 import com.king.app.roles.page.role.RoleFragment;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -53,6 +61,12 @@ public class ModuleActivity extends BaseActivity implements ModuleFragmentHolder
     LinearLayout groupConfirm;
     @BindView(R.id.group_ft_container)
     FrameLayout groupFtContainer;
+    @BindView(R.id.iv_search)
+    ImageView ivSearch;
+    @BindView(R.id.et_search)
+    EditText etSearch;
+    @BindView(R.id.group_search)
+    RelativeLayout groupSearch;
 
     private ModuleFragment mFragment;
 
@@ -64,7 +78,7 @@ public class ModuleActivity extends BaseActivity implements ModuleFragmentHolder
     @Override
     protected void initView() {
         groupConfirm.setVisibility(View.GONE);
-
+        ivSearch.setVisibility(View.GONE);
         initFragment();
     }
 
@@ -88,6 +102,7 @@ public class ModuleActivity extends BaseActivity implements ModuleFragmentHolder
             case PAGE_TYPE_CHARACTER:
                 mFragment = RoleFragment.newInstance(storyId, selectMode);
                 tvTitle.setText("Characters");
+                ivSearch.setVisibility(View.VISIBLE);
                 break;
         }
         getSupportFragmentManager().beginTransaction()
@@ -117,28 +132,75 @@ public class ModuleActivity extends BaseActivity implements ModuleFragmentHolder
             case R.id.tv_cancel:
                 if (isDeleteAction) {
                     cancelDelete();
-                }
-                else if (isDragAction) {
+                } else if (isDragAction) {
                     cancelDrag();
                 }
                 break;
             case R.id.tv_ok:
                 if (isDeleteAction) {
                     doDelete();
-                }
-                else if (isDragAction) {
+                } else if (isDragAction) {
                     doDrag();
                 }
                 break;
         }
     }
 
+    @OnClick({R.id.iv_search, R.id.iv_search_close})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.iv_search:
+                showSearchBar();
+                break;
+            case R.id.iv_search_close:
+                hideSearchBar();
+                break;
+        }
+    }
+
+    private void showSearchBar() {
+        if (groupSearch.getVisibility() != View.VISIBLE) {
+            groupSearch.setVisibility(View.VISIBLE);
+            Animation animation = new AlphaAnimation(0, 1);
+            animation.setDuration(500);
+            animation.setInterpolator(new AccelerateDecelerateInterpolator());
+            groupSearch.startAnimation(animation);
+        }
+    }
+
+    private void hideSearchBar() {
+        Animation animation = new AlphaAnimation(1, 0);
+        animation.setDuration(500);
+        animation.setInterpolator(new AccelerateDecelerateInterpolator());
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                groupSearch.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        groupSearch.startAnimation(animation);
+    }
+
+    @Override
+    public void registerTextWatcher(TextWatcher textWatcher) {
+        etSearch.addTextChangedListener(textWatcher);
+    }
+
     private void showActionConfirm(boolean show) {
         if (show) {
             groupConfirm.setVisibility(View.VISIBLE);
             groupIcon.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             groupConfirm.setVisibility(View.GONE);
             groupIcon.setVisibility(View.VISIBLE);
         }
@@ -183,4 +245,5 @@ public class ModuleActivity extends BaseActivity implements ModuleFragmentHolder
     public void hideDragAction() {
         ivMove.setVisibility(View.GONE);
     }
+
 }

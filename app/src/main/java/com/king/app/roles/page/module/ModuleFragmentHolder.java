@@ -1,5 +1,7 @@
 package com.king.app.roles.page.module;
 
+import android.text.TextWatcher;
+
 import com.king.app.roles.base.IFragmentHolder;
 
 /**
@@ -18,4 +20,6 @@ public interface ModuleFragmentHolder extends IFragmentHolder {
     void hideDeleteAction();
 
     void hideDragAction();
+
+    void registerTextWatcher(TextWatcher textWatcher);
 }
