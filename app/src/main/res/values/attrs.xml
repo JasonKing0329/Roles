@@ -12,6 +12,7 @@
         <attr name="showIconBack" format="boolean" />
         <attr name="supportIconOverFlow" format="boolean" />
         <attr name="iconSize" format="dimension" />
+        <attr name="iconPadding" format="dimension" />
     </declare-styleable>
 
 </resources>

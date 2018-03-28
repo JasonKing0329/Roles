@@ -23,7 +23,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.samsung.android.sdk.multiwindow.enable"
             android:value="true" />
@@ -37,26 +36,29 @@
             android:name="com.sec.android.support.multiwindow"
             android:value="true" />
 
-        <activity android:name=".page.login.LoginActivity"
+        <activity
+            android:name=".page.login.LoginActivity"
             android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".page.TestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".page.story.StoryListActivity"
-            android:theme="@style/CustomActionBarTheme"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".page.story.StoryPageActivity"
-            android:theme="@style/CustomActionBarTheme"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".page.module.ModuleActivity"
-            android:theme="@style/CustomActionBarTheme"
-            android:screenOrientation="portrait">
-        </activity>
+        <activity
+            android:name=".page.story.StoryListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CustomActionBarTheme"></activity>
+        <activity
+            android:name=".page.story.StoryPageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CustomActionBarTheme"></activity>
+        <activity
+            android:name=".page.module.ModuleActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CustomActionBarTheme"></activity>
     </application>
 
 </manifest>

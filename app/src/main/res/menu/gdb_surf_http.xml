@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_gdb_surf_delete"
+        android:title="delete"
+        android:icon="@drawable/ic_delete_white_24dp"
+        app:showAsAction="never"/>
+    <item android:id="@+id/menu_gdb_surf_edit"
+        android:title="edit"
+        android:icon="@drawable/ic_edit_white_24dp"
+        app:showAsAction="never"/>
+    <item android:id="@+id/menu_gdb_surf_close"
+        android:title="close"
+        android:icon="@drawable/ic_close_white_24dp"
+        app:showAsAction="never"/>
+    <item android:id="@+id/menu_gdb_surf_add"
+        android:title="Add"
+        android:icon="@drawable/ic_add_white_24dp"
+        app:showAsAction="never"/>
+    <item android:id="@+id/menu_gdb_surf_view"
+        android:title="View"
+        android:icon="@drawable/ic_view_module_white_24dp"
+        app:showAsAction="never"/>
+</menu>
