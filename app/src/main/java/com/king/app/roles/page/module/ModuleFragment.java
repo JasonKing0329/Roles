@@ -154,15 +154,4 @@ public abstract class ModuleFragment<P extends BasePresenter> extends MvpFragmen
         getAdapter().notifyDataSetChanged();
     }
 
-    public abstract void confirmDrag();
-
-    public abstract void confirmDelete();
-
-    protected void notifyDragDone() {
-        holder.cancelDrag();
-    }
-
-    protected void notifyDeleteDone() {
-        holder.cancelDelete();
-    }
 }

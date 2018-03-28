@@ -1,31 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="wrap_content">
-    <RelativeLayout
-        android:id="@+id/group_actionbar"
-        style="@style/GroupActionbar">
-        <ImageView
-            android:id="@+id/iv_back"
-            style="@style/IvActionIcon"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/ic_arrow_back_white_24dp" />
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/iv_back"
-            android:textSize="18dp"
-            android:textColor="@color/white"
-            android:text="Stories"
-            android:textStyle="bold"/>
-    </RelativeLayout>
+
+    <com.king.app.jactionbar.JActionbar
+        android:id="@+id/actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:theme="@style/EtActionSearch"
+        android:background="@color/actionbar_bg"
+        app:rippleColor="#33000000"
+        app:showIconBack="true"
+        app:titleSize="18dp"/>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/group_actionbar"
+        android:layout_below="@id/actionbar"
         android:layout_marginBottom="10dp">
         <LinearLayout
             android:layout_width="match_parent"

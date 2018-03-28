@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import com.king.app.jactionbar.JActionbar;
+import com.king.app.jactionbar.OnBackListener;
 import com.king.app.roles.R;
 import com.king.app.roles.base.MvpActivity;
 import com.king.app.roles.page.module.ModuleActivity;
@@ -24,8 +26,8 @@ public class StoryPageActivity extends MvpActivity<StoryPagePresenter> implement
 
     public static final String KEY_STORY_ID = "story_id";
 
-    @BindView(R.id.tv_title)
-    TextView tvTitle;
+    @BindView(R.id.actionbar)
+    JActionbar actionbar;
 
     @BindView(R.id.tv_description)
     TextView tvDescription;
@@ -37,7 +39,12 @@ public class StoryPageActivity extends MvpActivity<StoryPagePresenter> implement
 
     @Override
     protected void initView() {
-
+        actionbar.setOnBackListener(new OnBackListener() {
+            @Override
+            public void onBack() {
+                onBackPressed();
+            }
+        });
     }
 
     @Override
@@ -53,7 +60,7 @@ public class StoryPageActivity extends MvpActivity<StoryPagePresenter> implement
 
     @Override
     public void showStory(String name, String description) {
-        tvTitle.setText(name);
+        actionbar.setTitle(name);
         if (TextUtils.isEmpty(description)) {
             tvDescription.setText("No description, press to add one.");
         }
@@ -62,13 +69,10 @@ public class StoryPageActivity extends MvpActivity<StoryPagePresenter> implement
         }
     }
 
-    @OnClick({R.id.iv_back, R.id.group_race, R.id.group_kingdom, R.id.group_chapters, R.id.group_characters
+    @OnClick({R.id.group_race, R.id.group_kingdom, R.id.group_chapters, R.id.group_characters
         , R.id.tv_description})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.iv_back:
-                onBackPressed();
-                break;
             case R.id.group_race:
                 startModuleActivity(ModuleActivity.PAGE_TYPE_RACE);
                 break;

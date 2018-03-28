@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
+import com.king.app.jactionbar.OnMenuItemListener;
 import com.king.app.roles.R;
 import com.king.app.roles.model.entity.Chapter;
 import com.king.app.roles.page.module.ModuleAdapter;
@@ -44,8 +45,17 @@ public class ChapterFragment extends ModuleFragment<ChapterPresenter> implements
 
     @Override
     protected void onCreate(View view) {
-        holder.hideDeleteAction();
-        holder.hideDragAction();
+        holder.getJActionbar().inflateMenu(R.menu.page_chapter);
+        holder.getJActionbar().setOnMenuItemListener(new OnMenuItemListener() {
+            @Override
+            public void onMenuItemSelected(int menuId) {
+                switch (menuId) {
+                    case R.id.menu_add:
+                        addNewItem();
+                        break;
+                }
+            }
+        });
     }
 
     @Override
@@ -137,13 +147,4 @@ public class ChapterFragment extends ModuleFragment<ChapterPresenter> implements
                 });
     }
 
-    @Override
-    public void confirmDrag() {
-
-    }
-
-    @Override
-    public void confirmDelete() {
-
-    }
 }

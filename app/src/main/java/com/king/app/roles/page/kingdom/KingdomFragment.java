@@ -3,6 +3,9 @@ package com.king.app.roles.page.kingdom;
 import android.os.Bundle;
 import android.view.View;
 
+import com.king.app.jactionbar.OnConfirmListener;
+import com.king.app.jactionbar.OnMenuItemListener;
+import com.king.app.roles.R;
 import com.king.app.roles.base.BaseRecyclerAdapter;
 import com.king.app.roles.model.entity.Kingdom;
 import com.king.app.roles.page.module.ModuleAdapter;
@@ -31,7 +34,64 @@ public class KingdomFragment extends ModuleFragment<KingdomPresenter> implements
 
     @Override
     protected void onCreate(View view) {
+        holder.getJActionbar().inflateMenu(R.menu.page_kingdom);
+        holder.getJActionbar().setOnMenuItemListener(new OnMenuItemListener() {
+            @Override
+            public void onMenuItemSelected(int menuId) {
+                switch (menuId) {
+                    case R.id.menu_add:
+                        addNewItem();
+                        break;
+                    case R.id.menu_delete:
+                        holder.getJActionbar().showConfirmStatus(menuId);
+                        setDeleteMode(true);
+                        break;
+                    case R.id.menu_drag:
+                        holder.getJActionbar().showConfirmStatus(menuId);
+                        setDragMode(true);
+                        break;
+                }
+            }
+        });
+        holder.getJActionbar().setOnConfirmListener(new OnConfirmListener() {
+            @Override
+            public boolean disableInstantDismissConfirm() {
+                return false;
+            }
 
+            @Override
+            public boolean disableInstantDismissCancel() {
+                return false;
+            }
+
+            @Override
+            public boolean onConfirm(int actionId) {
+                switch (actionId) {
+                    case R.id.menu_delete:
+                        confirmDelete();
+                        setDeleteMode(false);
+                        break;
+                    case R.id.menu_drag:
+                        confirmDrag();
+                        setDragMode(false);
+                        break;
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onCancel(int actionId) {
+                switch (actionId) {
+                    case R.id.menu_delete:
+                        setDeleteMode(false);
+                        break;
+                    case R.id.menu_drag:
+                        setDragMode(false);
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     @Override
@@ -98,18 +158,14 @@ public class KingdomFragment extends ModuleFragment<KingdomPresenter> implements
         dialogFragment.show(getChildFragmentManager(), "DraggableDialogFragment");
     }
 
-    @Override
     public void confirmDrag() {
         presenter.confirmDrag(kingdomAdapter.getList());
         loadData();
-        notifyDragDone();
     }
 
-    @Override
     public void confirmDelete() {
         presenter.confirmDelete(kingdomAdapter.getSelectedData());
         loadData();
-        notifyDeleteDone();
     }
 
 }

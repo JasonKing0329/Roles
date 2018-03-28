@@ -219,9 +219,10 @@ public class JActionbar extends RelativeLayout {
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tvTitle.getLayoutParams();
             params.leftMargin = ParamUtils.dp2px(16);
             tvTitle.setLayoutParams(params);
-            tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, titleSize);
-            tvTitle.setText(title);
         }
+        tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, titleSize);
+        tvTitle.setText(title);
+        tvTitle.setTextAppearance(getContext(), R.style.TvTitle);
     }
 
     /**
@@ -554,6 +555,7 @@ public class JActionbar extends RelativeLayout {
         view.setBackground(drawable);
         view.setOnClickListener(iconClickListener);
         view.setLayoutParams(params);
+        view.setTextAppearance(getContext(), R.style.TvTitle);
         return view;
     }
 
@@ -705,5 +707,13 @@ public class JActionbar extends RelativeLayout {
 
     public void setOnBackListener(OnBackListener onBackListener) {
         this.onBackListener = onBackListener;
+    }
+
+    public void setTitle(String name) {
+        tvTitle.setText(name);
+    }
+
+    public void enableSearch() {
+        isSupportSearch = true;
     }
 }

@@ -4,11 +4,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 
+import com.king.app.jactionbar.JActionbar;
+import com.king.app.jactionbar.OnBackListener;
+import com.king.app.jactionbar.OnConfirmListener;
+import com.king.app.jactionbar.OnMenuItemListener;
 import com.king.app.roles.R;
 import com.king.app.roles.base.BaseRecyclerAdapter;
 import com.king.app.roles.base.MvpActivity;
@@ -23,7 +25,6 @@ import com.yanzhenjie.recyclerview.swipe.touch.OnItemStateChangedListener;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * 描述:
@@ -32,19 +33,14 @@ import butterknife.OnClick;
  */
 public class StoryListActivity extends MvpActivity<StoryListPresenter> implements StoryListView {
 
+    @BindView(R.id.actionbar)
+    JActionbar actionbar;
     @BindView(R.id.rv_stories)
     SwipeMenuRecyclerView rvStories;
-    @BindView(R.id.group_icon)
-    LinearLayout groupIcon;
-    @BindView(R.id.group_confirm)
-    LinearLayout groupConfirm;
     @BindView(R.id.cb_fingerprint)
     CheckBox cbFingerprint;
 
     private StoryListAdapter storyListAdapter;
-
-    private boolean isDeleteAction;
-    private boolean isDragAction;
 
     @Override
     protected int getContentView() {
@@ -54,7 +50,6 @@ public class StoryListActivity extends MvpActivity<StoryListPresenter> implement
     @Override
     protected void initView() {
 
-        groupConfirm.setVisibility(View.GONE);
         cbFingerprint.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean check) {
@@ -103,6 +98,70 @@ public class StoryListActivity extends MvpActivity<StoryListPresenter> implement
                 }
             }
         });
+
+        actionbar.setOnBackListener(new OnBackListener() {
+            @Override
+            public void onBack() {
+                onBackPressed();
+            }
+        });
+        actionbar.setOnMenuItemListener(new OnMenuItemListener() {
+            @Override
+            public void onMenuItemSelected(int menuId) {
+                switch (menuId) {
+                    case R.id.menu_add:
+                        addNewStory();
+                        break;
+                    case R.id.menu_delete:
+                        actionbar.showConfirmStatus(menuId);
+                        storyListAdapter.setSelect(true);
+                        storyListAdapter.notifyDataSetChanged();
+                        break;
+                    case R.id.menu_drag:
+                        actionbar.showConfirmStatus(menuId);
+                        storyListAdapter.setDrag(true);
+                        storyListAdapter.notifyDataSetChanged();
+                        break;
+                }
+            }
+        });
+        actionbar.setOnConfirmListener(new OnConfirmListener() {
+            @Override
+            public boolean disableInstantDismissConfirm() {
+                return true;
+            }
+
+            @Override
+            public boolean disableInstantDismissCancel() {
+                return false;
+            }
+
+            @Override
+            public boolean onConfirm(int actionId) {
+                switch (actionId) {
+                    case R.id.menu_delete:
+                        doDelete();
+                        break;
+                    case R.id.menu_drag:
+                        doDrag();
+                        break;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onCancel(int actionId) {
+                switch (actionId) {
+                    case R.id.menu_delete:
+                        cancelDelete();
+                        break;
+                    case R.id.menu_drag:
+                        cancelDrag();
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     @Override
@@ -140,55 +199,14 @@ public class StoryListActivity extends MvpActivity<StoryListPresenter> implement
         startActivity(intent);
     }
 
-    @OnClick({R.id.iv_add, R.id.iv_delete, R.id.iv_move, R.id.tv_cancel, R.id.tv_ok})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_add:
-                addNewStory();
-                break;
-            case R.id.iv_delete:
-                isDeleteAction = true;
-                storyListAdapter.setSelect(true);
-                storyListAdapter.notifyDataSetChanged();
-                showActionConfirm(true);
-                break;
-            case R.id.iv_move:
-                isDragAction = true;
-                storyListAdapter.setDrag(true);
-                storyListAdapter.notifyDataSetChanged();
-                showActionConfirm(true);
-                break;
-            case R.id.tv_cancel:
-                if (isDeleteAction) {
-                    cancelDelete();
-                }
-                else if (isDragAction) {
-                    cancelDrag();
-                }
-                break;
-            case R.id.tv_ok:
-                if (isDeleteAction) {
-                    doDelete();
-                }
-                else if (isDragAction) {
-                    doDrag();
-                }
-                break;
-        }
-    }
-
     private void cancelDelete() {
-        isDeleteAction = false;
         storyListAdapter.setSelect(false);
         storyListAdapter.notifyDataSetChanged();
-        showActionConfirm(false);
     }
 
     private void cancelDrag() {
-        isDragAction = false;
         storyListAdapter.setDrag(false);
         storyListAdapter.notifyDataSetChanged();
-        showActionConfirm(false);
     }
 
     private void doDrag() {
@@ -198,6 +216,7 @@ public class StoryListActivity extends MvpActivity<StoryListPresenter> implement
     @Override
     public void updateDone() {
         cancelDrag();
+        actionbar.cancelConfirmStatus();
     }
 
     private void doDelete() {
@@ -211,6 +230,7 @@ public class StoryListActivity extends MvpActivity<StoryListPresenter> implement
                         }
                         else {
                             cancelDelete();
+                            actionbar.cancelConfirmStatus();
                         }
                     }
                 });
@@ -219,17 +239,7 @@ public class StoryListActivity extends MvpActivity<StoryListPresenter> implement
     @Override
     public void deleteDone() {
         cancelDelete();
-    }
-
-    private void showActionConfirm(boolean show) {
-        if (show) {
-            groupConfirm.setVisibility(View.VISIBLE);
-            groupIcon.setVisibility(View.GONE);
-        }
-        else {
-            groupConfirm.setVisibility(View.GONE);
-            groupIcon.setVisibility(View.VISIBLE);
-        }
+        actionbar.cancelConfirmStatus();
     }
 
     private void addNewStory() {

@@ -1,7 +1,6 @@
 package com.king.app.roles.page.module;
 
-import android.text.TextWatcher;
-
+import com.king.app.jactionbar.JActionbar;
 import com.king.app.roles.base.IFragmentHolder;
 
 /**
@@ -11,15 +10,9 @@ import com.king.app.roles.base.IFragmentHolder;
  */
 
 public interface ModuleFragmentHolder extends IFragmentHolder {
-    void cancelDrag();
 
-    void cancelDelete();
+    JActionbar getJActionbar();
 
     void onSelectId(long id);
 
-    void hideDeleteAction();
-
-    void hideDragAction();
-
-    void registerTextWatcher(TextWatcher textWatcher);
 }
