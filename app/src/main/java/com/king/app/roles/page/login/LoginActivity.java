@@ -28,11 +28,6 @@ public class LoginActivity extends MvpActivity<LoginPresenter> implements LoginV
     private FingerPrintController fingerPrint;
 
     @Override
-    protected boolean updateStatusBarColor() {
-        return false;
-    }
-
-    @Override
     protected int getContentView() {
         return R.layout.activity_login;
     }

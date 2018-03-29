@@ -54,7 +54,7 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
     protected void onCreate(View view) {
         // 选择模式下只允许新增
         if (isSelectMode()) {
-            holder.getJActionbar().inflateMenu(R.menu.select_mode);
+            holder.getJActionbar().inflateMenu(R.menu.page_role_select);
         }
         else {
             holder.getJActionbar().inflateMenu(R.menu.page_role);
@@ -74,6 +74,9 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
                 switch (menuId) {
                     case R.id.menu_add:
                         addNewItem();
+                        break;
+                    case R.id.menu_sort:
+                        showSortFilter();
                         break;
                     case R.id.menu_delete:
                         holder.getJActionbar().showConfirmStatus(menuId);
@@ -170,6 +173,27 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
     public void addNewItem() {
 
         showRoleEditor(null);
+    }
+
+    private void showSortFilter() {
+        RoleSortFilterDialog sortFilter = new RoleSortFilterDialog();
+        sortFilter.setOnSortFilterListener(new RoleSortFilterDialog.OnSortFilterListener() {
+            @Override
+            public void onSortAndFilter(int sortType, List<Race> races, Kingdom kingdom) {
+                presenter.sortAndFilter(sortType, races, kingdom);
+            }
+
+            @Override
+            public long getStoryId() {
+                return RoleFragment.this.getStoryId();
+            }
+        });
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment.Builder()
+                .setTitle("Sort and filter")
+                .setContentFragment(sortFilter)
+                .setMaxHeight(ScreenUtils.getScreenHeight())
+                .build();
+        dialogFragment.show(getChildFragmentManager(), "RoleSortFilterDialog");
     }
 
     private void showRoleEditor(final Role role) {
