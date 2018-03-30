@@ -7,8 +7,8 @@ android {
         applicationId "com.king.app.roles"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 15
-        versionName "2.2.1"
+        versionCode 16
+        versionName "2.2.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -70,6 +70,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.0.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
     implementation 'com.yanzhenjie:recyclerview-swipe:1.1.4'
+    implementation 'com.king.lib:jactionbar:1.0.1'
     implementation project(':expandablerecycleradapter')
-    implementation project(':jactionbar')
 }
