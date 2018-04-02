@@ -3,6 +3,7 @@ package com.king.app.roles.page.role;
 import com.king.app.roles.base.BasePresenter;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.conf.AppConstants;
+import com.king.app.roles.model.entity.Chapter;
 import com.king.app.roles.model.entity.Kingdom;
 import com.king.app.roles.model.entity.Race;
 import com.king.app.roles.model.entity.Role;
@@ -14,7 +15,6 @@ import com.king.app.roles.model.entity.RoleRelationsDao;
 import com.king.app.roles.utils.ListUtil;
 
 import org.greenrobot.greendao.query.QueryBuilder;
-import org.greenrobot.greendao.query.WhereCondition;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,16 +48,22 @@ public class RolePresenter extends BasePresenter<RoleView> {
     public void loadRoles(long storyId) {
         mStoryId = storyId;
         queryRoles(storyId, AppConstants.ROLE_SORT_BY_SEQUENCE)
+                .flatMap(new Function<List<Role>, ObservableSource<List<RoleItemBean>>>() {
+                    @Override
+                    public ObservableSource<List<RoleItemBean>> apply(List<Role> roles) throws Exception {
+                        return parseRoles(roles);
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<Role>>() {
+                .subscribe(new Observer<List<RoleItemBean>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         addDisposable(d);
                     }
 
                     @Override
-                    public void onNext(List<Role> roles) {
+                    public void onNext(List<RoleItemBean> roles) {
                         view.showRole(roles);
                     }
 
@@ -93,6 +99,43 @@ public class RolePresenter extends BasePresenter<RoleView> {
         });
     }
 
+    private Observable<List<RoleItemBean>> parseRoles(final List<Role> list) {
+        return Observable.create(new ObservableOnSubscribe<List<RoleItemBean>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<RoleItemBean>> e) throws Exception {
+                List<RoleItemBean> roleItemBeans = new ArrayList<>();
+                RoleRelationsDao dao = RApplication.getInstance().getDaoSession().getRoleRelationsDao();
+                for (Role role:list) {
+                    RoleItemBean bean = new RoleItemBean();
+                    bean.setRole(role);
+                    bean.setDebut(getDebutText(role.getChapter()));
+
+                    QueryBuilder<RoleRelations> builder = dao.queryBuilder();
+                    int number = (int) builder
+                            .where(builder.or(RoleRelationsDao.Properties.RoleId.eq(role.getId()), RoleRelationsDao.Properties.RelationId.eq(role.getId())))
+                            .buildCount().count();
+                    bean.setRelations(number);
+
+                    roleItemBeans.add(bean);
+                }
+
+                e.onNext(roleItemBeans);
+            }
+        });
+    }
+
+    private String getDebutText(Chapter chapter) {
+        if (chapter == null) {
+            return null;
+        }
+        StringBuffer buffer = new StringBuffer();
+        if (chapter.getParent() != null) {
+            buffer.append("第").append(chapter.getParent().getIndex()).append("章 ").append(chapter.getParent().getName()).append(" - ");
+        }
+        buffer.append("(").append(chapter.getIndex()).append(")").append(chapter.getName());
+        return buffer.toString();
+    }
+
     public void insertOrUpdate(Role role, List<Race> raceList, Kingdom kingdom) {
         RoleDao dao = RApplication.getInstance().getDaoSession().getRoleDao();
         RoleRacesDao roleRacesDao = RApplication.getInstance().getDaoSession().getRoleRacesDao();
@@ -126,16 +169,23 @@ public class RolePresenter extends BasePresenter<RoleView> {
         }
     }
 
-    public void confirmDrag(List<Role> list) {
+    public void confirmDrag(List<RoleItemBean> list) {
+        List<Role> roles = new ArrayList<>();
         for (int i = 0; i < list.size(); i ++) {
-            list.get(i).setSequence(i + 1);
+            list.get(i).getRole().setSequence(i + 1);
+            roles.add(list.get(i).getRole());
         }
         RoleDao dao = RApplication.getInstance().getDaoSession().getRoleDao();
-        dao.updateInTx(list);
+        dao.updateInTx(roles);
         dao.detachAll();
     }
 
-    public void confirmDelete(List<Role> list) {
+    public void confirmDelete(List<RoleItemBean> roles) {
+        List<Role> list = new ArrayList<>();
+        for (int i = 0; i < roles.size(); i ++) {
+            roles.get(i).getRole().setSequence(i + 1);
+            list.add(roles.get(i).getRole());
+        }
         // delete from role
         RoleDao dao = RApplication.getInstance().getDaoSession().getRoleDao();
         dao.deleteInTx(list);
@@ -168,16 +218,22 @@ public class RolePresenter extends BasePresenter<RoleView> {
                         return filterRole(roles, races, kingdom);
                     }
                 })
+                .flatMap(new Function<List<Role>, ObservableSource<List<RoleItemBean>>>() {
+                    @Override
+                    public ObservableSource<List<RoleItemBean>> apply(List<Role> roles) throws Exception {
+                        return parseRoles(roles);
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<Role>>() {
+                .subscribe(new Observer<List<RoleItemBean>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         addDisposable(d);
                     }
 
                     @Override
-                    public void onNext(List<Role> roles) {
+                    public void onNext(List<RoleItemBean> roles) {
                         view.showRole(roles);
                     }
 

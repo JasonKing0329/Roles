@@ -1,0 +1,41 @@
+package com.king.app.roles.page.role;
+
+import com.king.app.roles.model.entity.Role;
+
+/**
+ * 描述:
+ * <p/>作者：景阳
+ * <p/>创建时间: 2018/4/2 10:17
+ */
+public class RoleItemBean {
+
+    private Role role;
+
+    private String debut;
+
+    private int relations;
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public String getDebut() {
+        return debut;
+    }
+
+    public void setDebut(String debut) {
+        this.debut = debut;
+    }
+
+    public int getRelations() {
+        return relations;
+    }
+
+    public void setRelations(int relations) {
+        this.relations = relations;
+    }
+}

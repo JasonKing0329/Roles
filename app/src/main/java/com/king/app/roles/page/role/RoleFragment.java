@@ -140,19 +140,19 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
     }
 
     @Override
-    public void showRole(List<Role> roles) {
+    public void showRole(List<RoleItemBean> roles) {
         if (roleAdapter == null) {
             roleAdapter = new RoleAdapter();
             roleAdapter.setList(roles);
             roleAdapter.setSwipeMenuRecyclerView(rvItems);
-            roleAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<Role>() {
+            roleAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<RoleItemBean>() {
                 @Override
-                public void onClickItem(int position, Role data) {
+                public void onClickItem(int position, RoleItemBean data) {
                     if (isSelectMode()) {
-                        onSelectId(data.getId());
+                        onSelectId(data.getRole().getId());
                     }
                     else {
-                        showRoleEditor(data);
+                        showRoleEditor(data.getRole());
                     }
                 }
             });

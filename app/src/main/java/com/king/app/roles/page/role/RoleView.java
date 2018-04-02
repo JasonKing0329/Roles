@@ -11,5 +11,5 @@ import java.util.List;
  * <p/>创建时间: 2018/3/26 10:03
  */
 public interface RoleView extends BaseView {
-    void showRole(List<Role> roles);
+    void showRole(List<RoleItemBean> roles);
 }
