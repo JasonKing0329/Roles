@@ -7,6 +7,7 @@ import com.king.app.jactionbar.JActionbar;
 import com.king.app.jactionbar.OnBackListener;
 import com.king.app.roles.R;
 import com.king.app.roles.base.BaseActivity;
+import com.king.app.roles.base.ButterKnifeActivity;
 import com.king.app.roles.page.chapter.ChapterFragment;
 import com.king.app.roles.page.kingdom.KingdomFragment;
 import com.king.app.roles.page.race.RaceFragment;
@@ -20,7 +21,7 @@ import butterknife.BindView;
  * @time 2018/3/25 0025 20:43
  */
 
-public class ModuleActivity extends BaseActivity implements ModuleFragmentHolder {
+public class ModuleActivity extends ButterKnifeActivity implements ModuleFragmentHolder {
 
     public static final String KEY_STORY_ID = "story_id";
     public static final String KEY_SELECT_MODE = "select_mode";

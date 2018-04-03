@@ -1,20 +1,18 @@
 package com.king.app.roles.page.story;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.text.TextUtils;
+import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.TextView;
 
-import com.king.app.jactionbar.JActionbar;
 import com.king.app.jactionbar.OnBackListener;
 import com.king.app.roles.R;
-import com.king.app.roles.base.MvpActivity;
+import com.king.app.roles.base.MvvmActivity;
+import com.king.app.roles.databinding.ActivityStoryPageBinding;
 import com.king.app.roles.page.module.ModuleActivity;
 import com.king.app.roles.view.dialog.DescriptionEditor;
 import com.king.app.roles.view.dialog.DraggableDialogFragment;
-
-import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * @desc
@@ -22,15 +20,9 @@ import butterknife.OnClick;
  * @time 2018/3/24 0024 10:39
  */
 
-public class StoryPageActivity extends MvpActivity<StoryPagePresenter> implements StoryPageView {
+public class StoryPageActivity extends MvvmActivity<ActivityStoryPageBinding, StoryPageViewModel> {
 
     public static final String KEY_STORY_ID = "story_id";
-
-    @BindView(R.id.actionbar)
-    JActionbar actionbar;
-
-    @BindView(R.id.tv_description)
-    TextView tvDescription;
 
     @Override
     protected int getContentView() {
@@ -39,56 +31,36 @@ public class StoryPageActivity extends MvpActivity<StoryPagePresenter> implement
 
     @Override
     protected void initView() {
-        actionbar.setOnBackListener(new OnBackListener() {
+        binding.actionbar.setOnBackListener(new OnBackListener() {
             @Override
             public void onBack() {
                 onBackPressed();
             }
         });
+        binding.tvDescription.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editDescription();
+            }
+        });
     }
 
     @Override
-    protected StoryPagePresenter createPresenter() {
-        return new StoryPagePresenter();
+    protected StoryPageViewModel createViewModel() {
+        return ViewModelProviders.of(this).get(StoryPageViewModel.class);
     }
 
     @Override
     protected void initData() {
+        binding.setViewModel(viewModel);
         long storyId = getIntent().getLongExtra(KEY_STORY_ID, -1);
-        presenter.loadStory(storyId);
-    }
-
-    @Override
-    public void showStory(String name, String description) {
-        actionbar.setTitle(name);
-        if (TextUtils.isEmpty(description)) {
-            tvDescription.setText("No description, press to add one.");
-        }
-        else {
-            tvDescription.setText(description);
-        }
-    }
-
-    @OnClick({R.id.group_race, R.id.group_kingdom, R.id.group_chapters, R.id.group_characters
-        , R.id.tv_description})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.group_race:
-                startModuleActivity(ModuleActivity.PAGE_TYPE_RACE);
-                break;
-            case R.id.group_kingdom:
-                startModuleActivity(ModuleActivity.PAGE_TYPE_KINGDOM);
-                break;
-            case R.id.group_chapters:
-                startModuleActivity(ModuleActivity.PAGE_TYPE_CHAPTER);
-                break;
-            case R.id.group_characters:
-                startModuleActivity(ModuleActivity.PAGE_TYPE_CHARACTER);
-                break;
-            case R.id.tv_description:
-                editDescription();
-                break;
-        }
+        viewModel.loadStory(storyId);
+        viewModel.moduleObserver.observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(@Nullable Integer integer) {
+                startModuleActivity(integer);
+            }
+        });
     }
 
     private void startModuleActivity(int type) {
@@ -103,14 +75,14 @@ public class StoryPageActivity extends MvpActivity<StoryPagePresenter> implement
         editor.setOnDescriptionListener(new DescriptionEditor.OnDescriptionListener() {
             @Override
             public String getInitContent() {
-                return presenter.getDescription();
+                return viewModel.getDescription();
             }
 
             @Override
             public void onSaveDescription(String content) {
-                presenter.saveDescription(content);
-                tvDescription.setText(content);
-                showMessage("Save successfully");
+                viewModel.saveDescription(content);
+                binding.tvDescription.setText(content);
+                showMessageLong("Save successfully");
             }
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment.Builder()
