@@ -29,6 +29,14 @@ public class BaseViewModule extends AndroidViewModel {
         compositeDisposable.add(disposable);
     }
 
+    protected void dispatchCommonError(Throwable e) {
+        messageObserver.setValue("Load error: " + e.getMessage());
+    }
+
+    protected void dispatchCommonError(String errorTitle, Throwable e) {
+        messageObserver.setValue(errorTitle + ": " + e.getMessage());
+    }
+
     public void onDestroy() {
         compositeDisposable.clear();
     }

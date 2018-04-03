@@ -1,40 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.king.app.roles.page.story.StoryListViewModel"/>
+    </data>
 
-    <com.king.app.jactionbar.JActionbar
-        android:id="@+id/actionbar"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:theme="@style/EtActionSearch"
-        android:background="@color/actionbar_bg"
-        app:rippleColor="#33000000"
-        app:showIconBack="true"
-        app:menu="@menu/page_story_list"
-        app:iconPadding="8dp"
-        app:iconSize="40dp"
-        app:title="Stories"
-        app:titleSize="18dp"
-        app:supportSearch="false"/>
+        android:layout_height="match_parent">
 
-    <CheckBox
-        android:id="@+id/cb_fingerprint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Enable fingerprint"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_alignParentBottom="true"/>
+        <com.king.app.jactionbar.JActionbar
+            android:id="@+id/actionbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:theme="@style/EtActionSearch"
+            android:background="@color/actionbar_bg"
+            app:rippleColor="#33000000"
+            app:showIconBack="false"
+            app:menu="@menu/page_story_list"
+            app:iconPadding="8dp"
+            app:iconSize="40dp"
+            app:title="Stories"
+            app:titleSize="18dp"
+            app:supportSearch="false"/>
 
-    <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
-        android:id="@+id/rv_stories"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/actionbar"
-        android:layout_above="@id/cb_fingerprint"
-        android:layout_marginTop="10dp"/>
+        <CheckBox
+            android:id="@+id/cb_fingerprint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enable fingerprint"
+            android:checked="@{viewModel.fingerprintCheckStatus}"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_alignParentBottom="true"
+            app:setOnCheckedChangeListener="@{viewModel.fingerprintCheckedListener}"/>
 
-</RelativeLayout>
+        <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
+            android:id="@+id/rv_stories"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/actionbar"
+            android:layout_above="@id/cb_fingerprint"
+            android:layout_marginTop="10dp"/>
+
+    </RelativeLayout>
+</layout>
