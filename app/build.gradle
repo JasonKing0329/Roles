@@ -7,8 +7,8 @@ android {
         applicationId "com.king.app.roles"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 17
-        versionName "2.2.3"
+        versionCode 18
+        versionName "2.2.3.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -32,6 +32,10 @@ android {
 
     greendao {
         schemaVersion 1
+    }
+
+    dataBinding {
+        enabled = true
     }
 }
 
@@ -69,6 +73,11 @@ dependencies {
     /*glide*/
     implementation 'com.github.bumptech.glide:glide:4.0.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
+
+    implementation 'android.arch.lifecycle:runtime:1.1.1'
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
+    annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'
+
     implementation 'com.yanzhenjie:recyclerview-swipe:1.1.4'
     implementation 'com.king.lib:jactionbar:1.0.1'
     implementation project(':expandablerecycleradapter')

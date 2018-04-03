@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
  * <p/>作者：景阳
  * <p/>创建时间: 2018/1/29 13:14
  */
-public abstract class MvpActivity<T extends BasePresenter> extends BaseActivity implements BaseView {
+public abstract class MvpActivity<T extends BasePresenter> extends ButterKnifeActivity implements BaseView {
 
     protected T presenter;
 

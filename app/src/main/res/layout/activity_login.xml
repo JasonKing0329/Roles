@@ -1,40 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".page.login.LoginActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.king.app.jactionbar.JActionbar
-        android:id="@+id/actionbar"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:theme="@style/EtActionSearch"
-        android:background="@color/actionbar_bg"
-        app:showIconBack="false"
-        app:title="Login"
-        app:titleSize="18dp"
-        app:supportSearch="false"/>
+    <data>
+        <variable
+            name="viewModel"
+            type="com.king.app.roles.page.login.LoginViewModel"/>
+    </data>
 
-    <LinearLayout
-        android:id="@+id/group_login"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/actionbar"
-        android:orientation="vertical"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp">
-        <EditText
-            android:id="@+id/et_pwd"
+        android:layout_height="match_parent"
+        tools:context=".page.login.LoginActivity">
+
+        <com.king.app.jactionbar.JActionbar
+            android:id="@+id/actionbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:theme="@style/EtActionSearch"
+            android:background="@color/actionbar_bg"
+            app:showIconBack="false"
+            app:title="Login"
+            app:titleSize="18dp"
+            app:supportSearch="false"/>
+
+        <LinearLayout
+            android:id="@+id/group_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword" />
-        <Button
-            android:id="@+id/btn_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Login"/>
-    </LinearLayout>
-</RelativeLayout>
+            android:layout_below="@id/actionbar"
+            android:orientation="vertical"
+            android:visibility="@{viewModel.groupLoginVisibility}"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp">
+            <EditText
+                android:id="@+id/et_pwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:text="@{viewModel.etPwdText}"
+                app:addTextChangedListener="@{viewModel.pwdTextWatcher}"/>
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{viewModel.onClickLogin}"
+                android:text="Login"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+</layout>

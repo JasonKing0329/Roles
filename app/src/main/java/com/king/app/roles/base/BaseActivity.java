@@ -13,9 +13,6 @@ import com.king.app.roles.R;
 import com.king.app.roles.utils.ScreenUtils;
 import com.king.app.roles.view.dialog.ProgressDialogFragment;
 
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
 /**
  * 描述:
  * <p/>作者：景阳
@@ -24,8 +21,6 @@ import butterknife.Unbinder;
 public abstract class BaseActivity extends AppCompatActivity {
 
     private ProgressDialogFragment progressDialogFragment;
-
-    private Unbinder unbinder;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,12 +36,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
-
-        setContentView(getContentView());
-
-        unbinder = ButterKnife.bind(this);
-
-        initView();
     }
 
     /**
@@ -112,11 +101,4 @@ public abstract class BaseActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    protected void onDestroy() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
-        super.onDestroy();
-    }
 }

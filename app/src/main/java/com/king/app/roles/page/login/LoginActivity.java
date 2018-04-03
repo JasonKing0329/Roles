@@ -1,29 +1,22 @@
 package com.king.app.roles.page.login;
 
 import android.Manifest;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.support.annotation.Nullable;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.MvpActivity;
+import com.king.app.roles.base.MvvmActivity;
+import com.king.app.roles.databinding.ActivityLoginBinding;
 import com.king.app.roles.model.FingerPrintController;
 import com.king.app.roles.page.story.StoryListActivity;
-import com.king.app.roles.utils.DBExportor;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 
-public class LoginActivity extends MvpActivity<LoginPresenter> implements LoginView {
-
-    @BindView(R.id.et_pwd)
-    EditText etPwd;
-    @BindView(R.id.group_login)
-    LinearLayout groupLogin;
+public class LoginActivity extends MvvmActivity<ActivityLoginBinding, LoginViewModel> {
 
     private FingerPrintController fingerPrint;
 
@@ -34,12 +27,36 @@ public class LoginActivity extends MvpActivity<LoginPresenter> implements LoginV
 
     @Override
     protected void initView() {
-        groupLogin.setVisibility(View.INVISIBLE);
+        binding.setViewModel(viewModel);
+        viewModel.fingerprintObserver.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean aBoolean) {
+                fingerPrint = new FingerPrintController(LoginActivity.this);
+                if (fingerPrint.isSupported()) {
+                    if (fingerPrint.hasRegistered()) {
+                        startFingerPrintDialog();
+                    } else {
+                        showMessageLong("设备未注册指纹");
+                    }
+                    return;
+                } else {
+                    showMessageLong("设备不支持指纹识别");
+                }
+            }
+        });
+        viewModel.loginObserver.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean success) {
+                if (success) {
+                    startHome();
+                }
+            }
+        });
     }
 
     @Override
-    protected LoginPresenter createPresenter() {
-        return new LoginPresenter();
+    protected LoginViewModel createViewModel() {
+        return ViewModelProviders.of(this).get(LoginViewModel.class);
     }
 
     @Override
@@ -65,29 +82,7 @@ public class LoginActivity extends MvpActivity<LoginPresenter> implements LoginV
     }
 
     private void initCreate() {
-        // 每次进入导出一次数据库
-        DBExportor.execute();
-        presenter.prepare();
-    }
-
-    @Override
-    public void showLoginFrame() {
-        groupLogin.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void showFingerPrint() {
-        fingerPrint = new FingerPrintController(this);
-        if (fingerPrint.isSupported()) {
-            if (fingerPrint.hasRegistered()) {
-                startFingerPrintDialog();
-            } else {
-                showMessage("设备未注册指纹");
-            }
-            return;
-        } else {
-            showMessage("设备不支持指纹识别");
-        }
+        viewModel.initCreate();
     }
 
     private void startFingerPrintDialog() {
@@ -97,7 +92,7 @@ public class LoginActivity extends MvpActivity<LoginPresenter> implements LoginV
 
                 @Override
                 public void onSuccess() {
-                    permitLogin();
+                    startHome();
                 }
 
                 @Override
@@ -111,18 +106,8 @@ public class LoginActivity extends MvpActivity<LoginPresenter> implements LoginV
                 }
             });
         } else {
-            showMessage(getString(R.string.login_finger_not_register));
+            showMessageLong(getString(R.string.login_finger_not_register));
         }
-    }
-
-    @OnClick(R.id.btn_login)
-    public void onViewClicked() {
-        presenter.checkPassword(etPwd.getText().toString());
-    }
-
-    @Override
-    public void permitLogin() {
-        startHome();
     }
 
     private void startHome() {
