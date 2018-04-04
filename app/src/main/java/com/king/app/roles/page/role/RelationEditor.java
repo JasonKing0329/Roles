@@ -6,7 +6,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.BaseFragment;
+import com.king.app.roles.base.ButterKnifeFragment;
 import com.king.app.roles.base.IFragmentHolder;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.model.entity.Role;
@@ -22,7 +22,7 @@ import butterknife.OnClick;
  * <p/>作者：景阳
  * <p/>创建时间: 2018/3/27 9:26
  */
-public class RelationEditor extends BaseFragment {
+public class RelationEditor extends ButterKnifeFragment {
 
     @BindView(R.id.tv_role)
     TextView tvRole;

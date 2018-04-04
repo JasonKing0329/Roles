@@ -1,6 +1,9 @@
 package com.king.app.roles.page.race;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.king.app.jactionbar.OnConfirmListener;
@@ -10,6 +13,7 @@ import com.king.app.roles.base.BaseRecyclerAdapter;
 import com.king.app.roles.model.entity.Race;
 import com.king.app.roles.page.module.ModuleAdapter;
 import com.king.app.roles.page.module.ModuleFragment;
+import com.king.app.roles.page.module.ModuleViewModel;
 import com.king.app.roles.view.dialog.DraggableDialogFragment;
 
 import java.util.List;
@@ -20,7 +24,7 @@ import java.util.List;
  * @time 2018/3/25 0025 21:41
  */
 
-public class RaceFragment extends ModuleFragment<RacePresenter> implements RaceView {
+public class RaceFragment extends ModuleFragment<RaceViewModel> {
 
     private RaceAdapter raceAdapter;
 
@@ -30,6 +34,11 @@ public class RaceFragment extends ModuleFragment<RacePresenter> implements RaceV
         bundle.putLong(KEY_STORY_ID, storyId);
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    @Override
+    protected RaceViewModel createViewModel() {
+        return ViewModelProviders.of(this).get(RaceViewModel.class);
     }
 
     @Override
@@ -95,28 +104,28 @@ public class RaceFragment extends ModuleFragment<RacePresenter> implements RaceV
     }
 
     @Override
-    protected RacePresenter createPresenter() {
-        return new RacePresenter();
-    }
-
-    @Override
     protected void loadData() {
-        presenter.loadRaces(getStoryId());
+        viewModel.racesObserver.observe(this, new Observer<List<Race>>() {
+            @Override
+            public void onChanged(@Nullable List<Race> races) {
+                showRaces(races);
+            }
+        });
+        viewModel.loadRaces(getStoryId());
     }
 
-    @Override
-    public void showRaces(List<Race> races) {
+    private void showRaces(List<Race> races) {
         if (raceAdapter == null) {
             raceAdapter = new RaceAdapter();
             raceAdapter.setList(races);
-            raceAdapter.setSwipeMenuRecyclerView(rvItems);
+            raceAdapter.setSwipeMenuRecyclerView(binding.rvItems);
             raceAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<Race>() {
                 @Override
                 public void onClickItem(int position, Race data) {
                     showRaceEditor(data);
                 }
             });
-            rvItems.setAdapter(raceAdapter);
+            binding.rvItems.setAdapter(raceAdapter);
         }
         else {
             raceAdapter.setList(races);
@@ -140,9 +149,9 @@ public class RaceFragment extends ModuleFragment<RacePresenter> implements RaceV
         editor.setOnRaceListener(new RaceEditor.OnRaceListener() {
             @Override
             public void onSaveRace(Race race) {
-                presenter.insertOrUpdate(race);
+                viewModel.insertOrUpdate(race);
                 loadData();
-                showMessage("Save successfully");
+                showMessageLong("Save successfully");
             }
 
             @Override
@@ -158,12 +167,12 @@ public class RaceFragment extends ModuleFragment<RacePresenter> implements RaceV
     }
 
     public void confirmDrag() {
-        presenter.confirmDrag(raceAdapter.getList());
+        viewModel.confirmDrag(raceAdapter.getList());
         loadData();
     }
 
     public void confirmDelete() {
-        presenter.confirmDelete(raceAdapter.getSelectedData());
+        viewModel.confirmDelete(raceAdapter.getSelectedData());
         loadData();
     }
 

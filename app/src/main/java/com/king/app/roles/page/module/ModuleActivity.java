@@ -1,19 +1,17 @@
 package com.king.app.roles.page.module;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.widget.FrameLayout;
 
 import com.king.app.jactionbar.JActionbar;
 import com.king.app.jactionbar.OnBackListener;
 import com.king.app.roles.R;
-import com.king.app.roles.base.BaseActivity;
-import com.king.app.roles.base.ButterKnifeActivity;
+import com.king.app.roles.base.MvvmActivity;
+import com.king.app.roles.databinding.ActivityStoryModuleBinding;
 import com.king.app.roles.page.chapter.ChapterFragment;
 import com.king.app.roles.page.kingdom.KingdomFragment;
 import com.king.app.roles.page.race.RaceFragment;
 import com.king.app.roles.page.role.RoleFragment;
-
-import butterknife.BindView;
 
 /**
  * @desc
@@ -21,7 +19,7 @@ import butterknife.BindView;
  * @time 2018/3/25 0025 20:43
  */
 
-public class ModuleActivity extends ButterKnifeActivity implements ModuleFragmentHolder {
+public class ModuleActivity extends MvvmActivity<ActivityStoryModuleBinding, ModuleViewModel> implements ModuleFragmentHolder {
 
     public static final String KEY_STORY_ID = "story_id";
     public static final String KEY_SELECT_MODE = "select_mode";
@@ -34,11 +32,6 @@ public class ModuleActivity extends ButterKnifeActivity implements ModuleFragmen
     public static final int PAGE_TYPE_CHAPTER = 3;
     public static final int PAGE_TYPE_CHARACTER = 4;
 
-    @BindView(R.id.actionbar)
-    JActionbar actionbar;
-    @BindView(R.id.group_ft_container)
-    FrameLayout groupFtContainer;
-
     private ModuleFragment mFragment;
 
     @Override
@@ -47,13 +40,22 @@ public class ModuleActivity extends ButterKnifeActivity implements ModuleFragmen
     }
 
     @Override
+    protected ModuleViewModel createViewModel() {
+        return ViewModelProviders.of(this).get(ModuleViewModel.class);
+    }
+
+    @Override
     protected void initView() {
-        actionbar.setOnBackListener(new OnBackListener() {
+        binding.actionbar.setOnBackListener(new OnBackListener() {
             @Override
             public void onBack() {
                 onBackPressed();
             }
         });
+    }
+
+    @Override
+    protected void initData() {
         initFragment();
     }
 
@@ -64,20 +66,20 @@ public class ModuleActivity extends ButterKnifeActivity implements ModuleFragmen
         switch (type) {
             case PAGE_TYPE_RACE:
                 mFragment = RaceFragment.newInstance(storyId);
-                actionbar.setTitle("Races");
+                binding.actionbar.setTitle("Races");
                 break;
             case PAGE_TYPE_KINGDOM:
                 mFragment = KingdomFragment.newInstance(storyId);
-                actionbar.setTitle("Kingdoms");
+                binding.actionbar.setTitle("Kingdoms");
                 break;
             case PAGE_TYPE_CHAPTER:
                 mFragment = ChapterFragment.newInstance(storyId, selectMode);
-                actionbar.setTitle("Chapters");
+                binding.actionbar.setTitle("Chapters");
                 break;
             case PAGE_TYPE_CHARACTER:
                 mFragment = RoleFragment.newInstance(storyId, selectMode);
-                actionbar.setTitle("Characters");
-                actionbar.enableSearch();
+                binding.actionbar.setTitle("Characters");
+                binding.actionbar.enableSearch();
                 break;
         }
         getSupportFragmentManager().beginTransaction()
@@ -87,7 +89,7 @@ public class ModuleActivity extends ButterKnifeActivity implements ModuleFragmen
 
     @Override
     public JActionbar getJActionbar() {
-        return actionbar;
+        return binding.actionbar;
     }
 
     @Override

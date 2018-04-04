@@ -27,8 +27,6 @@ public abstract class BaseFragment extends Fragment {
 
     private ProgressDialogFragment progressDialogFragment;
 
-    private Unbinder unbinder;
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -47,23 +45,10 @@ public abstract class BaseFragment extends Fragment {
                 bindFragmentHolder((IFragmentHolder) getParentFragment());
             }
         }
-        View view = inflater.inflate(getContentLayoutRes(), container, false);
-        unbinder = ButterKnife.bind(this, view);
-        onCreate(view);
-        return view;
+        return null;
     }
 
     protected abstract int getContentLayoutRes();
-
-    protected abstract void onCreate(View view);
-
-    @Override
-    public void onDestroyView() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
-        super.onDestroyView();
-    }
 
     public void showProgress(String msg) {
         progressDialogFragment = new ProgressDialogFragment();

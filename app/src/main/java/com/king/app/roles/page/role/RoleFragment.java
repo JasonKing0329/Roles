@@ -1,9 +1,12 @@
 package com.king.app.roles.page.role;
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.king.app.jactionbar.OnConfirmListener;
@@ -30,7 +33,7 @@ import java.util.List;
  * @time 2018/3/25 0025 21:41
  */
 
-public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleView {
+public class RoleFragment extends ModuleFragment<RoleViewModel> {
 
     private final int REQUEST_CHAPTER = 151;
     private final int REQUEST_ROLE = 152;
@@ -48,6 +51,11 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
         bundle.putBoolean(KEY_SELECT_MODE, selectMode);
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    @Override
+    protected RoleViewModel createViewModel() {
+        return ViewModelProviders.of(this).get(RoleViewModel.class);
     }
 
     @Override
@@ -130,21 +138,21 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
     }
 
     @Override
-    protected RolePresenter createPresenter() {
-        return new RolePresenter();
-    }
-
-    @Override
     protected void loadData() {
-        presenter.loadRoles(getStoryId());
+        viewModel.rolesObserver.observe(this, new Observer<List<RoleItemBean>>() {
+            @Override
+            public void onChanged(@Nullable List<RoleItemBean> roleItemBeans) {
+                showRole(roleItemBeans);
+            }
+        });
+        viewModel.loadRoles(getStoryId());
     }
 
-    @Override
-    public void showRole(List<RoleItemBean> roles) {
+    private void showRole(List<RoleItemBean> roles) {
         if (roleAdapter == null) {
             roleAdapter = new RoleAdapter();
             roleAdapter.setList(roles);
-            roleAdapter.setSwipeMenuRecyclerView(rvItems);
+            roleAdapter.setSwipeMenuRecyclerView(binding.rvItems);
             roleAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<RoleItemBean>() {
                 @Override
                 public void onClickItem(int position, RoleItemBean data) {
@@ -156,7 +164,7 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
                     }
                 }
             });
-            rvItems.setAdapter(roleAdapter);
+            binding.rvItems.setAdapter(roleAdapter);
         }
         else {
             roleAdapter.setList(roles);
@@ -180,7 +188,7 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
         sortFilter.setOnSortFilterListener(new RoleSortFilterDialog.OnSortFilterListener() {
             @Override
             public void onSortAndFilter(int sortType, List<Race> races, Kingdom kingdom) {
-                presenter.sortAndFilter(sortType, races, kingdom);
+                viewModel.sortAndFilter(sortType, races, kingdom);
             }
 
             @Override
@@ -201,9 +209,9 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
         roleEditor.setOnRoleListener(new RoleEditor.OnRoleListener() {
             @Override
             public void onSaveRole(Role role, List<Race> raceList, Kingdom kingdom) {
-                presenter.insertOrUpdate(role, raceList, kingdom);
+                viewModel.insertOrUpdate(role, raceList, kingdom);
                 loadData();
-                showMessage("Save successfully");
+                showMessageLong("Save successfully");
             }
 
             @Override
@@ -292,7 +300,7 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
     }
 
     public void confirmDrag() {
-        presenter.confirmDrag(roleAdapter.getList());
+        viewModel.confirmDrag(roleAdapter.getList());
         loadData();
         holder.getJActionbar().cancelConfirmStatus();
         setDragMode(false);
@@ -306,7 +314,7 @@ public class RoleFragment extends ModuleFragment<RolePresenter> implements RoleV
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (i == DialogInterface.BUTTON_POSITIVE) {
-                            presenter.confirmDelete(roleAdapter.getSelectedData());
+                            viewModel.confirmDelete(roleAdapter.getSelectedData());
                             loadData();
                         }
                         holder.getJActionbar().cancelConfirmStatus();

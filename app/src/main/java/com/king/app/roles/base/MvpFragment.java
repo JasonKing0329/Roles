@@ -11,7 +11,7 @@ import android.view.ViewGroup;
  * <p/>作者：景阳
  * <p/>创建时间: 2018/1/29 13:28
  */
-public abstract class MvpFragment<T extends BasePresenter> extends BaseFragment implements BaseView {
+public abstract class MvpFragment<T extends BasePresenter> extends ButterKnifeFragment implements BaseView {
 
     protected T presenter;
 

@@ -5,15 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.BasePresenter;
+import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.IFragmentHolder;
-import com.king.app.roles.base.MvpFragment;
+import com.king.app.roles.base.MvvmFragment;
+import com.king.app.roles.databinding.FragmentModuleBinding;
 import com.king.app.roles.utils.DebugLog;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemStateChangedListener;
-
-import butterknife.BindView;
 
 /**
  * @desc
@@ -21,15 +19,10 @@ import butterknife.BindView;
  * @time 2018/3/25 0025 20:42
  */
 
-public abstract class ModuleFragment<P extends BasePresenter> extends MvpFragment<P> {
+public abstract class ModuleFragment<VM extends ModuleViewModel> extends MvvmFragment<FragmentModuleBinding, VM> {
 
     protected static final String KEY_STORY_ID = "story_id";
     protected static final String KEY_SELECT_MODE = "select_mode";
-
-    @BindView(R.id.rv_items)
-    public SwipeMenuRecyclerView rvItems;
-    @BindView(R.id.rv_items_normal)
-    public RecyclerView rvItemsNormal;
 
     protected ModuleFragmentHolder holder;
 
@@ -45,16 +38,12 @@ public abstract class ModuleFragment<P extends BasePresenter> extends MvpFragmen
 
     @Override
     protected void onCreateData() {
-
-        if (isSupportDragList()) {
-            rvItemsNormal.setVisibility(View.GONE);
-            rvItems.setVisibility(View.VISIBLE);
-            initDraggableList();
-        }
-        else {
-            rvItemsNormal.setVisibility(View.VISIBLE);
-            rvItems.setVisibility(View.GONE);
+        binding.setViewModel(viewModel);
+        if (viewModel.normalVisibility.get() == View.VISIBLE) {
             initNormalList();
+        }
+        else if (viewModel.draggableVisibility.get() == View.VISIBLE) {
+            initDraggableList();
         }
 
         loadData();
@@ -63,22 +52,14 @@ public abstract class ModuleFragment<P extends BasePresenter> extends MvpFragmen
     private void initNormalList() {
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
-        rvItemsNormal.setLayoutManager(manager);
-    }
-
-    /**
-     * 子类选择覆盖
-     * @return
-     */
-    protected boolean isSupportDragList() {
-        return true;
+        binding.rvItemsNormal.setLayoutManager(manager);
     }
 
     private void initDraggableList() {
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
-        rvItems.setLayoutManager(manager);
-        rvItems.setOnItemMoveListener(new OnItemMoveListener() {
+        binding.rvItems.setLayoutManager(manager);
+        binding.rvItems.setOnItemMoveListener(new OnItemMoveListener() {
             @Override
             public boolean onItemMove(RecyclerView.ViewHolder srcHolder, RecyclerView.ViewHolder targetHolder) {
                 // 不同的ViewType不能拖拽换位置。
@@ -87,8 +68,8 @@ public abstract class ModuleFragment<P extends BasePresenter> extends MvpFragmen
                 }
 
                 // 真实的Position：通过ViewHolder拿到的position都需要减掉HeadView的数量。
-                int fromPosition = srcHolder.getAdapterPosition() - rvItems.getHeaderItemCount();
-                int toPosition = targetHolder.getAdapterPosition() - rvItems.getHeaderItemCount();
+                int fromPosition = srcHolder.getAdapterPosition() - binding.rvItems.getHeaderItemCount();
+                int toPosition = targetHolder.getAdapterPosition() - binding.rvItems.getHeaderItemCount();
 
                 getAdapter().swapData(fromPosition, toPosition);
                 return true;// 返回true表示处理了并可以换位置，返回false表示你没有处理并不能换位置。
@@ -100,7 +81,7 @@ public abstract class ModuleFragment<P extends BasePresenter> extends MvpFragmen
 
             }
         });
-        rvItems.setOnItemStateChangedListener(new OnItemStateChangedListener() {
+        binding.rvItems.setOnItemStateChangedListener(new OnItemStateChangedListener() {
             @Override
             public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
                 if (actionState == OnItemStateChangedListener.ACTION_STATE_DRAG) {

@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.BaseFragment;
+import com.king.app.roles.base.ButterKnifeFragment;
 import com.king.app.roles.base.IFragmentHolder;
 
 import butterknife.BindView;
@@ -16,7 +16,7 @@ import butterknife.OnClick;
  * @time 2018/3/24 0024 11:02
  */
 
-public class DescriptionEditor extends BaseFragment {
+public class DescriptionEditor extends ButterKnifeFragment {
 
     @BindView(R.id.et_text)
     EditText etText;

@@ -9,7 +9,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 
-import com.king.app.roles.base.BaseViewModule;
+import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.conf.AppConfig;
 import com.king.app.roles.model.SettingProperty;
@@ -32,7 +32,7 @@ import io.reactivex.schedulers.Schedulers;
  * <p/>作者：景阳
  * <p/>创建时间: 2018/4/2 14:05
  */
-public class LoginViewModel extends BaseViewModule {
+public class LoginViewModel extends BaseViewModel {
 
     public ObservableField<String> etPwdText;
 

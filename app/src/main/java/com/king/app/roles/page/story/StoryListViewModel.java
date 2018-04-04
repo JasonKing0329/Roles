@@ -6,7 +6,7 @@ import android.databinding.ObservableBoolean;
 import android.support.annotation.NonNull;
 import android.widget.CompoundButton;
 
-import com.king.app.roles.base.BaseViewModule;
+import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.model.SettingProperty;
 import com.king.app.roles.model.entity.Story;
@@ -29,7 +29,7 @@ import io.reactivex.schedulers.Schedulers;
  * <p/>作者：景阳
  * <p/>创建时间: 2018/4/3 10:59
  */
-public class StoryListViewModel extends BaseViewModule {
+public class StoryListViewModel extends BaseViewModel {
 
     public ObservableBoolean fingerprintCheckStatus;
 

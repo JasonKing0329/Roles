@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.king.app.roles.base.BaseViewModule;
+import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.model.entity.Story;
 import com.king.app.roles.model.entity.StoryDao;
@@ -26,7 +26,7 @@ import io.reactivex.schedulers.Schedulers;
  * <p/>作者：景阳
  * <p/>创建时间: 2018/4/3 16:23
  */
-public class StoryPageViewModel extends BaseViewModule {
+public class StoryPageViewModel extends BaseViewModel {
 
     public ObservableField<String> titleText;
     public ObservableField<String> descriptionText;

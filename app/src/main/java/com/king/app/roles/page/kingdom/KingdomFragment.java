@@ -1,6 +1,9 @@
 package com.king.app.roles.page.kingdom;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.king.app.jactionbar.OnConfirmListener;
@@ -20,7 +23,7 @@ import java.util.List;
  * @time 2018/3/25 0025 21:41
  */
 
-public class KingdomFragment extends ModuleFragment<KingdomPresenter> implements KingdomView {
+public class KingdomFragment extends ModuleFragment<KingdomViewModel> {
 
     private KingdomAdapter kingdomAdapter;
 
@@ -30,6 +33,11 @@ public class KingdomFragment extends ModuleFragment<KingdomPresenter> implements
         bundle.putLong(KEY_STORY_ID, storyId);
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    @Override
+    protected KingdomViewModel createViewModel() {
+        return ViewModelProviders.of(this).get(KingdomViewModel.class);
     }
 
     @Override
@@ -95,28 +103,28 @@ public class KingdomFragment extends ModuleFragment<KingdomPresenter> implements
     }
 
     @Override
-    protected KingdomPresenter createPresenter() {
-        return new KingdomPresenter();
-    }
-
-    @Override
     protected void loadData() {
-        presenter.loadKingdoms(getStoryId());
+        viewModel.kingdomsObserver.observe(this, new Observer<List<Kingdom>>() {
+            @Override
+            public void onChanged(@Nullable List<Kingdom> kingdoms) {
+                showKingdoms(kingdoms);
+            }
+        });
+        viewModel.loadKingdoms(getStoryId());
     }
 
-    @Override
-    public void showKingdoms(List<Kingdom> kingdoms) {
+    private void showKingdoms(List<Kingdom> kingdoms) {
         if (kingdomAdapter == null) {
             kingdomAdapter = new KingdomAdapter();
             kingdomAdapter.setList(kingdoms);
-            kingdomAdapter.setSwipeMenuRecyclerView(rvItems);
+            kingdomAdapter.setSwipeMenuRecyclerView(binding.rvItems);
             kingdomAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<Kingdom>() {
                 @Override
                 public void onClickItem(int position, Kingdom data) {
                     showKingdomEditor(data);
                 }
             });
-            rvItems.setAdapter(kingdomAdapter);
+            binding.rvItems.setAdapter(kingdomAdapter);
         }
         else {
             kingdomAdapter.setList(kingdoms);
@@ -141,9 +149,9 @@ public class KingdomFragment extends ModuleFragment<KingdomPresenter> implements
 
             @Override
             public void onSaveKingdom(Kingdom kingdom) {
-                presenter.insertOrUpdate(kingdom);
+                viewModel.insertOrUpdate(kingdom);
                 loadData();
-                showMessage("Save successfully");
+                showMessageLong("Save successfully");
             }
 
             @Override
@@ -159,12 +167,12 @@ public class KingdomFragment extends ModuleFragment<KingdomPresenter> implements
     }
 
     public void confirmDrag() {
-        presenter.confirmDrag(kingdomAdapter.getList());
+        viewModel.confirmDrag(kingdomAdapter.getList());
         loadData();
     }
 
     public void confirmDelete() {
-        presenter.confirmDelete(kingdomAdapter.getSelectedData());
+        viewModel.confirmDelete(kingdomAdapter.getSelectedData());
         loadData();
     }
 

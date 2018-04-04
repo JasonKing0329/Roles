@@ -13,14 +13,14 @@ import io.reactivex.disposables.Disposable;
  * <p/>作者：景阳
  * <p/>创建时间: 2018/4/2 15:02
  */
-public class BaseViewModule extends AndroidViewModel {
+public class BaseViewModel extends AndroidViewModel {
 
     private CompositeDisposable compositeDisposable;
 
     public MutableLiveData<Boolean> loadingObserver = new MutableLiveData<>();
     public MutableLiveData<String> messageObserver = new MutableLiveData<>();
 
-    public BaseViewModule(@NonNull Application application) {
+    public BaseViewModel(@NonNull Application application) {
         super(application);
         compositeDisposable = new CompositeDisposable();
     }

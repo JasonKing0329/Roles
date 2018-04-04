@@ -9,7 +9,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.BaseFragment;
+import com.king.app.roles.base.ButterKnifeFragment;
 import com.king.app.roles.base.IFragmentHolder;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.conf.AppConstants;
@@ -31,7 +31,7 @@ import butterknife.OnClick;
  * <p/>作者：景阳
  * <p/>创建时间: 2018/3/29 9:28
  */
-public class RoleSortFilterDialog extends BaseFragment {
+public class RoleSortFilterDialog extends ButterKnifeFragment {
 
     @BindView(R.id.cb_race)
     CheckBox cbRace;

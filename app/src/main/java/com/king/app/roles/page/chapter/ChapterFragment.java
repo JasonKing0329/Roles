@@ -1,7 +1,10 @@
 package com.king.app.roles.page.chapter;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.king.app.jactionbar.OnMenuItemListener;
@@ -19,7 +22,7 @@ import java.util.List;
  * <p/>作者：景阳
  * <p/>创建时间: 2018/3/26 14:52
  */
-public class ChapterFragment extends ModuleFragment<ChapterPresenter> implements ChapterView {
+public class ChapterFragment extends ModuleFragment<ChapterViewModel> {
 
     public static ChapterFragment newInstance(long storyId, boolean selectMode) {
         ChapterFragment fragment = new ChapterFragment();
@@ -34,13 +37,8 @@ public class ChapterFragment extends ModuleFragment<ChapterPresenter> implements
     private DraggableDialogFragment editorDialog;
 
     @Override
-    protected boolean isSupportDragList() {
-        return false;
-    }
-
-    @Override
-    protected ChapterPresenter createPresenter() {
-        return new ChapterPresenter();
+    protected ChapterViewModel createViewModel() {
+        return ViewModelProviders.of(this).get(ChapterViewModel.class);
     }
 
     @Override
@@ -60,11 +58,16 @@ public class ChapterFragment extends ModuleFragment<ChapterPresenter> implements
 
     @Override
     protected void loadData() {
-        presenter.loadChapters(getStoryId());
+        viewModel.chaptersObserver.observe(this, new Observer<List<FirstLevelItem>>() {
+            @Override
+            public void onChanged(@Nullable List<FirstLevelItem> levelItems) {
+                showChapters(levelItems);
+            }
+        });
+        viewModel.loadChapters(getStoryId());
     }
 
-    @Override
-    public void showChapters(List<FirstLevelItem> list) {
+    private void showChapters(List<FirstLevelItem> list) {
         chapterAdapter = new ChapterAdapter(list);
         chapterAdapter.setOnChapterItemListener(new OnChapterItemListener() {
             @Override
@@ -82,7 +85,7 @@ public class ChapterFragment extends ModuleFragment<ChapterPresenter> implements
                 editChapter(chapter);
             }
         });
-        rvItemsNormal.setAdapter(chapterAdapter);
+        binding.rvItemsNormal.setAdapter(chapterAdapter);
     }
 
     @Override
@@ -100,9 +103,9 @@ public class ChapterFragment extends ModuleFragment<ChapterPresenter> implements
         editor.setOnChapterListener(new ChapterEditor.OnChapterListener() {
             @Override
             public void onSaveChapter(Chapter chapter) {
-                presenter.insertOrUpdate(chapter);
+                viewModel.insertOrUpdate(chapter);
                 loadData();
-                showMessage("Save successfully");
+                showMessageLong("Save successfully");
             }
 
             @Override
@@ -139,7 +142,7 @@ public class ChapterFragment extends ModuleFragment<ChapterPresenter> implements
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (i == DialogInterface.BUTTON_POSITIVE) {
-                            presenter.delete(chapter);
+                            viewModel.delete(chapter);
                             loadData();
                             editorDialog.dismiss();
                         }

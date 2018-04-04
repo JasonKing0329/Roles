@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-    <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
-        android:id="@+id/rv_items"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_items_normal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
-</RelativeLayout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.king.app.roles.page.module.ModuleViewModel"/>
+    </data>
+    <RelativeLayout
+        android:layout_width="match_parent" android:layout_height="match_parent">
+        <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
+            android:id="@+id/rv_items"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{viewModel.draggableVisibility}"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_items_normal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{viewModel.normalVisibility}"/>
+    </RelativeLayout>
+</layout>
