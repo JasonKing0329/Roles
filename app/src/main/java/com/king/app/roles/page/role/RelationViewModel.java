@@ -1,6 +1,10 @@
 package com.king.app.roles.page.role;
 
-import com.king.app.roles.base.BasePresenter;
+import android.app.Application;
+import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.NonNull;
+
+import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.model.entity.Role;
 import com.king.app.roles.model.entity.RoleDao;
@@ -12,8 +16,6 @@ import org.greenrobot.greendao.query.QueryBuilder;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -26,13 +28,14 @@ import io.reactivex.schedulers.Schedulers;
  * <p/>作者：景阳
  * <p/>创建时间: 2018/3/27 9:37
  */
-public class RelationPresenter extends BasePresenter<RelationView> {
+public class RelationViewModel extends BaseViewModel {
 
     private Role mRole;
 
-    @Override
-    protected void onCreate() {
+    public MutableLiveData<List<RoleRelations>> relationsObserver = new MutableLiveData<>();
 
+    public RelationViewModel(@NonNull Application application) {
+        super(application);
     }
 
     public Role getRole() {
@@ -40,14 +43,11 @@ public class RelationPresenter extends BasePresenter<RelationView> {
     }
 
     public void loadRelations(long roleId) {
-        view.showLoading();
+        loadingObserver.setValue(true);
         queryRole(roleId)
-                .flatMap(new Function<Role, ObservableSource<List<RoleRelations>>>() {
-                    @Override
-                    public ObservableSource<List<RoleRelations>> apply(Role role) throws Exception {
-                        mRole = role;
-                        return queryRelations(role.getId());
-                    }
+                .flatMap((Function<Role, ObservableSource<List<RoleRelations>>>) role -> {
+                    mRole = role;
+                    return queryRelations(role.getId());
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -59,15 +59,15 @@ public class RelationPresenter extends BasePresenter<RelationView> {
 
                     @Override
                     public void onNext(List<RoleRelations> roleRelations) {
-                        view.dismissLoading();
-                        view.showRelations(roleRelations);
+                        loadingObserver.setValue(false);
+                        relationsObserver.setValue(roleRelations);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        view.dismissLoading();
-                        view.showMessage("Query error: " + e.getMessage());
+                        loadingObserver.setValue(false);
+                        messageObserver.setValue("Query error: " + e.getMessage());
                     }
 
                     @Override
@@ -78,29 +78,23 @@ public class RelationPresenter extends BasePresenter<RelationView> {
     }
 
     private Observable<Role> queryRole(final long roleId) {
-        return Observable.create(new ObservableOnSubscribe<Role>() {
-            @Override
-            public void subscribe(ObservableEmitter<Role> e) throws Exception {
-                RoleDao dao = RApplication.getInstance().getDaoSession().getRoleDao();
-                Role role = dao.queryBuilder()
-                        .where(RoleDao.Properties.Id.eq(roleId))
-                        .build().unique();
-                e.onNext(role);
-            }
+        return Observable.create(e -> {
+            RoleDao dao = RApplication.getInstance().getDaoSession().getRoleDao();
+            Role role = dao.queryBuilder()
+                    .where(RoleDao.Properties.Id.eq(roleId))
+                    .build().unique();
+            e.onNext(role);
         });
     }
 
     private Observable<List<RoleRelations>> queryRelations(final long roleId) {
-        return Observable.create(new ObservableOnSubscribe<List<RoleRelations>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<RoleRelations>> e) throws Exception {
-                RoleRelationsDao dao = RApplication.getInstance().getDaoSession().getRoleRelationsDao();
-                QueryBuilder<RoleRelations> builder = dao.queryBuilder();
-                List<RoleRelations> list = builder
-                        .where(builder.or(RoleRelationsDao.Properties.RoleId.eq(roleId), RoleRelationsDao.Properties.RelationId.eq(roleId)))
-                        .build().list();
-                e.onNext(list);
-            }
+        return Observable.create(e -> {
+            RoleRelationsDao dao = RApplication.getInstance().getDaoSession().getRoleRelationsDao();
+            QueryBuilder<RoleRelations> builder = dao.queryBuilder();
+            List<RoleRelations> list = builder
+                    .where(builder.or(RoleRelationsDao.Properties.RoleId.eq(roleId), RoleRelationsDao.Properties.RelationId.eq(roleId)))
+                    .build().list();
+            e.onNext(list);
         });
     }
 

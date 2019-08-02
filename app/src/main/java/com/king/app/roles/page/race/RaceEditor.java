@@ -1,16 +1,14 @@
 package com.king.app.roles.page.race;
 
 import android.view.View;
-import android.widget.EditText;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.ButterKnifeFragment;
+import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.IFragmentHolder;
+import com.king.app.roles.base.MvvmFragment;
+import com.king.app.roles.databinding.DialogRaceEditorBinding;
 import com.king.app.roles.model.entity.Race;
 import com.king.app.roles.view.dialog.DraggableHolder;
-
-import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * @desc
@@ -18,12 +16,7 @@ import butterknife.OnClick;
  * @time 2018/3/25 0025 22:03
  */
 
-public class RaceEditor extends ButterKnifeFragment {
-
-    @BindView(R.id.et_name)
-    EditText etName;
-    @BindView(R.id.et_description)
-    EditText etDescription;
+public class RaceEditor extends MvvmFragment<DialogRaceEditorBinding, BaseViewModel> {
 
     private Race mRace;
 
@@ -44,12 +37,22 @@ public class RaceEditor extends ButterKnifeFragment {
     }
 
     @Override
+    protected BaseViewModel createViewModel() {
+        return null;
+    }
+
+    @Override
     protected void onCreate(View view) {
+        binding.tvOk.setOnClickListener(v -> onClickOk());
+    }
+
+    @Override
+    protected void onCreateData() {
         if (onRaceListener != null) {
             mRace = onRaceListener.getInitRace();
             if (mRace != null) {
-                etName.setText(mRace.getName());
-                etDescription.setText(mRace.getDescription());
+                binding.etName.setText(mRace.getName());
+                binding.etDescription.setText(mRace.getDescription());
             }
         }
     }
@@ -58,14 +61,13 @@ public class RaceEditor extends ButterKnifeFragment {
         this.onRaceListener = onRaceListener;
     }
 
-    @OnClick(R.id.tv_ok)
-    public void onClick() {
+    private void onClickOk() {
         if (onRaceListener != null) {
             if (mRace == null) {
                 mRace = new Race();
             }
-            mRace.setName(etName.getText().toString());
-            mRace.setDescription(etDescription.getText().toString());
+            mRace.setName(binding.etName.getText().toString());
+            mRace.setDescription(binding.etDescription.getText().toString());
             onRaceListener.onSaveRace(mRace);
         }
         if (draggableHolder != null) {

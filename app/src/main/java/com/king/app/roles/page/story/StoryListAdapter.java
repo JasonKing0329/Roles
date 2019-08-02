@@ -1,16 +1,12 @@
 package com.king.app.roles.page.story;
 
-import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.BaseRecyclerAdapter;
+import com.king.app.roles.base.BaseBindingAdapter;
+import com.king.app.roles.databinding.AdapterStoryListBinding;
 import com.king.app.roles.model.entity.Story;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
@@ -18,15 +14,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * 描述:
  * <p/>作者：景阳
  * <p/>创建时间: 2018/3/23 17:20
  */
-public class StoryListAdapter extends BaseRecyclerAdapter<StoryListAdapter.StoryHolder, Story> implements View.OnClickListener {
+public class StoryListAdapter extends BaseBindingAdapter<AdapterStoryListBinding, Story> {
 
     private boolean isDrag;
 
@@ -58,27 +51,31 @@ public class StoryListAdapter extends BaseRecyclerAdapter<StoryListAdapter.Story
     }
 
     @Override
-    protected StoryHolder newViewHolder(View view) {
-        return new StoryHolder(view);
+    protected void onHolderCreated(BindingHolder holder, AdapterStoryListBinding binding) {
+        binding.ivDrag.setOnTouchListener((v, event) -> {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN: {
+                    swipeMenuRecyclerView.startDrag(holder);
+                    break;
+                }
+            }
+            return false;
+        });
     }
 
     @Override
-    public void onBindViewHolder(StoryHolder holder, int position) {
-        holder.mMenuRecyclerView = swipeMenuRecyclerView;
-
-        holder.tvName.setText(list.get(position).getName());
-        holder.ivDrag.setVisibility(isDrag ? View.VISIBLE:View.GONE);
+    protected void onBindItem(AdapterStoryListBinding binding, int position, Story bean) {
+        binding.tvName.setText(list.get(position).getName());
+        binding.ivDrag.setVisibility(isDrag ? View.VISIBLE:View.GONE);
 
         if (isSelect) {
-            holder.cbCheck.setVisibility(View.VISIBLE);
-            holder.cbCheck.setChecked(checkMap.get(position));
+            binding.cbCheck.setVisibility(View.VISIBLE);
+            binding.cbCheck.setChecked(checkMap.get(position));
         }
         else {
-            holder.cbCheck.setVisibility(View.GONE);
+            binding.cbCheck.setVisibility(View.GONE);
         }
-
-        holder.groupItem.setTag(position);
-        holder.groupItem.setOnClickListener(this);
     }
 
     public void swapData(int fromPosition, int toPosition) {
@@ -96,8 +93,7 @@ public class StoryListAdapter extends BaseRecyclerAdapter<StoryListAdapter.Story
     }
 
     @Override
-    public void onClick(View view) {
-        int position = (int) view.getTag();
+    protected void onClickItem(View v, int position) {
         if (isSelect) {
             checkMap.put(position, !checkMap.get(position));
             notifyItemChanged(position);
@@ -107,7 +103,7 @@ public class StoryListAdapter extends BaseRecyclerAdapter<StoryListAdapter.Story
         }
         else {
             if (onItemClickListener != null) {
-                onItemClickListener.onClickItem(position, list.get(position));
+                onItemClickListener.onClickItem(v, position, list.get(position));
             }
         }
     }
@@ -120,37 +116,5 @@ public class StoryListAdapter extends BaseRecyclerAdapter<StoryListAdapter.Story
             }
         }
         return stories;
-    }
-
-    public static class StoryHolder extends RecyclerView.ViewHolder implements View.OnTouchListener {
-
-        @BindView(R.id.group_item)
-        ViewGroup groupItem;
-        @BindView(R.id.tv_name)
-        TextView tvName;
-        @BindView(R.id.iv_drag)
-        ImageView ivDrag;
-        @BindView(R.id.cb_check)
-        CheckBox cbCheck;
-
-        SwipeMenuRecyclerView mMenuRecyclerView;
-
-        public StoryHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-            ivDrag.setOnTouchListener(this);
-        }
-
-        @Override
-        public boolean onTouch(View view, MotionEvent event) {
-            int action = event.getAction();
-            switch (action) {
-                case MotionEvent.ACTION_DOWN: {
-                    mMenuRecyclerView.startDrag(this);
-                    break;
-                }
-            }
-            return false;
-        }
     }
 }

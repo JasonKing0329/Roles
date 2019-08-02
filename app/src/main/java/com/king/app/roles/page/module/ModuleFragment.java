@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.IFragmentHolder;
 import com.king.app.roles.base.MvvmFragment;
 import com.king.app.roles.databinding.FragmentModuleBinding;

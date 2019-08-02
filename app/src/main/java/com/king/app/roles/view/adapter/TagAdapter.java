@@ -1,25 +1,22 @@
 package com.king.app.roles.view.adapter;
 
-import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.TextView;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.BaseRecyclerAdapter;
+import com.king.app.roles.base.BaseBindingAdapter;
+import com.king.app.roles.databinding.AdapterTagBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * 描述:
  * <p/>作者：景阳
  * <p/>创建时间: 2018/3/26 10:30
  */
-public abstract class TagAdapter<T> extends BaseRecyclerAdapter<TagAdapter.TagHolder, T> implements View.OnClickListener {
+public abstract class TagAdapter<T> extends BaseBindingAdapter<AdapterTagBinding, T> {
 
     private boolean isSingleSelect;
 
@@ -34,29 +31,20 @@ public abstract class TagAdapter<T> extends BaseRecyclerAdapter<TagAdapter.TagHo
         return R.layout.adapter_tag;
     }
 
-    @Override
-    protected TagHolder newViewHolder(View view) {
-        return new TagHolder(view);
-    }
-
     public void setSingleSelect(boolean singleSelect) {
         isSingleSelect = singleSelect;
     }
 
     @Override
-    public void onBindViewHolder(TagHolder holder, int position) {
-        holder.tvTag.setTag(position);
-        holder.tvTag.setOnClickListener(this);
-        holder.tvTag.setSelected(checkMap.get(position));
-
-        onBindTag(holder.tvTag, position);
+    protected void onBindItem(AdapterTagBinding binding, int position, T bean) {
+        binding.tvTag.setSelected(checkMap.get(position));
+        onBindTag(binding.tvTag, position);
     }
 
     protected abstract void onBindTag(TextView tvTag, int position);
 
     @Override
-    public void onClick(View view) {
-        int position = (int) view.getTag();
+    protected void onClickItem(View v, int position) {
         if (checkMap.get(position)) {
             checkMap.put(position, false);
             notifyItemChanged(position);
@@ -103,16 +91,5 @@ public abstract class TagAdapter<T> extends BaseRecyclerAdapter<TagAdapter.TagHo
             }
         }
         return stories;
-    }
-
-    public static class TagHolder extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.tv_tag)
-        TextView tvTag;
-
-        public TagHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
     }
 }

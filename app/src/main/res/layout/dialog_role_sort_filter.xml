@@ -1,66 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:orientation="vertical">
-    <CheckBox
-        android:id="@+id/cb_race"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:text="Filter race"/>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_race"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:overScrollMode="never"
-        android:visibility="gone"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"/>
-    <CheckBox
-        android:id="@+id/cb_kingdom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="10dp"
-        android:text="Filter kingdom"/>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_kingdom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:overScrollMode="never"
-        android:visibility="gone"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="10dp"
-        android:text="Sort by"/>
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="10dp">
-        <RadioButton
-            android:id="@+id/rb_sequence"
+<layout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <CheckBox
+            android:id="@+id/cb_race"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="Sequence"/>
-        <RadioButton
-            android:id="@+id/rb_name"
+            android:layout_marginLeft="16dp"
+            android:text="Filter race"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_race"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:visibility="gone"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
+        <CheckBox
+            android:id="@+id/cb_kingdom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="Name"/>
-    </RadioGroup>
-    <TextView
-        android:id="@+id/tv_ok"
-        style="@style/TvDialogConfirm"
-        android:text="OK"/>
-</LinearLayout>
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:text="Filter kingdom"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_kingdom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:visibility="gone"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:text="Sort by"/>
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="10dp">
+            <RadioButton
+                android:id="@+id/rb_sequence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Sequence"/>
+            <RadioButton
+                android:id="@+id/rb_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Name"/>
+        </RadioGroup>
+        <TextView
+            android:id="@+id/tv_ok"
+            style="@style/TvDialogConfirm"
+            android:text="OK"/>
+    </LinearLayout>
+</layout>

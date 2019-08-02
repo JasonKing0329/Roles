@@ -13,7 +13,6 @@ import com.king.app.jactionbar.OnBackListener;
 import com.king.app.jactionbar.OnConfirmListener;
 import com.king.app.jactionbar.OnMenuItemListener;
 import com.king.app.roles.R;
-import com.king.app.roles.base.BaseRecyclerAdapter;
 import com.king.app.roles.base.MvvmActivity;
 import com.king.app.roles.databinding.ActivityStoryListBinding;
 import com.king.app.roles.model.entity.Story;
@@ -189,12 +188,7 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
         if (storyListAdapter == null) {
             storyListAdapter = new StoryListAdapter();
             storyListAdapter.setList(stories);
-            storyListAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<Story>() {
-                @Override
-                public void onClickItem(int position, Story data) {
-                    startStoryPage(data.getId());
-                }
-            });
+            storyListAdapter.setOnItemClickListener((view, position, data) -> startStoryPage(data.getId()));
             storyListAdapter.setSwipeMenuRecyclerView(binding.rvStories);
             binding.rvStories.setAdapter(storyListAdapter);
         } else {

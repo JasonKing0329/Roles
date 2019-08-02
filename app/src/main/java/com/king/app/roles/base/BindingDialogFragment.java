@@ -1,7 +1,9 @@
-package com.king.app.roles.view.dialog;
+package com.king.app.roles.base;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -12,19 +14,16 @@ import android.view.WindowManager;
 
 import com.king.app.roles.R;
 
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
 /**
  * 描述:DialogFragment基类
  *
- * <br/>创建时间: 2017/4/19
+ * <br/>创建时间: 2018/8/9
  */
-public abstract class BaseDialogFragment extends DialogFragment {
+public abstract class BindingDialogFragment<T extends ViewDataBinding> extends DialogFragment {
+
+    protected T mBinding;
 
     private WindowManager.LayoutParams windowParams;
-
-    Unbinder unbinder;
 
     @Override
     public void onAttach(Context context) {
@@ -47,10 +46,10 @@ public abstract class BaseDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         windowParams = getDialog().getWindow().getAttributes();
-        View view = inflater.inflate(getLayoutResource(), container, false);
-        unbinder = ButterKnife.bind(this, view);
+        mBinding = DataBindingUtil.inflate(inflater, getLayoutResource(), container, false);
+        View view = mBinding.getRoot();
         initView(view);
-        return view;
+        return mBinding.getRoot();
     }
 
     protected abstract int getLayoutResource();
@@ -107,11 +106,4 @@ public abstract class BaseDialogFragment extends DialogFragment {
         getDialog().getWindow().setAttributes(windowParams);//must have
     }
 
-    @Override
-    public void onDestroy() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
-        super.onDestroy();
-    }
 }

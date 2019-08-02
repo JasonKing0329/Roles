@@ -1,16 +1,16 @@
 package com.king.app.roles.page.role;
 
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.ButterKnifeFragment;
+import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.IFragmentHolder;
+import com.king.app.roles.base.MvvmFragment;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.conf.AppConstants;
+import com.king.app.roles.databinding.DialogRoleEditorBinding;
 import com.king.app.roles.model.entity.Chapter;
 import com.king.app.roles.model.entity.ChapterDao;
 import com.king.app.roles.model.entity.Kingdom;
@@ -29,33 +29,13 @@ import org.greenrobot.greendao.query.QueryBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.OnClick;
-
 /**
  * @desc
  * @auth 景阳
  * @time 2018/3/25 0025 22:03
  */
 
-public class RoleEditor extends ButterKnifeFragment {
-
-    @BindView(R.id.et_name)
-    EditText etName;
-    @BindView(R.id.et_description)
-    EditText etDescription;
-    @BindView(R.id.et_nickname)
-    EditText etNickname;
-    @BindView(R.id.rv_race)
-    RecyclerView rvRace;
-    @BindView(R.id.rv_kingdom)
-    RecyclerView rvKingdom;
-    @BindView(R.id.et_power)
-    EditText etPower;
-    @BindView(R.id.tv_chapter)
-    TextView tvChapter;
-    @BindView(R.id.tv_relations)
-    TextView tvRelations;
+public class RoleEditor extends MvvmFragment<DialogRoleEditorBinding, BaseViewModel> {
 
     private Role mRole;
 
@@ -82,29 +62,46 @@ public class RoleEditor extends ButterKnifeFragment {
     }
 
     @Override
+    protected BaseViewModel createViewModel() {
+        return null;
+    }
+
+    @Override
     protected void onCreate(View view) {
 
-        GridLayoutManager manager = new GridLayoutManager(getActivity(), 3);
-        rvRace.setLayoutManager(manager);
-        manager = new GridLayoutManager(getActivity(), 3);
-        rvKingdom.setLayoutManager(manager);
+        binding.tvChapter.setOnClickListener(v -> selectChapter());
+        binding.tvRelations.setOnClickListener(v -> {
+            if (onRoleListener != null) {
+                onRoleListener.showRelations(mRole);
+            }
+        });
+        binding.tvOk.setOnClickListener(v -> onClickOk());
 
-        tvRelations.setVisibility(View.GONE);
+        GridLayoutManager manager = new GridLayoutManager(getActivity(), 3);
+        binding.rvRace.setLayoutManager(manager);
+        manager = new GridLayoutManager(getActivity(), 3);
+        binding.rvKingdom.setLayoutManager(manager);
+
+        binding.tvRelations.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onCreateData() {
         if (onRoleListener != null) {
             mRole = onRoleListener.getInitKingdom();
             // 编辑模式才显示Relations
             if (mRole != null) {
-                tvRelations.setVisibility(View.VISIBLE);
-                etName.setText(mRole.getName());
-                etNickname.setText(mRole.getNickname());
-                etPower.setText(mRole.getPower());
-                etDescription.setText(mRole.getDescription());
+                binding.tvRelations.setVisibility(View.VISIBLE);
+                binding.etName.setText(mRole.getName());
+                binding.etNickname.setText(mRole.getNickname());
+                binding.etPower.setText(mRole.getPower());
+                binding.etDescription.setText(mRole.getDescription());
                 if (mRole.getChapter() != null) {
                     if (mRole.getChapter().getLevel() == AppConstants.CHAPTER_LEVEL_SECOND) {
-                        tvChapter.setText("Chapter   第" + mRole.getChapter().getParent().getIndex() + "章 - (" + mRole.getChapter().getIndex() + ")");
+                        binding.tvChapter.setText("Chapter   第" + mRole.getChapter().getParent().getIndex() + "章 - (" + mRole.getChapter().getIndex() + ")");
                     }
                     else {
-                        tvChapter.setText("Chapter   第" + mRole.getChapter().getIndex() + "章");
+                        binding.tvChapter.setText("Chapter   第" + mRole.getChapter().getIndex() + "章");
                     }
                 }
 
@@ -123,7 +120,7 @@ public class RoleEditor extends ButterKnifeFragment {
         int count = (int) builder
                 .where(builder.or(RoleRelationsDao.Properties.RoleId.eq(mRole.getId()), RoleRelationsDao.Properties.RelationId.eq(mRole.getId())))
                 .buildCount().count();
-        tvRelations.setText("Relations (" + count + " persons)");
+        binding.tvRelations.setText("Relations (" + count + " persons)");
     }
 
     public void refreshRelations() {
@@ -154,7 +151,7 @@ public class RoleEditor extends ButterKnifeFragment {
         if (mRole != null && mRole.getRaceList() != null) {
             raceAdapter.setSelectedData(mRole.getRaceList());
         }
-        rvRace.setAdapter(raceAdapter);
+        binding.rvRace.setAdapter(raceAdapter);
     }
 
     /**
@@ -184,23 +181,22 @@ public class RoleEditor extends ButterKnifeFragment {
             list.add(mRole.getKingdom());
             kingdomAdapter.setSelectedData(list);
         }
-        rvKingdom.setAdapter(kingdomAdapter);
+        binding.rvKingdom.setAdapter(kingdomAdapter);
     }
 
     public void setOnRoleListener(OnRoleListener onRoleListener) {
         this.onRoleListener = onRoleListener;
     }
 
-    @OnClick(R.id.tv_ok)
-    public void onClick() {
+    private void onClickOk() {
         if (onRoleListener != null) {
             if (mRole == null) {
                 mRole = new Role();
             }
-            mRole.setName(etName.getText().toString());
-            mRole.setNickname(etNickname.getText().toString());
-            mRole.setPower(etPower.getText().toString());
-            mRole.setDescription(etDescription.getText().toString());
+            mRole.setName(binding.etName.getText().toString());
+            mRole.setNickname(binding.etNickname.getText().toString());
+            mRole.setPower(binding.etPower.getText().toString());
+            mRole.setDescription(binding.etDescription.getText().toString());
             mRole.setChapterId(mChapterId);
 
             Kingdom kingdom = null;
@@ -215,20 +211,6 @@ public class RoleEditor extends ButterKnifeFragment {
         }
     }
 
-    @OnClick({R.id.tv_chapter, R.id.tv_relations})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.tv_chapter:
-                selectChapter();
-                break;
-            case R.id.tv_relations:
-                if (onRoleListener != null) {
-                    onRoleListener.showRelations(mRole);
-                }
-                break;
-        }
-    }
-
     private void selectChapter() {
         onRoleListener.selectChapter();
     }
@@ -237,10 +219,10 @@ public class RoleEditor extends ButterKnifeFragment {
         mChapterId = chapterId;
         Chapter chapter = loadChapter();
         if (chapter.getLevel() == AppConstants.CHAPTER_LEVEL_SECOND) {
-            tvChapter.setText("Chapter   第" + chapter.getParent().getIndex() + "章 - (" + chapter.getIndex() + ")");
+            binding.tvChapter.setText("Chapter   第" + chapter.getParent().getIndex() + "章 - (" + chapter.getIndex() + ")");
         }
         else {
-            tvChapter.setText("Chapter   第" + chapter.getIndex() + "章");
+            binding.tvChapter.setText("Chapter   第" + chapter.getIndex() + "章");
         }
     }
 

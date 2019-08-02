@@ -1,16 +1,14 @@
 package com.king.app.roles.page.kingdom;
 
 import android.view.View;
-import android.widget.EditText;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.ButterKnifeFragment;
+import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.IFragmentHolder;
+import com.king.app.roles.base.MvvmFragment;
+import com.king.app.roles.databinding.DialogKingdomEditorBinding;
 import com.king.app.roles.model.entity.Kingdom;
 import com.king.app.roles.view.dialog.DraggableHolder;
-
-import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * @desc
@@ -18,12 +16,7 @@ import butterknife.OnClick;
  * @time 2018/3/25 0025 22:03
  */
 
-public class KingdomEditor extends ButterKnifeFragment {
-
-    @BindView(R.id.et_name)
-    EditText etName;
-    @BindView(R.id.et_description)
-    EditText etDescription;
+public class KingdomEditor extends MvvmFragment<DialogKingdomEditorBinding, BaseViewModel> {
 
     private Kingdom mKingdom;
 
@@ -44,12 +37,22 @@ public class KingdomEditor extends ButterKnifeFragment {
     }
 
     @Override
+    protected BaseViewModel createViewModel() {
+        return null;
+    }
+
+    @Override
     protected void onCreate(View view) {
+        binding.tvOk.setOnClickListener(v -> onClickOk());
+    }
+
+    @Override
+    protected void onCreateData() {
         if (onRaceListener != null) {
             mKingdom = onRaceListener.getInitKingdom();
             if (mKingdom != null) {
-                etName.setText(mKingdom.getName());
-                etDescription.setText(mKingdom.getDescription());
+                binding.etName.setText(mKingdom.getName());
+                binding.etDescription.setText(mKingdom.getDescription());
             }
         }
     }
@@ -58,14 +61,13 @@ public class KingdomEditor extends ButterKnifeFragment {
         this.onRaceListener = onRaceListener;
     }
 
-    @OnClick(R.id.tv_ok)
-    public void onClick() {
+    private void onClickOk() {
         if (onRaceListener != null) {
             if (mKingdom == null) {
                 mKingdom = new Kingdom();
             }
-            mKingdom.setName(etName.getText().toString());
-            mKingdom.setDescription(etDescription.getText().toString());
+            mKingdom.setName(binding.etName.getText().toString());
+            mKingdom.setDescription(binding.etDescription.getText().toString());
             onRaceListener.onSaveKingdom(mKingdom);
         }
         if (draggableHolder != null) {

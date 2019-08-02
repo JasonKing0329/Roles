@@ -9,11 +9,10 @@ import android.view.View;
 import com.king.app.jactionbar.OnConfirmListener;
 import com.king.app.jactionbar.OnMenuItemListener;
 import com.king.app.roles.R;
-import com.king.app.roles.base.BaseRecyclerAdapter;
+import com.king.app.roles.databinding.AdapterRaceItemBinding;
 import com.king.app.roles.model.entity.Race;
 import com.king.app.roles.page.module.ModuleAdapter;
 import com.king.app.roles.page.module.ModuleFragment;
-import com.king.app.roles.page.module.ModuleViewModel;
 import com.king.app.roles.view.dialog.DraggableDialogFragment;
 
 import java.util.List;
@@ -119,12 +118,7 @@ public class RaceFragment extends ModuleFragment<RaceViewModel> {
             raceAdapter = new RaceAdapter();
             raceAdapter.setList(races);
             raceAdapter.setSwipeMenuRecyclerView(binding.rvItems);
-            raceAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<Race>() {
-                @Override
-                public void onClickItem(int position, Race data) {
-                    showRaceEditor(data);
-                }
-            });
+            raceAdapter.setOnItemClickListener((view, position, data) -> showRaceEditor(data));
             binding.rvItems.setAdapter(raceAdapter);
         }
         else {
@@ -134,7 +128,7 @@ public class RaceFragment extends ModuleFragment<RaceViewModel> {
     }
 
     @Override
-    protected ModuleAdapter getAdapter() {
+    protected ModuleAdapter<AdapterRaceItemBinding, Race> getAdapter() {
         return raceAdapter;
     }
 

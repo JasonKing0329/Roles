@@ -1,18 +1,12 @@
 package com.king.app.roles.page.race;
 
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.king.app.roles.R;
+import com.king.app.roles.databinding.AdapterRaceItemBinding;
 import com.king.app.roles.model.entity.Race;
 import com.king.app.roles.page.module.ModuleAdapter;
-import com.king.app.roles.page.module.ModuleViewHolder;
-
-import butterknife.BindView;
 
 /**
  * @desc
@@ -20,7 +14,7 @@ import butterknife.BindView;
  * @time 2018/3/25 0025 21:14
  */
 
-public class RaceAdapter extends ModuleAdapter<RaceAdapter.RaceHolder, Race> {
+public class RaceAdapter extends ModuleAdapter<AdapterRaceItemBinding, Race> {
 
     @Override
     protected int getItemLayoutRes() {
@@ -28,27 +22,17 @@ public class RaceAdapter extends ModuleAdapter<RaceAdapter.RaceHolder, Race> {
     }
 
     @Override
-    protected RaceHolder newViewHolder(View view) {
-        return new RaceHolder(view);
-    }
-
-    @Override
-    protected View getDragView(RaceHolder holder) {
+    protected View getDragView(AdapterRaceItemBinding holder) {
         return holder.ivDrag;
     }
 
     @Override
-    protected CheckBox getCheckBox(RaceHolder holder) {
+    protected CheckBox getCheckBox(AdapterRaceItemBinding holder) {
         return holder.cbCheck;
     }
 
     @Override
-    protected ViewGroup getGroupItem(RaceHolder holder) {
-        return holder.groupItem;
-    }
-
-    @Override
-    protected void onBindSubHolder(RaceHolder holder, int position) {
+    protected void onBindSubHolder(AdapterRaceItemBinding holder, int position) {
         holder.tvName.setText(list.get(position).getName());
         holder.tvDescription.setText(list.get(position).getDescription());
     }
@@ -58,26 +42,4 @@ public class RaceAdapter extends ModuleAdapter<RaceAdapter.RaceHolder, Race> {
         return false;
     }
 
-    public static class RaceHolder extends ModuleViewHolder {
-
-        @BindView(R.id.tv_name)
-        TextView tvName;
-        @BindView(R.id.tv_description)
-        TextView tvDescription;
-        @BindView(R.id.iv_drag)
-        ImageView ivDrag;
-        @BindView(R.id.cb_check)
-        CheckBox cbCheck;
-        @BindView(R.id.group_item)
-        LinearLayout groupItem;
-
-        public RaceHolder(View itemView) {
-            super(itemView);
-        }
-
-        @Override
-        public View getTouchHandler() {
-            return ivDrag;
-        }
-    }
 }

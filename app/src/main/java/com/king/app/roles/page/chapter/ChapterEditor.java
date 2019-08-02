@@ -2,20 +2,17 @@ package com.king.app.roles.page.chapter;
 
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.Spinner;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.ButterKnifeFragment;
+import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.IFragmentHolder;
+import com.king.app.roles.base.MvvmFragment;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.conf.AppConstants;
+import com.king.app.roles.databinding.DialogChapterEditorBinding;
 import com.king.app.roles.model.entity.Chapter;
 import com.king.app.roles.model.entity.ChapterDao;
 import com.king.app.roles.view.dialog.DraggableHolder;
-
-import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * @desc
@@ -23,18 +20,7 @@ import butterknife.OnClick;
  * @time 2018/3/25 0025 22:03
  */
 
-public class ChapterEditor extends ButterKnifeFragment {
-
-    @BindView(R.id.et_name)
-    EditText etName;
-    @BindView(R.id.et_description)
-    EditText etDescription;
-    @BindView(R.id.et_index)
-    EditText etIndex;
-    @BindView(R.id.et_parent_index)
-    EditText etParentIndex;
-    @BindView(R.id.sp_level)
-    Spinner spLevel;
+public class ChapterEditor extends MvvmFragment<DialogChapterEditorBinding, BaseViewModel> {
 
     private Chapter mChapter;
 
@@ -50,23 +36,28 @@ public class ChapterEditor extends ButterKnifeFragment {
     }
 
     @Override
+    protected BaseViewModel createViewModel() {
+        return null;
+    }
+
+    @Override
     protected int getContentLayoutRes() {
         return R.layout.dialog_chapter_editor;
     }
 
     @Override
     protected void onCreate(View view) {
-        etParentIndex.setVisibility(View.GONE);
+        binding.etParentIndex.setVisibility(View.GONE);
 
-        spLevel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.spLevel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
 
                 if (position == 1) {
-                    etParentIndex.setVisibility(View.VISIBLE);
+                    binding.etParentIndex.setVisibility(View.VISIBLE);
                 }
                 else {
-                    etParentIndex.setVisibility(View.GONE);
+                    binding.etParentIndex.setVisibility(View.GONE);
                 }
             }
 
@@ -76,20 +67,25 @@ public class ChapterEditor extends ButterKnifeFragment {
             }
         });
 
+        binding.tvOk.setOnClickListener(v -> onClickOk());
+    }
+
+    @Override
+    protected void onCreateData() {
         if (onChapterListener != null) {
             mChapter = onChapterListener.getInitChapter();
             if (mChapter != null) {
-                etName.setText(mChapter.getName());
-                etIndex.setText(String.valueOf(mChapter.getIndex()));
+                binding.etName.setText(mChapter.getName());
+                binding.etIndex.setText(String.valueOf(mChapter.getIndex()));
                 if (mChapter.getParentId() != 0) {
-                    etParentIndex.setText(String.valueOf(mChapter.getParent().getIndex()));
+                    binding.etParentIndex.setText(String.valueOf(mChapter.getParent().getIndex()));
                 }
-                etDescription.setText(mChapter.getDescription());
+                binding.etDescription.setText(mChapter.getDescription());
                 if (mChapter.getLevel() == AppConstants.CHAPTER_LEVEL_FIRST) {
-                    spLevel.setSelection(0);
+                    binding.spLevel.setSelection(0);
                 }
                 else {
-                    spLevel.setSelection(1);
+                    binding.spLevel.setSelection(1);
                 }
             }
         }
@@ -99,8 +95,7 @@ public class ChapterEditor extends ButterKnifeFragment {
         this.onChapterListener = onChapterListener;
     }
 
-    @OnClick(R.id.tv_ok)
-    public void onClick() {
+    private void onClickOk() {
         if (onChapterListener != null) {
             if (mChapter == null) {
                 mChapter = new Chapter();
@@ -108,14 +103,14 @@ public class ChapterEditor extends ButterKnifeFragment {
             if (!checkIndex()) {
                 return;
             }
-            if (spLevel.getSelectedItemPosition() == 0) {
+            if (binding.spLevel.getSelectedItemPosition() == 0) {
                 mChapter.setLevel(AppConstants.CHAPTER_LEVEL_FIRST);
             }
             else {
                 mChapter.setLevel(AppConstants.CHAPTER_LEVEL_SECOND);
             }
-            mChapter.setName(etName.getText().toString());
-            mChapter.setDescription(etDescription.getText().toString());
+            mChapter.setName(binding.etName.getText().toString());
+            mChapter.setDescription(binding.etDescription.getText().toString());
             onChapterListener.onSaveChapter(mChapter);
         }
         if (draggableHolder != null) {
@@ -125,26 +120,26 @@ public class ChapterEditor extends ButterKnifeFragment {
 
     private boolean checkIndex() {
 
-        String index = etIndex.getText().toString();
+        String index = binding.etIndex.getText().toString();
         try {
             mChapter.setIndex(Integer.parseInt(index));
         } catch (Exception e) {
-            etIndex.setError("error data");
+            binding.etIndex.setError("error data");
             return false;
         }
 
-        if (etParentIndex.getVisibility() == View.VISIBLE) {
-            String parentIndex = etParentIndex.getText().toString();
+        if (binding.etParentIndex.getVisibility() == View.VISIBLE) {
+            String parentIndex = binding.etParentIndex.getText().toString();
             try {
                 int pIndex = Integer.parseInt(parentIndex);
                 long parentId = queryParentByIndex(pIndex);
                 if (parentId == 0) {
-                    etParentIndex.setError("parent is not existed");
+                    binding.etParentIndex.setError("parent is not existed");
                     return false;
                 }
                 mChapter.setParentId(parentId);
             } catch (Exception e) {
-                etParentIndex.setError("error data");
+                binding.etParentIndex.setError("error data");
                 return false;
             }
         }

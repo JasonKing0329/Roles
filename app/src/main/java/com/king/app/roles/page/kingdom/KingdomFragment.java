@@ -9,7 +9,7 @@ import android.view.View;
 import com.king.app.jactionbar.OnConfirmListener;
 import com.king.app.jactionbar.OnMenuItemListener;
 import com.king.app.roles.R;
-import com.king.app.roles.base.BaseRecyclerAdapter;
+import com.king.app.roles.databinding.AdapterKingdomItemBinding;
 import com.king.app.roles.model.entity.Kingdom;
 import com.king.app.roles.page.module.ModuleAdapter;
 import com.king.app.roles.page.module.ModuleFragment;
@@ -118,12 +118,7 @@ public class KingdomFragment extends ModuleFragment<KingdomViewModel> {
             kingdomAdapter = new KingdomAdapter();
             kingdomAdapter.setList(kingdoms);
             kingdomAdapter.setSwipeMenuRecyclerView(binding.rvItems);
-            kingdomAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<Kingdom>() {
-                @Override
-                public void onClickItem(int position, Kingdom data) {
-                    showKingdomEditor(data);
-                }
-            });
+            kingdomAdapter.setOnItemClickListener((view, position, data) -> showKingdomEditor(data));
             binding.rvItems.setAdapter(kingdomAdapter);
         }
         else {
@@ -133,7 +128,7 @@ public class KingdomFragment extends ModuleFragment<KingdomViewModel> {
     }
 
     @Override
-    protected ModuleAdapter getAdapter() {
+    protected ModuleAdapter<AdapterKingdomItemBinding, Kingdom> getAdapter() {
         return kingdomAdapter;
     }
 

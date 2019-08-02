@@ -1,14 +1,12 @@
 package com.king.app.roles.view.dialog;
 
 import android.view.View;
-import android.widget.EditText;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.ButterKnifeFragment;
+import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.IFragmentHolder;
-
-import butterknife.BindView;
-import butterknife.OnClick;
+import com.king.app.roles.base.MvvmFragment;
+import com.king.app.roles.databinding.DialogDescriptionEditorBinding;
 
 /**
  * @desc
@@ -16,10 +14,7 @@ import butterknife.OnClick;
  * @time 2018/3/24 0024 11:02
  */
 
-public class DescriptionEditor extends ButterKnifeFragment {
-
-    @BindView(R.id.et_text)
-    EditText etText;
+public class DescriptionEditor extends MvvmFragment<DialogDescriptionEditorBinding, BaseViewModel> {
 
     private DraggableHolder draggableHolder;
 
@@ -38,9 +33,19 @@ public class DescriptionEditor extends ButterKnifeFragment {
     }
 
     @Override
+    protected BaseViewModel createViewModel() {
+        return null;
+    }
+
+    @Override
     protected void onCreate(View view) {
+        binding.tvOk.setOnClickListener(v -> onClickOk());
+    }
+
+    @Override
+    protected void onCreateData() {
         if (onDescriptionListener != null) {
-            etText.setText(onDescriptionListener.getInitContent());
+            binding.etText.setText(onDescriptionListener.getInitContent());
         }
     }
 
@@ -48,10 +53,9 @@ public class DescriptionEditor extends ButterKnifeFragment {
         this.onDescriptionListener = onDescriptionListener;
     }
 
-    @OnClick(R.id.tv_ok)
-    public void onClick() {
+    private void onClickOk() {
         if (onDescriptionListener != null) {
-            onDescriptionListener.onSaveDescription(etText.getText().toString());
+            onDescriptionListener.onSaveDescription(binding.etText.getText().toString());
             if (draggableHolder != null) {
                 draggableHolder.dismiss();
             }

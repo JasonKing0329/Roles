@@ -13,7 +13,7 @@ import com.king.app.jactionbar.OnConfirmListener;
 import com.king.app.jactionbar.OnMenuItemListener;
 import com.king.app.jactionbar.OnSearchListener;
 import com.king.app.roles.R;
-import com.king.app.roles.base.BaseRecyclerAdapter;
+import com.king.app.roles.databinding.AdapterRoleItemBinding;
 import com.king.app.roles.model.entity.Kingdom;
 import com.king.app.roles.model.entity.Race;
 import com.king.app.roles.model.entity.Role;
@@ -153,15 +153,12 @@ public class RoleFragment extends ModuleFragment<RoleViewModel> {
             roleAdapter = new RoleAdapter();
             roleAdapter.setList(roles);
             roleAdapter.setSwipeMenuRecyclerView(binding.rvItems);
-            roleAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<RoleItemBean>() {
-                @Override
-                public void onClickItem(int position, RoleItemBean data) {
-                    if (isSelectMode()) {
-                        onSelectId(data.getRole().getId());
-                    }
-                    else {
-                        showRoleEditor(data.getRole());
-                    }
+            roleAdapter.setOnItemClickListener((view, position, data) -> {
+                if (isSelectMode()) {
+                    onSelectId(data.getRole().getId());
+                }
+                else {
+                    showRoleEditor(data.getRole());
                 }
             });
             binding.rvItems.setAdapter(roleAdapter);
@@ -173,7 +170,7 @@ public class RoleFragment extends ModuleFragment<RoleViewModel> {
     }
 
     @Override
-    protected ModuleAdapter getAdapter() {
+    protected ModuleAdapter<AdapterRoleItemBinding, RoleItemBean> getAdapter() {
         return roleAdapter;
     }
 

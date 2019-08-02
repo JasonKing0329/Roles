@@ -6,16 +6,12 @@ import com.king.app.jactionbar.OnBackListener;
 import com.king.app.jactionbar.OnConfirmListener;
 import com.king.app.jactionbar.OnMenuItemListener;
 import com.king.app.jactionbar.OnSearchListener;
-import com.king.app.jactionbar.JActionbar;
 import com.king.app.roles.R;
-import com.king.app.roles.base.BaseActivity;
+import com.king.app.roles.base.BaseViewModel;
+import com.king.app.roles.base.MvvmActivity;
+import com.king.app.roles.databinding.ActivityTestBinding;
 
-import butterknife.BindView;
-
-public class TestActivity extends BaseActivity {
-
-    @BindView(R.id.jactionbar)
-    JActionbar jactionbar;
+public class TestActivity extends MvvmActivity<ActivityTestBinding, BaseViewModel> {
 
     @Override
     protected int getContentView() {
@@ -23,14 +19,24 @@ public class TestActivity extends BaseActivity {
     }
 
     @Override
+    protected BaseViewModel createViewModel() {
+        return null;
+    }
+
+    @Override
+    protected void initData() {
+
+    }
+
+    @Override
     protected void initView() {
-        jactionbar.setOnBackListener(new OnBackListener() {
+        binding.jactionbar.setOnBackListener(new OnBackListener() {
             @Override
             public void onBack() {
                 onBackPressed();
             }
         });
-        jactionbar.setOnConfirmListener(new OnConfirmListener() {
+        binding.jactionbar.setOnConfirmListener(new OnConfirmListener() {
             @Override
             public boolean disableInstantDismissConfirm() {
                 return true;
@@ -52,7 +58,7 @@ public class TestActivity extends BaseActivity {
                 return true;
             }
         });
-        jactionbar.setOnMenuItemListener(new OnMenuItemListener() {
+        binding.jactionbar.setOnMenuItemListener(new OnMenuItemListener() {
             @Override
             public void onMenuItemSelected(int menuId) {
                 switch (menuId) {
@@ -60,7 +66,7 @@ public class TestActivity extends BaseActivity {
                         Toast.makeText(TestActivity.this, "menu_gdb_surf_add", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.menu_gdb_surf_delete:
-                        jactionbar.showConfirmStatus(menuId);
+                        binding.jactionbar.showConfirmStatus(menuId);
                         Toast.makeText(TestActivity.this, "menu_gdb_surf_delete", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.menu_gdb_surf_close:
@@ -75,7 +81,7 @@ public class TestActivity extends BaseActivity {
                 }
             }
         });
-        jactionbar.setOnSearchListener(new OnSearchListener() {
+        binding.jactionbar.setOnSearchListener(new OnSearchListener() {
             @Override
             public void onSearchWordsChanged(String words) {
                 Toast.makeText(TestActivity.this, words, Toast.LENGTH_SHORT).show();

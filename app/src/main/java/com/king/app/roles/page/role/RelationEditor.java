@@ -1,35 +1,25 @@
 package com.king.app.roles.page.role;
 
 import android.view.View;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.ButterKnifeFragment;
+import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.IFragmentHolder;
+import com.king.app.roles.base.MvvmFragment;
 import com.king.app.roles.base.RApplication;
+import com.king.app.roles.databinding.DialogRelationEditorBinding;
 import com.king.app.roles.model.entity.Role;
 import com.king.app.roles.model.entity.RoleDao;
 import com.king.app.roles.model.entity.RoleRelations;
 import com.king.app.roles.view.dialog.DraggableHolder;
-
-import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * 描述:
  * <p/>作者：景阳
  * <p/>创建时间: 2018/3/27 9:26
  */
-public class RelationEditor extends ButterKnifeFragment {
+public class RelationEditor extends MvvmFragment<DialogRelationEditorBinding, BaseViewModel> {
 
-    @BindView(R.id.tv_role)
-    TextView tvRole;
-    @BindView(R.id.sp_type)
-    Spinner spType;
-    @BindView(R.id.et_relation)
-    EditText etRelation;
     public OnRelationListener onRelationListener;
 
     private Role mRole;
@@ -53,14 +43,31 @@ public class RelationEditor extends ButterKnifeFragment {
     }
 
     @Override
+    protected BaseViewModel createViewModel() {
+        return null;
+    }
+
+    @Override
     protected void onCreate(View view) {
-        mRole = onRelationListener.getRole();
-        mRelation = onRelationListener.getInitRoleRelation();
+        binding.tvRole.setOnClickListener(v -> {
+            if (onRelationListener != null) {
+                onRelationListener.onSelectRole();
+            }
+        });
+        binding.tvOk.setOnClickListener(v -> onClickOk());
+    }
+
+    @Override
+    protected void onCreateData() {
+        if (onRelationListener != null) {
+            mRole = onRelationListener.getRole();
+            mRelation = onRelationListener.getInitRoleRelation();
+        }
         if (mRelation != null) {
             mRoleRelated = mRole.getId() == mRelation.getRoleId() ? mRelation.getRole2():mRelation.getRole1();
-            tvRole.setText(mRoleRelated.getName());
-            etRelation.setText(mRelation.getRelationship());
-            spType.setSelection(mRelation.getRelationshipType());
+            binding.tvRole.setText(mRoleRelated.getName());
+            binding.etRelation.setText(mRelation.getRelationship());
+            binding.spType.setSelection(mRelation.getRelationshipType());
         }
     }
 
@@ -68,31 +75,21 @@ public class RelationEditor extends ButterKnifeFragment {
         this.onRelationListener = onRelationListener;
     }
 
-    @OnClick({R.id.tv_ok, R.id.tv_role})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.tv_ok:
-                if (mRoleRelated == null) {
-                    showMessageLong("No role related");
-                    return;
-                }
-                if (mRelation == null) {
-                    mRelation = new RoleRelations();
-                }
-                mRelation.setRoleId(mRole.getId());
-                mRelation.setRelationId(mRoleRelated.getId());
-                mRelation.setRelationshipType(spType.getSelectedItemPosition());
-                mRelation.setRelationship(etRelation.getText().toString());
-                onRelationListener.saveRelation(mRelation);
-                if (draggableHolder != null) {
-                    draggableHolder.dismiss();
-                }
-                break;
-            case R.id.tv_role:
-                if (onRelationListener != null) {
-                    onRelationListener.onSelectRole();
-                }
-                break;
+    private void onClickOk() {
+        if (mRoleRelated == null) {
+            showMessageLong("No role related");
+            return;
+        }
+        if (mRelation == null) {
+            mRelation = new RoleRelations();
+        }
+        mRelation.setRoleId(mRole.getId());
+        mRelation.setRelationId(mRoleRelated.getId());
+        mRelation.setRelationshipType(binding.spType.getSelectedItemPosition());
+        mRelation.setRelationship(binding.etRelation.getText().toString());
+        onRelationListener.saveRelation(mRelation);
+        if (draggableHolder != null) {
+            draggableHolder.dismiss();
         }
     }
 
@@ -101,7 +98,7 @@ public class RelationEditor extends ButterKnifeFragment {
         mRoleRelated = dao.queryBuilder()
                 .where(RoleDao.Properties.Id.eq(roleId))
                 .build().unique();
-        tvRole.setText(mRoleRelated.getName());
+        binding.tvRole.setText(mRoleRelated.getName());
     }
 
     public interface OnRelationListener {

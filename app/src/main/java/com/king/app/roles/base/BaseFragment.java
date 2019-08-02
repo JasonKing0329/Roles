@@ -15,9 +15,6 @@ import android.widget.Toast;
 import com.king.app.roles.R;
 import com.king.app.roles.view.dialog.ProgressDialogFragment;
 
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
 /**
  * 描述:
  * <p/>作者：景阳

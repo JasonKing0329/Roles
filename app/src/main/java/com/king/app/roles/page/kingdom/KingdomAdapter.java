@@ -2,25 +2,19 @@ package com.king.app.roles.page.kingdom;
 
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.king.app.roles.R;
+import com.king.app.roles.databinding.AdapterKingdomItemBinding;
 import com.king.app.roles.model.entity.Kingdom;
 import com.king.app.roles.page.module.ModuleAdapter;
-import com.king.app.roles.page.module.ModuleViewHolder;
-
-import butterknife.BindView;
 
 /**
  * 描述:
  * <p/>作者：景阳
  * <p/>创建时间: 2018/3/26 9:24
  */
-public class KingdomAdapter extends ModuleAdapter<KingdomAdapter.KingdomHolder, Kingdom> {
+public class KingdomAdapter extends ModuleAdapter<AdapterKingdomItemBinding, Kingdom> {
 
     @Override
     protected int getItemLayoutRes() {
@@ -28,27 +22,17 @@ public class KingdomAdapter extends ModuleAdapter<KingdomAdapter.KingdomHolder, 
     }
 
     @Override
-    protected KingdomHolder newViewHolder(View view) {
-        return new KingdomHolder(view);
-    }
-
-    @Override
-    protected ViewGroup getGroupItem(KingdomHolder holder) {
-        return holder.groupItem;
-    }
-
-    @Override
-    protected CheckBox getCheckBox(KingdomHolder holder) {
+    protected CheckBox getCheckBox(AdapterKingdomItemBinding holder) {
         return holder.cbCheck;
     }
 
     @Override
-    protected View getDragView(KingdomHolder holder) {
+    protected View getDragView(AdapterKingdomItemBinding holder) {
         return holder.ivDrag;
     }
 
     @Override
-    protected void onBindSubHolder(KingdomHolder holder, int position) {
+    protected void onBindSubHolder(AdapterKingdomItemBinding holder, int position) {
         holder.tvName.setText(list.get(position).getName());
         if (TextUtils.isEmpty(list.get(position).getDescription())) {
             holder.tvDescription.setVisibility(View.GONE);
@@ -64,26 +48,4 @@ public class KingdomAdapter extends ModuleAdapter<KingdomAdapter.KingdomHolder, 
         return false;
     }
 
-    public static class KingdomHolder extends ModuleViewHolder {
-
-        @BindView(R.id.tv_name)
-        TextView tvName;
-        @BindView(R.id.tv_description)
-        TextView tvDescription;
-        @BindView(R.id.iv_drag)
-        ImageView ivDrag;
-        @BindView(R.id.cb_check)
-        CheckBox cbCheck;
-        @BindView(R.id.group_item)
-        LinearLayout groupItem;
-
-        public KingdomHolder(View itemView) {
-            super(itemView);
-        }
-
-        @Override
-        public View getTouchHandler() {
-            return ivDrag;
-        }
-    }
 }

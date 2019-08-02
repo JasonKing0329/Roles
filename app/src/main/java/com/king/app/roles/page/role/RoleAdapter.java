@@ -2,30 +2,23 @@ package com.king.app.roles.page.role;
 
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.king.app.roles.R;
-import com.king.app.roles.model.entity.Chapter;
+import com.king.app.roles.databinding.AdapterRoleItemBinding;
 import com.king.app.roles.model.entity.Race;
 import com.king.app.roles.model.entity.Role;
 import com.king.app.roles.page.module.ModuleAdapter;
-import com.king.app.roles.page.module.ModuleViewHolder;
 import com.king.app.roles.utils.ListUtil;
 
 import java.util.List;
-
-import butterknife.BindView;
 
 /**
  * 描述:
  * <p/>作者：景阳
  * <p/>创建时间: 2018/3/26 9:24
  */
-public class RoleAdapter extends ModuleAdapter<RoleAdapter.RoleHolder, RoleItemBean> {
+public class RoleAdapter extends ModuleAdapter<AdapterRoleItemBinding, RoleItemBean> {
 
     @Override
     protected int getItemLayoutRes() {
@@ -33,27 +26,17 @@ public class RoleAdapter extends ModuleAdapter<RoleAdapter.RoleHolder, RoleItemB
     }
 
     @Override
-    protected RoleHolder newViewHolder(View view) {
-        return new RoleHolder(view);
-    }
-
-    @Override
-    protected ViewGroup getGroupItem(RoleHolder holder) {
-        return holder.groupItem;
-    }
-
-    @Override
-    protected CheckBox getCheckBox(RoleHolder holder) {
+    protected CheckBox getCheckBox(AdapterRoleItemBinding holder) {
         return holder.cbCheck;
     }
 
     @Override
-    protected View getDragView(RoleHolder holder) {
+    protected View getDragView(AdapterRoleItemBinding holder) {
         return holder.ivDrag;
     }
 
     @Override
-    protected void onBindSubHolder(RoleHolder holder, int position) {
+    protected void onBindSubHolder(AdapterRoleItemBinding holder, int position) {
 
         Role role = list.get(position).getRole();
         StringBuffer name = new StringBuffer(role.getName());
@@ -120,36 +103,5 @@ public class RoleAdapter extends ModuleAdapter<RoleAdapter.RoleHolder, RoleItemB
             }
         }
         return role.getRole().getName().toLowerCase().contains(text.toLowerCase());
-    }
-
-    public static class RoleHolder extends ModuleViewHolder {
-
-        @BindView(R.id.tv_name)
-        TextView tvName;
-        @BindView(R.id.tv_index)
-        TextView tvIndex;
-        @BindView(R.id.tv_power)
-        TextView tvPower;
-        @BindView(R.id.tv_description)
-        TextView tvDescription;
-        @BindView(R.id.tv_debut)
-        TextView tvDebut;
-        @BindView(R.id.tv_relations)
-        TextView tvRelations;
-        @BindView(R.id.iv_drag)
-        ImageView ivDrag;
-        @BindView(R.id.cb_check)
-        CheckBox cbCheck;
-        @BindView(R.id.group_item)
-        LinearLayout groupItem;
-
-        public RoleHolder(View itemView) {
-            super(itemView);
-        }
-
-        @Override
-        public View getTouchHandler() {
-            return ivDrag;
-        }
     }
 }

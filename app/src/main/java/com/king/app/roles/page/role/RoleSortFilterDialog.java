@@ -1,18 +1,16 @@
 package com.king.app.roles.page.role;
 
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.king.app.roles.R;
-import com.king.app.roles.base.ButterKnifeFragment;
+import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.IFragmentHolder;
+import com.king.app.roles.base.MvvmFragment;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.conf.AppConstants;
+import com.king.app.roles.databinding.DialogRoleSortFilterBinding;
 import com.king.app.roles.model.entity.Kingdom;
 import com.king.app.roles.model.entity.KingdomDao;
 import com.king.app.roles.model.entity.Race;
@@ -23,28 +21,12 @@ import com.king.app.roles.view.dialog.DraggableHolder;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.OnClick;
-
 /**
  * 描述:
  * <p/>作者：景阳
  * <p/>创建时间: 2018/3/29 9:28
  */
-public class RoleSortFilterDialog extends ButterKnifeFragment {
-
-    @BindView(R.id.cb_race)
-    CheckBox cbRace;
-    @BindView(R.id.rv_race)
-    RecyclerView rvRace;
-    @BindView(R.id.cb_kingdom)
-    CheckBox cbKingdom;
-    @BindView(R.id.rv_kingdom)
-    RecyclerView rvKingdom;
-    @BindView(R.id.rb_sequence)
-    RadioButton rbSequence;
-    @BindView(R.id.rb_name)
-    RadioButton rbName;
+public class RoleSortFilterDialog extends MvvmFragment<DialogRoleSortFilterBinding, BaseViewModel> {
 
     private TagAdapter<Race> raceAdapter;
 
@@ -67,25 +49,24 @@ public class RoleSortFilterDialog extends ButterKnifeFragment {
     }
 
     @Override
+    protected BaseViewModel createViewModel() {
+        return null;
+    }
+
+    @Override
     protected void onCreate(View view) {
-        cbRace.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                rvRace.setVisibility(isChecked ? View.VISIBLE:View.GONE);
-            }
-        });
-        cbKingdom.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                rvKingdom.setVisibility(isChecked ? View.VISIBLE:View.GONE);
-            }
-        });
+        binding.tvOk.setOnClickListener(v -> onClickOk());
+        binding.cbRace.setOnCheckedChangeListener((buttonView, isChecked) -> binding.rvRace.setVisibility(isChecked ? View.VISIBLE:View.GONE));
+        binding.cbKingdom.setOnCheckedChangeListener((buttonView, isChecked) -> binding.rvKingdom.setVisibility(isChecked ? View.VISIBLE:View.GONE));
 
         GridLayoutManager manager = new GridLayoutManager(getActivity(), 3);
-        rvRace.setLayoutManager(manager);
+        binding.rvRace.setLayoutManager(manager);
         manager = new GridLayoutManager(getActivity(), 3);
-        rvKingdom.setLayoutManager(manager);
+        binding.rvKingdom.setLayoutManager(manager);
+    }
 
+    @Override
+    protected void onCreateData() {
         loadRaces();
         loadKingdoms();
     }
@@ -115,7 +96,7 @@ public class RoleSortFilterDialog extends ButterKnifeFragment {
 
         };
         raceAdapter.setList(races);
-        rvRace.setAdapter(raceAdapter);
+        binding.rvRace.setAdapter(raceAdapter);
     }
 
     /**
@@ -140,14 +121,13 @@ public class RoleSortFilterDialog extends ButterKnifeFragment {
         };
         kingdomAdapter.setSingleSelect(true);
         kingdomAdapter.setList(kingdoms);
-        rvKingdom.setAdapter(kingdomAdapter);
+        binding.rvKingdom.setAdapter(kingdomAdapter);
     }
 
-    @OnClick(R.id.tv_ok)
-    public void onViewClicked() {
+    private void onClickOk() {
         int sortType = getSortType();
         List<Race> races = null;
-        if (cbRace.isChecked()) {
+        if (binding.cbRace.isChecked()) {
             races = raceAdapter.getSelectedData();
             if (ListUtil.isEmpty(races)) {
                 showMessageLong("Please select races");
@@ -155,7 +135,7 @@ public class RoleSortFilterDialog extends ButterKnifeFragment {
             }
         }
         Kingdom kingdom = null;
-        if (cbKingdom.isChecked()) {
+        if (binding.cbKingdom.isChecked()) {
             List<Kingdom> list = kingdomAdapter.getSelectedData();
             if (ListUtil.isEmpty(list)) {
                 showMessageLong("Please select kingdom");
@@ -171,7 +151,7 @@ public class RoleSortFilterDialog extends ButterKnifeFragment {
     }
 
     public int getSortType() {
-        if (rbName.isChecked()) {
+        if (binding.rbName.isChecked()) {
             return AppConstants.ROLE_SORT_BY_NAME;
         }
         return AppConstants.ROLE_SORT_BY_SEQUENCE;

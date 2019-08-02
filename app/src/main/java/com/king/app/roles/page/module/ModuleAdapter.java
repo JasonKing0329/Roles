@@ -1,13 +1,14 @@
 package com.king.app.roles.page.module;
 
+import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 
-import com.king.app.roles.base.BaseRecyclerAdapter;
+import com.king.app.roles.base.BaseBindingAdapter;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import java.util.List;
  * @time 2018/3/25 0025 21:06
  */
 
-public abstract class ModuleAdapter<VH extends ModuleViewHolder, T> extends BaseRecyclerAdapter<VH, T> implements View.OnClickListener {
+public abstract class ModuleAdapter<V extends ViewDataBinding, T> extends BaseBindingAdapter<V, T> {
 
     protected boolean isDrag;
 
@@ -74,8 +75,7 @@ public abstract class ModuleAdapter<VH extends ModuleViewHolder, T> extends Base
     }
 
     @Override
-    public void onClick(View view) {
-        int position = (int) view.getTag();
+    protected void onClickItem(View v, int position) {
         if (isSelect) {
             checkMap.put(position, !checkMap.get(position));
             notifyItemChanged(position);
@@ -85,7 +85,7 @@ public abstract class ModuleAdapter<VH extends ModuleViewHolder, T> extends Base
         }
         else {
             if (onItemClickListener != null) {
-                onItemClickListener.onClickItem(position, list.get(position));
+                onItemClickListener.onClickItem(v, position, list.get(position));
             }
         }
     }
@@ -101,24 +101,33 @@ public abstract class ModuleAdapter<VH extends ModuleViewHolder, T> extends Base
     }
 
     @Override
-    public void onBindViewHolder(VH holder, int position) {
-        holder.mMenuRecyclerView = swipeMenuRecyclerView;
-        getDragView(holder).setVisibility(isDrag ? View.VISIBLE:View.GONE);
-        getCheckBox(holder).setVisibility(isSelect ? View.VISIBLE:View.GONE);
-        getCheckBox(holder).setChecked(checkMap.get(position));
-
-        getGroupItem(holder).setTag(position);
-        getGroupItem(holder).setOnClickListener(this);
-        onBindSubHolder(holder, position);
+    protected void onHolderCreated(BindingHolder holder, V binding) {
+        getDragView(binding).setOnTouchListener((v, event) -> {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN: {
+                    swipeMenuRecyclerView.startDrag(holder);
+                    break;
+                }
+            }
+            return false;
+        });
     }
 
-    protected abstract ViewGroup getGroupItem(VH holder);
+    @Override
+    protected void onBindItem(V binding, int position, T bean) {
+        getDragView(binding).setVisibility(isDrag ? View.VISIBLE:View.GONE);
+        getCheckBox(binding).setVisibility(isSelect ? View.VISIBLE:View.GONE);
+        getCheckBox(binding).setChecked(checkMap.get(position));
 
-    protected abstract CheckBox getCheckBox(VH holder);
+        onBindSubHolder(binding, position);
+    }
 
-    protected abstract View getDragView(VH holder);
+    protected abstract CheckBox getCheckBox(V holder);
 
-    protected abstract void onBindSubHolder(VH holder, int position);
+    protected abstract View getDragView(V holder);
+
+    protected abstract void onBindSubHolder(V holder, int position);
 
     public void filter(String text) {
         if (!text.equals(mKeyword)) {

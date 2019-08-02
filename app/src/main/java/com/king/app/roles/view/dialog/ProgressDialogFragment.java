@@ -1,34 +1,20 @@
 package com.king.app.roles.view.dialog;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.TextView;
 
 import com.king.app.roles.R;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
+import com.king.app.roles.base.BindingDialogFragment;
+import com.king.app.roles.databinding.DialogLoadingBinding;
 
 /**
  * 描述:
  * <p/>作者：景阳
  * <p/>创建时间: 2018/1/29 13:37
  */
-public class ProgressDialogFragment extends DialogFragment {
-
-    @BindView(R.id.tv_message)
-    TextView tvMessage;
-
-    Unbinder unbinder;
+public class ProgressDialogFragment extends BindingDialogFragment<DialogLoadingBinding> {
 
     private String message;
 
@@ -40,18 +26,13 @@ public class ProgressDialogFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_loading, null);
-        unbinder = ButterKnife.bind(this, view);
-        tvMessage.setText(message);
-        return view;
+    protected int getLayoutResource() {
+        return R.layout.dialog_loading;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        getDialog().getWindow().setGravity(Gravity.CENTER);
-        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+    protected void initView(View view) {
+        mBinding.tvMessage.setText(message);
     }
 
     @Override
@@ -63,12 +44,6 @@ public class ProgressDialogFragment extends DialogFragment {
             ft.add(this, tag);
         }
         ft.commitAllowingStateLoss();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
     }
 
     public void setMessage(String message) {

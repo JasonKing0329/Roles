@@ -6,33 +6,19 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.king.app.roles.R;
+import com.king.app.roles.base.BindingDialogFragment;
+import com.king.app.roles.databinding.DialogBaseBinding;
 import com.king.app.roles.utils.DebugLog;
 import com.king.app.roles.utils.ScreenUtils;
-
-import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * 描述: 可拖拽移动的base dialog框架
  * <p/>作者：景阳
  * <p/>创建时间: 2017/7/20 11:45
  */
-public class DraggableDialogFragment extends BaseDialogFragment implements DraggableHolder {
-
-    @BindView(R.id.group_dialog)
-    ViewGroup groupDialog;
-    @BindView(R.id.tv_title)
-    TextView tvTitle;
-    @BindView(R.id.iv_close)
-    ImageView ivClose;
-    @BindView(R.id.iv_delete)
-    ImageView ivDelete;
-    @BindView(R.id.group_ft_container)
-    ViewGroup groupFtContent;
+public class DraggableDialogFragment extends BindingDialogFragment<DialogBaseBinding> implements DraggableHolder {
 
     private Point startPoint, touchPoint;
 
@@ -59,19 +45,21 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
     protected void initView(View view) {
 
         if (title != null) {
-            tvTitle.setText(title);
+            mBinding.tvTitle.setText(title);
         }
         if (backgroundColor != 0) {
-            GradientDrawable drawable = (GradientDrawable) groupDialog.getBackground();
+            GradientDrawable drawable = (GradientDrawable) mBinding.groupDialog.getBackground();
             drawable.setColor(backgroundColor);
         }
         if (hideClose) {
-            ivClose.setVisibility(View.GONE);
+            mBinding.ivClose.setVisibility(View.GONE);
         }
         if (showDelete) {
-            ivDelete.setVisibility(View.VISIBLE);
-            ivDelete.setOnClickListener(onDeleteListener);
+            mBinding.ivDelete.setVisibility(View.VISIBLE);
+            mBinding.ivDelete.setOnClickListener(onDeleteListener);
         }
+
+        mBinding.ivClose.setOnClickListener(v -> dismissAllowingStateLoss());
 
         initDragParams();
 
@@ -79,12 +67,9 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
             replaceContentFragment(contentFragment, "ContentView");
         }
 
-        groupFtContent.post(new Runnable() {
-            @Override
-            public void run() {
-                DebugLog.e("groupFtContent height=" + groupFtContent.getHeight());
-                limitMaxHeight();
-            }
+        mBinding.groupFtContainer.post(() -> {
+            DebugLog.e("mBinding.groupFtContainer height=" + mBinding.groupFtContainer.getHeight());
+            limitMaxHeight();
         });
     }
 
@@ -98,10 +83,10 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
 
     private void limitMaxHeight() {
         int maxContentHeight = getMaxHeight();
-        if (groupFtContent.getHeight() > maxContentHeight) {
-            ViewGroup.LayoutParams params = groupFtContent.getLayoutParams();
+        if (mBinding.groupFtContainer.getHeight() > maxContentHeight) {
+            ViewGroup.LayoutParams params = mBinding.groupFtContainer.getLayoutParams();
             params.height = maxContentHeight;
-            groupFtContent.setLayoutParams(params);
+            mBinding.groupFtContainer.setLayoutParams(params);
         }
     }
 
@@ -121,7 +106,7 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
     private void initDragParams() {
         touchPoint = new Point();
         startPoint = new Point();
-        groupDialog.setOnTouchListener(new DialogTouchListener());
+        mBinding.groupDialog.setOnTouchListener(new DialogTouchListener());
     }
 
     public void setTitle(String title) {
@@ -150,15 +135,6 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
 
     public void setOnDeleteListener(View.OnClickListener onDeleteListener) {
         this.onDeleteListener = onDeleteListener;
-    }
-
-    @OnClick({R.id.iv_close})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_close:
-                dismiss();
-                break;
-        }
     }
 
     private class Point {
