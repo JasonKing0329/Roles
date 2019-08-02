@@ -16,4 +16,6 @@
     <color name="white">#ffffff</color>
 
     <color name="text_main">#333333</color>
+    <color name="transparent">#00ffffff</color>
+    <color name="text_sub">#999999</color>
 </resources>

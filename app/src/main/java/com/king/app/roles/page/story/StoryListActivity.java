@@ -1,22 +1,20 @@
 package com.king.app.roles.page.story;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.king.app.jactionbar.JActionbar;
-import com.king.app.jactionbar.OnBackListener;
 import com.king.app.jactionbar.OnConfirmListener;
-import com.king.app.jactionbar.OnMenuItemListener;
 import com.king.app.roles.R;
 import com.king.app.roles.base.MvvmActivity;
+import com.king.app.roles.base.RApplication;
 import com.king.app.roles.databinding.ActivityStoryListBinding;
 import com.king.app.roles.model.entity.Story;
 import com.king.app.roles.utils.DebugLog;
+import com.king.app.roles.view.dialog.DraggableDialogFragment;
 import com.king.app.roles.view.dialog.SimpleDialogs;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
@@ -40,35 +38,34 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
 
     @Override
     protected void initView() {
+        binding.setViewModel(viewModel);
         setupRecyclerView(binding.rvStories);
         setupActionbar(binding.actionbar);
     }
 
     private void setupActionbar(JActionbar actionbar) {
-        actionbar.setOnBackListener(new OnBackListener() {
-            @Override
-            public void onBack() {
-                onBackPressed();
-            }
-        });
-        actionbar.setOnMenuItemListener(new OnMenuItemListener() {
-            @Override
-            public void onMenuItemSelected(int menuId) {
-                switch (menuId) {
-                    case R.id.menu_add:
-                        addNewStory();
-                        break;
-                    case R.id.menu_delete:
-                        binding.actionbar.showConfirmStatus(menuId);
-                        storyListAdapter.setSelect(true);
-                        storyListAdapter.notifyDataSetChanged();
-                        break;
-                    case R.id.menu_drag:
-                        binding.actionbar.showConfirmStatus(menuId);
-                        storyListAdapter.setDrag(true);
-                        storyListAdapter.notifyDataSetChanged();
-                        break;
-                }
+        actionbar.setOnBackListener(() -> onBackPressed());
+        actionbar.setOnMenuItemListener(menuId -> {
+            switch (menuId) {
+                case R.id.menu_add:
+                    addNewStory();
+                    break;
+                case R.id.menu_delete:
+                    binding.actionbar.showConfirmStatus(menuId);
+                    storyListAdapter.setSelect(true);
+                    storyListAdapter.notifyDataSetChanged();
+                    break;
+                case R.id.menu_drag:
+                    binding.actionbar.showConfirmStatus(menuId);
+                    storyListAdapter.setDrag(true);
+                    storyListAdapter.notifyDataSetChanged();
+                    break;
+                case R.id.menu_load_from:
+                    showLoadFrom();
+                    break;
+                case R.id.menu_save:
+                    viewModel.saveDatabase();
+                    break;
             }
         });
         actionbar.setOnConfirmListener(new OnConfirmListener() {
@@ -135,20 +132,17 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
 
             }
         });
-        rvStories.setOnItemStateChangedListener(new OnItemStateChangedListener() {
-            @Override
-            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-                if (actionState == OnItemStateChangedListener.ACTION_STATE_DRAG) {
-                    DebugLog.e("状态：拖拽");
-                    // 拖拽的时候背景就透明了，这里我们可以添加一个特殊背景。
+        rvStories.setOnItemStateChangedListener((viewHolder, actionState) -> {
+            if (actionState == OnItemStateChangedListener.ACTION_STATE_DRAG) {
+                DebugLog.e("状态：拖拽");
+                // 拖拽的时候背景就透明了，这里我们可以添加一个特殊背景。
 //                    viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(StoryListActivity.this, R.color.grayef));
-                } else if (actionState == OnItemStateChangedListener.ACTION_STATE_SWIPE) {
-                    DebugLog.e("状态：滑动删除");
-                } else if (actionState == OnItemStateChangedListener.ACTION_STATE_IDLE) {
-                    DebugLog.e("状态：手指松开");
-                    // 在手松开的时候还原背景。
+            } else if (actionState == OnItemStateChangedListener.ACTION_STATE_SWIPE) {
+                DebugLog.e("状态：滑动删除");
+            } else if (actionState == OnItemStateChangedListener.ACTION_STATE_IDLE) {
+                DebugLog.e("状态：手指松开");
+                // 在手松开的时候还原背景。
 //                ViewCompat.setBackground(viewHolder.itemView, ContextCompat.getDrawable(RecordOrderPadActivity.this, R.drawable.white));
-                }
             }
         });
     }
@@ -160,28 +154,16 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
 
     @Override
     protected void initData() {
-        binding.setViewModel(viewModel);
+        viewModel.storiesObserver.observe(this, stories -> showStories(stories));
+        viewModel.deleteObserver.observe(this, aBoolean -> {
+            cancelDelete();
+            binding.actionbar.cancelConfirmStatus();
+        });
+        viewModel.updateObserver.observe(this, aBoolean -> {
+            cancelDrag();
+            binding.actionbar.cancelConfirmStatus();
+        });
         viewModel.loadStories();
-        viewModel.storiesObserver.observe(this, new Observer<List<Story>>() {
-            @Override
-            public void onChanged(@Nullable List<Story> stories) {
-                showStories(stories);
-            }
-        });
-        viewModel.deleteObserver.observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(@Nullable Boolean aBoolean) {
-                cancelDelete();
-                binding.actionbar.cancelConfirmStatus();
-            }
-        });
-        viewModel.updateObserver.observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(@Nullable Boolean aBoolean) {
-                cancelDrag();
-                binding.actionbar.cancelConfirmStatus();
-            }
-        });
     }
 
     public void showStories(List<Story> stories) {
@@ -220,16 +202,13 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
     private void doDelete() {
         new SimpleDialogs().showWarningActionDialog(this, "Delete story will delete all information related, click ok to continue"
                 , getString(R.string.ok), null
-                , new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (i == DialogInterface.BUTTON_POSITIVE) {
-                            viewModel.deleteStory(storyListAdapter.getSelectedData());
-                        }
-                        else {
-                            cancelDelete();
-                            binding.actionbar.cancelConfirmStatus();
-                        }
+                , (dialogInterface, i) -> {
+                    if (i == DialogInterface.BUTTON_POSITIVE) {
+                        viewModel.deleteStory(storyListAdapter.getSelectedData());
+                    }
+                    else {
+                        cancelDelete();
+                        binding.actionbar.cancelConfirmStatus();
                     }
                 });
     }
@@ -241,6 +220,20 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
                 viewModel.addStory(name);
             }
         });
+    }
+
+    private void showLoadFrom() {
+        LoadFromFragment content = new LoadFromFragment();
+        content.setOnDatabaseChangedListener(() -> {
+            RApplication.getInstance().reCreateGreenDao();
+            viewModel.loadStories();
+        });
+        DraggableDialogFragment editDialog = new DraggableDialogFragment.Builder()
+                .setTitle("Load from")
+                .setShowDelete(false)
+                .setContentFragment(content)
+                .build();
+        editDialog.show(getSupportFragmentManager(), "LoadFromFragment");
     }
 
 }

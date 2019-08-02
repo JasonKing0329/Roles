@@ -11,6 +11,7 @@ import com.king.app.roles.base.RApplication;
 import com.king.app.roles.model.SettingProperty;
 import com.king.app.roles.model.entity.Story;
 import com.king.app.roles.model.entity.StoryDao;
+import com.king.app.roles.utils.DBExportor;
 
 import java.util.List;
 
@@ -242,4 +243,39 @@ public class StoryListViewModel extends BaseViewModel {
                     }
                 });
     }
+
+    public void saveDatabase() {
+        copyDatabase()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        messageObserver.setValue("Save success");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private Observable<Boolean> copyDatabase() {
+        return Observable.create(e -> {
+            DBExportor.exportAsHistory();
+            e.onNext(true);
+        });
+    }
+
 }
