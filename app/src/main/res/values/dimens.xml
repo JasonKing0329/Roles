@@ -13,4 +13,7 @@
     <dimen name="login_row_marginLeft">10dp</dimen>
 
     <dimen name="progress_size">200dp</dimen>
+
+    <dimen name="dlg_fingerprint_width">320dp</dimen>
+    <dimen name="dlg_fingerprint_height">200dp</dimen>
 </resources>
