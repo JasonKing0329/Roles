@@ -4,21 +4,19 @@ import android.view.View;
 
 import com.king.app.roles.R;
 import com.king.app.roles.base.BaseViewModel;
-import com.king.app.roles.base.IFragmentHolder;
-import com.king.app.roles.base.MvvmFragment;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.databinding.DialogRelationEditorBinding;
 import com.king.app.roles.model.entity.Role;
 import com.king.app.roles.model.entity.RoleDao;
 import com.king.app.roles.model.entity.RoleRelations;
-import com.king.app.roles.view.dialog.DraggableHolder;
+import com.king.app.roles.view.dialog.DraggableContentFragment;
 
 /**
  * 描述:
  * <p/>作者：景阳
  * <p/>创建时间: 2018/3/27 9:26
  */
-public class RelationEditor extends MvvmFragment<DialogRelationEditorBinding, BaseViewModel> {
+public class RelationEditor extends DraggableContentFragment<DialogRelationEditorBinding, BaseViewModel> {
 
     public OnRelationListener onRelationListener;
 
@@ -27,15 +25,6 @@ public class RelationEditor extends MvvmFragment<DialogRelationEditorBinding, Ba
     private Role mRoleRelated;
 
     private RoleRelations mRelation;
-
-    private DraggableHolder draggableHolder;
-
-    @Override
-    protected void bindFragmentHolder(IFragmentHolder holder) {
-        if (holder instanceof DraggableHolder) {
-            draggableHolder = (DraggableHolder) holder;
-        }
-    }
 
     @Override
     protected int getContentLayoutRes() {
@@ -88,9 +77,8 @@ public class RelationEditor extends MvvmFragment<DialogRelationEditorBinding, Ba
         mRelation.setRelationshipType(binding.spType.getSelectedItemPosition());
         mRelation.setRelationship(binding.etRelation.getText().toString());
         onRelationListener.saveRelation(mRelation);
-        if (draggableHolder != null) {
-            draggableHolder.dismiss();
-        }
+
+        dismiss();
     }
 
     public void onRoleSelected(long roleId) {

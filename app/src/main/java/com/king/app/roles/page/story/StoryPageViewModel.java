@@ -3,18 +3,19 @@ package com.king.app.roles.page.story;
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.databinding.ObservableField;
+import android.databinding.ObservableInt;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.RApplication;
+import com.king.app.roles.conf.StoryType;
 import com.king.app.roles.model.entity.Story;
 import com.king.app.roles.model.entity.StoryDao;
 import com.king.app.roles.page.module.ModuleActivity;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -28,29 +29,25 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class StoryPageViewModel extends BaseViewModel {
 
-    public ObservableField<String> titleText;
-    public ObservableField<String> descriptionText;
-    public MutableLiveData<Integer> moduleObserver;
+    public ObservableInt raceVisibility = new ObservableInt(View.GONE);
+    public ObservableInt kingdomVisibility = new ObservableInt(View.GONE);
+    public ObservableField<String> titleText = new ObservableField<>();
+    public ObservableField<String> descriptionText = new ObservableField<>();
+    public MutableLiveData<Integer> moduleObserver = new MutableLiveData<>();
 
     private Story mStory;
 
     public StoryPageViewModel(@NonNull Application application) {
         super(application);
-        titleText = new ObservableField<>();
-        descriptionText = new ObservableField<>();
-        moduleObserver = new MutableLiveData<>();
     }
 
     public void loadStory(final long storyId) {
-        Observable.create(new ObservableOnSubscribe<Story>() {
-            @Override
-            public void subscribe(ObservableEmitter<Story> e) throws Exception {
-                StoryDao dao = RApplication.getInstance().getDaoSession().getStoryDao();
-                Story story = dao.queryBuilder()
-                        .where(StoryDao.Properties.Id.eq(storyId))
-                        .build().unique();
-                e.onNext(story);
-            }
+        Observable.create((ObservableOnSubscribe<Story>) e -> {
+            StoryDao dao = RApplication.getInstance().getDaoSession().getStoryDao();
+            Story story = dao.queryBuilder()
+                    .where(StoryDao.Properties.Id.eq(storyId))
+                    .build().unique();
+            e.onNext(story);
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<Story>() {
@@ -61,6 +58,15 @@ public class StoryPageViewModel extends BaseViewModel {
 
                     @Override
                     public void onNext(Story story) {
+                        if (story.getType() == StoryType.R_K_C_C) {
+                            raceVisibility.set(View.VISIBLE);
+                            kingdomVisibility.set(View.VISIBLE);
+                        }
+                        else {
+                            raceVisibility.set(View.GONE);
+                            kingdomVisibility.set(View.GONE);
+                        }
+
                         mStory = story;
                         titleText.set(story.getName());
                         if (TextUtils.isEmpty(story.getDescription())) {

@@ -96,7 +96,8 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
                         break;
                     case R.id.menu_edit:
                         isEdit = false;
-                        return true;
+                        binding.actionbar.cancelConfirmStatus();
+                        break;
                 }
                 return false;
             }
@@ -233,14 +234,27 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
     }
 
     private void addNewStory() {
-        new SimpleDialogs().openInputDialog(this, "Story name", name -> viewModel.addStory(name));
+        editStory(-1, null);
     }
 
     private void editStory(int position, Story data) {
-        new SimpleDialogs().openInputDialog(this, "Story name", data.getName(), name -> {
-            viewModel.updateStory(data, name);
-            storyListAdapter.notifyItemChanged(position);
+        boolean isNew = data == null;
+        StoryEditor editor = new StoryEditor();
+        editor.setStory(data);
+        editor.setOnStoryListener(story -> {
+            if (isNew) {
+                viewModel.loadStories();
+            }
+            else {
+                storyListAdapter.notifyItemChanged(position);
+            }
         });
+
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment.Builder()
+                .setTitle("Story")
+                .setContentFragment(editor)
+                .build();
+        dialogFragment.show(getSupportFragmentManager(), "StoryEditor");
     }
 
     private void showLoadFrom() {

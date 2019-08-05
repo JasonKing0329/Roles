@@ -97,41 +97,6 @@ public class StoryListViewModel extends BaseViewModel {
         });
     }
 
-    public void addStory(String name) {
-        insertStory(name)
-                .flatMap(story -> queryStories())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<Story>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(List<Story> stories) {
-                        storiesObserver.setValue(stories);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        dispatchCommonError("Insert error", e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void updateStory(Story data, String name) {
-        data.setName(name);
-        getDaoSession().getStoryDao().update(data);
-        getDaoSession().getStoryDao().detach(data);
-    }
-
     public void deleteStory(List<Story> list) {
         loadingObserver.setValue(true);
         deleteStoryRx(list)

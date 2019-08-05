@@ -1,12 +1,8 @@
 package com.king.app.roles.page.story;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.view.View;
 
-import com.king.app.jactionbar.OnBackListener;
 import com.king.app.roles.R;
 import com.king.app.roles.base.MvvmActivity;
 import com.king.app.roles.databinding.ActivityStoryPageBinding;
@@ -31,18 +27,8 @@ public class StoryPageActivity extends MvvmActivity<ActivityStoryPageBinding, St
 
     @Override
     protected void initView() {
-        binding.actionbar.setOnBackListener(new OnBackListener() {
-            @Override
-            public void onBack() {
-                onBackPressed();
-            }
-        });
-        binding.tvDescription.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editDescription();
-            }
-        });
+        binding.actionbar.setOnBackListener(() -> onBackPressed());
+        binding.tvDescription.setOnClickListener(v -> editDescription());
     }
 
     @Override
@@ -55,12 +41,7 @@ public class StoryPageActivity extends MvvmActivity<ActivityStoryPageBinding, St
         binding.setViewModel(viewModel);
         long storyId = getIntent().getLongExtra(KEY_STORY_ID, -1);
         viewModel.loadStory(storyId);
-        viewModel.moduleObserver.observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(@Nullable Integer integer) {
-                startModuleActivity(integer);
-            }
-        });
+        viewModel.moduleObserver.observe(this, integer -> startModuleActivity(integer));
     }
 
     private void startModuleActivity(int type) {

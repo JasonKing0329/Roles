@@ -10,4 +10,8 @@
         <item>Friend</item>
         <item>Relative in law</item>
     </array>
+    <array name="story_types">
+        <item>Chapter + Character</item>
+        <item>Chapter + Character + Race + Kingdom</item>
+    </array>
 </resources>
