@@ -31,6 +31,8 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
 
     private StoryListAdapter storyListAdapter;
 
+    private boolean isEdit;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_story_list;
@@ -60,6 +62,10 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
                     storyListAdapter.setDrag(true);
                     storyListAdapter.notifyDataSetChanged();
                     break;
+                case R.id.menu_edit:
+                    binding.actionbar.showConfirmStatus(menuId);
+                    isEdit = true;
+                    break;
                 case R.id.menu_load_from:
                     showLoadFrom();
                     break;
@@ -88,6 +94,9 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
                     case R.id.menu_drag:
                         doDrag();
                         break;
+                    case R.id.menu_edit:
+                        isEdit = false;
+                        return true;
                 }
                 return false;
             }
@@ -100,6 +109,9 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
                         break;
                     case R.id.menu_drag:
                         cancelDrag();
+                        break;
+                    case R.id.menu_edit:
+                        isEdit = false;
                         break;
                 }
                 return true;
@@ -170,7 +182,14 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
         if (storyListAdapter == null) {
             storyListAdapter = new StoryListAdapter();
             storyListAdapter.setList(stories);
-            storyListAdapter.setOnItemClickListener((view, position, data) -> startStoryPage(data.getId()));
+            storyListAdapter.setOnItemClickListener((view, position, data) -> {
+                if (isEdit) {
+                    editStory(position, data);
+                }
+                else {
+                    startStoryPage(data.getId());
+                }
+            });
             storyListAdapter.setSwipeMenuRecyclerView(binding.rvStories);
             binding.rvStories.setAdapter(storyListAdapter);
         } else {
@@ -214,11 +233,13 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
     }
 
     private void addNewStory() {
-        new SimpleDialogs().openInputDialog(this, "Story name", new SimpleDialogs.OnDialogActionListener() {
-            @Override
-            public void onOk(String name) {
-                viewModel.addStory(name);
-            }
+        new SimpleDialogs().openInputDialog(this, "Story name", name -> viewModel.addStory(name));
+    }
+
+    private void editStory(int position, Story data) {
+        new SimpleDialogs().openInputDialog(this, "Story name", data.getName(), name -> {
+            viewModel.updateStory(data, name);
+            storyListAdapter.notifyItemChanged(position);
         });
     }
 

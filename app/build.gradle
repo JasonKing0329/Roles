@@ -7,8 +7,8 @@ android {
         applicationId "com.king.app.roles"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 24
-        versionName "3.1.1"
+        versionCode 25
+        versionName "3.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {

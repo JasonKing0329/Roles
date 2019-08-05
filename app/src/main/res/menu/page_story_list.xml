@@ -13,6 +13,10 @@
         android:title="close"
         android:icon="@drawable/ic_add_white_24dp"
         app:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_edit"
+        android:title="close"
+        android:icon="@drawable/ic_edit_white_24dp"
+        app:showAsAction="ifRoom"/>
     <item android:id="@+id/menu_load_from"
         android:title="Load from"
         app:showAsAction="never"/>

@@ -18,11 +18,9 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -101,12 +99,7 @@ public class StoryListViewModel extends BaseViewModel {
 
     public void addStory(String name) {
         insertStory(name)
-                .flatMap(new Function<Story, ObservableSource<List<Story>>>() {
-                    @Override
-                    public ObservableSource<List<Story>> apply(Story story) throws Exception {
-                        return queryStories();
-                    }
-                })
+                .flatMap(story -> queryStories())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<Story>>() {
@@ -133,15 +126,16 @@ public class StoryListViewModel extends BaseViewModel {
                 });
     }
 
+    public void updateStory(Story data, String name) {
+        data.setName(name);
+        getDaoSession().getStoryDao().update(data);
+        getDaoSession().getStoryDao().detach(data);
+    }
+
     public void deleteStory(List<Story> list) {
         loadingObserver.setValue(true);
         deleteStoryRx(list)
-                .flatMap(new Function<Object, ObservableSource<List<Story>>>() {
-                    @Override
-                    public ObservableSource<List<Story>> apply(Object object) throws Exception {
-                        return queryStories();
-                    }
-                })
+                .flatMap(object -> queryStories())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<Story>>() {
@@ -172,17 +166,14 @@ public class StoryListViewModel extends BaseViewModel {
     }
 
     private Observable<Story> insertStory(final String name) {
-        return Observable.create(new ObservableOnSubscribe<Story>() {
-            @Override
-            public void subscribe(ObservableEmitter<Story> e) throws Exception {
-                StoryDao dao = RApplication.getInstance().getDaoSession().getStoryDao();
-                int count = (int) dao.count();
-                Story story = new Story();
-                story.setName(name);
-                story.setSequence(count);
-                dao.insert(story);
-                e.onNext(story);
-            }
+        return Observable.create(e -> {
+            StoryDao dao = RApplication.getInstance().getDaoSession().getStoryDao();
+            int count = (int) dao.count();
+            Story story = new Story();
+            story.setName(name);
+            story.setSequence(count);
+            dao.insert(story);
+            e.onNext(story);
         });
     }
 
@@ -277,5 +268,4 @@ public class StoryListViewModel extends BaseViewModel {
             e.onNext(true);
         });
     }
-
 }

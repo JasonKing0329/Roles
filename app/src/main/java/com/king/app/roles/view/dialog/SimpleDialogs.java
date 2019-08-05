@@ -3,6 +3,7 @@ package com.king.app.roles.view.dialog;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -21,6 +22,10 @@ public class SimpleDialogs {
     }
 
     public void openInputDialog(Context context, String msg, final OnDialogActionListener listener) {
+        openInputDialog(context, msg, null, listener);
+    }
+
+    public void openInputDialog(Context context, String msg, String initText, final OnDialogActionListener listener) {
         LinearLayout layout = new LinearLayout(context);
         layout.setPadding(40, 10, 40, 10);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -28,6 +33,9 @@ public class SimpleDialogs {
         EditText edit = new EditText(context);
         edit.setLayoutParams(params);
         layout.addView(edit);
+        if (!TextUtils.isEmpty(initText)) {
+            edit.setText(initText);
+        }
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
         if (msg == null) {
             dialog.setMessage("input content");
