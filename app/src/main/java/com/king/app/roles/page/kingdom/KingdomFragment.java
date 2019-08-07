@@ -1,13 +1,9 @@
 package com.king.app.roles.page.kingdom;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.king.app.jactionbar.OnConfirmListener;
-import com.king.app.jactionbar.OnMenuItemListener;
 import com.king.app.roles.R;
 import com.king.app.roles.databinding.AdapterKingdomItemBinding;
 import com.king.app.roles.model.entity.Kingdom;
@@ -27,11 +23,8 @@ public class KingdomFragment extends ModuleFragment<KingdomViewModel> {
 
     private KingdomAdapter kingdomAdapter;
 
-    public static KingdomFragment newInstance(long storyId) {
+    public static KingdomFragment newInstance() {
         KingdomFragment fragment = new KingdomFragment();
-        Bundle bundle = new Bundle();
-        bundle.putLong(KEY_STORY_ID, storyId);
-        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -43,22 +36,19 @@ public class KingdomFragment extends ModuleFragment<KingdomViewModel> {
     @Override
     protected void onCreate(View view) {
         holder.getJActionbar().inflateMenu(R.menu.page_kingdom);
-        holder.getJActionbar().setOnMenuItemListener(new OnMenuItemListener() {
-            @Override
-            public void onMenuItemSelected(int menuId) {
-                switch (menuId) {
-                    case R.id.menu_add:
-                        addNewItem();
-                        break;
-                    case R.id.menu_delete:
-                        holder.getJActionbar().showConfirmStatus(menuId);
-                        setDeleteMode(true);
-                        break;
-                    case R.id.menu_drag:
-                        holder.getJActionbar().showConfirmStatus(menuId);
-                        setDragMode(true);
-                        break;
-                }
+        holder.getJActionbar().setOnMenuItemListener(menuId -> {
+            switch (menuId) {
+                case R.id.menu_add:
+                    addNewItem();
+                    break;
+                case R.id.menu_delete:
+                    holder.getJActionbar().showConfirmStatus(menuId);
+                    setDeleteMode(true);
+                    break;
+                case R.id.menu_drag:
+                    holder.getJActionbar().showConfirmStatus(menuId);
+                    setDragMode(true);
+                    break;
             }
         });
         holder.getJActionbar().setOnConfirmListener(new OnConfirmListener() {
@@ -104,13 +94,8 @@ public class KingdomFragment extends ModuleFragment<KingdomViewModel> {
 
     @Override
     protected void loadData() {
-        viewModel.kingdomsObserver.observe(this, new Observer<List<Kingdom>>() {
-            @Override
-            public void onChanged(@Nullable List<Kingdom> kingdoms) {
-                showKingdoms(kingdoms);
-            }
-        });
-        viewModel.loadKingdoms(getStoryId());
+        viewModel.kingdomsObserver.observe(this, kingdoms -> showKingdoms(kingdoms));
+        viewModel.loadKingdoms();
     }
 
     private void showKingdoms(List<Kingdom> kingdoms) {

@@ -18,8 +18,6 @@ import com.king.app.roles.view.dialog.DraggableDialogFragment;
 
 public class StoryPageActivity extends MvvmActivity<ActivityStoryPageBinding, StoryPageViewModel> {
 
-    public static final String KEY_STORY_ID = "story_id";
-
     @Override
     protected int getContentView() {
         return R.layout.activity_story_page;
@@ -39,14 +37,12 @@ public class StoryPageActivity extends MvvmActivity<ActivityStoryPageBinding, St
     @Override
     protected void initData() {
         binding.setViewModel(viewModel);
-        long storyId = getIntent().getLongExtra(KEY_STORY_ID, -1);
-        viewModel.loadStory(storyId);
+        viewModel.loadStory();
         viewModel.moduleObserver.observe(this, integer -> startModuleActivity(integer));
     }
 
     private void startModuleActivity(int type) {
         Intent intent = new Intent().setClass(this, ModuleActivity.class);
-        intent.putExtra(ModuleActivity.KEY_STORY_ID, getIntent().getLongExtra(KEY_STORY_ID, -1));
         intent.putExtra(ModuleActivity.KEY_PAGE_TYPE, type);
         startActivity(intent);
     }
@@ -71,5 +67,11 @@ public class StoryPageActivity extends MvvmActivity<ActivityStoryPageBinding, St
                 .setContentFragment(editor)
                 .build();
         dialogFragment.show(getSupportFragmentManager(), "DraggableDialogFragment");
+    }
+
+    @Override
+    protected void onDestroy() {
+        StoryInstance.getInstance().destroy();
+        super.onDestroy();
     }
 }

@@ -1,9 +1,6 @@
 package com.king.app.roles.page.race;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.king.app.jactionbar.OnConfirmListener;
@@ -27,11 +24,8 @@ public class RaceFragment extends ModuleFragment<RaceViewModel> {
 
     private RaceAdapter raceAdapter;
 
-    public static RaceFragment newInstance(long storyId) {
+    public static RaceFragment newInstance() {
         RaceFragment fragment = new RaceFragment();
-        Bundle bundle = new Bundle();
-        bundle.putLong(KEY_STORY_ID, storyId);
-        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -104,13 +98,8 @@ public class RaceFragment extends ModuleFragment<RaceViewModel> {
 
     @Override
     protected void loadData() {
-        viewModel.racesObserver.observe(this, new Observer<List<Race>>() {
-            @Override
-            public void onChanged(@Nullable List<Race> races) {
-                showRaces(races);
-            }
-        });
-        viewModel.loadRaces(getStoryId());
+        viewModel.racesObserver.observe(this, races -> showRaces(races));
+        viewModel.loadRaces();
     }
 
     private void showRaces(List<Race> races) {

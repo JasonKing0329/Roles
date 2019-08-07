@@ -1,12 +1,10 @@
 package com.king.app.roles.page.role;
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.king.app.jactionbar.OnConfirmListener;
@@ -44,10 +42,9 @@ public class RoleFragment extends ModuleFragment<RoleViewModel> {
     private RelationsDialog relationsDialog;
     private RelationEditor relationEditor;
 
-    public static RoleFragment newInstance(long storyId, boolean selectMode) {
+    public static RoleFragment newInstance(boolean selectMode) {
         RoleFragment fragment = new RoleFragment();
         Bundle bundle = new Bundle();
-        bundle.putLong(KEY_STORY_ID, storyId);
         bundle.putBoolean(KEY_SELECT_MODE, selectMode);
         fragment.setArguments(bundle);
         return fragment;
@@ -139,13 +136,8 @@ public class RoleFragment extends ModuleFragment<RoleViewModel> {
 
     @Override
     protected void loadData() {
-        viewModel.rolesObserver.observe(this, new Observer<List<RoleItemBean>>() {
-            @Override
-            public void onChanged(@Nullable List<RoleItemBean> roleItemBeans) {
-                showRole(roleItemBeans);
-            }
-        });
-        viewModel.loadRoles(getStoryId());
+        viewModel.rolesObserver.observe(this, roleItemBeans -> showRole(roleItemBeans));
+        viewModel.loadRoles();
     }
 
     private void showRole(List<RoleItemBean> roles) {
@@ -161,6 +153,7 @@ public class RoleFragment extends ModuleFragment<RoleViewModel> {
                     showRoleEditor(data.getRole());
                 }
             });
+            roleAdapter.setOnRoleListener(role -> showRelationDialog(role.getRole()));
             binding.rvItems.setAdapter(roleAdapter);
         }
         else {
@@ -190,7 +183,7 @@ public class RoleFragment extends ModuleFragment<RoleViewModel> {
 
             @Override
             public long getStoryId() {
-                return RoleFragment.this.getStoryId();
+                return viewModel.getStoryId();
             }
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment.Builder()
@@ -213,7 +206,7 @@ public class RoleFragment extends ModuleFragment<RoleViewModel> {
 
             @Override
             public long getStoryId() {
-                return RoleFragment.this.getStoryId();
+                return viewModel.getStoryId();
             }
 
             @Override
@@ -254,7 +247,7 @@ public class RoleFragment extends ModuleFragment<RoleViewModel> {
 
             @Override
             public void onRelationDeleted(RoleRelations relations) {
-                roleEditor.refreshRelations();
+                refreshRoleEditor();
             }
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment.Builder()
@@ -262,6 +255,12 @@ public class RoleFragment extends ModuleFragment<RoleViewModel> {
                 .setContentFragment(relationsDialog)
                 .build();
         dialogFragment.show(getChildFragmentManager(), "RelationsDialog");
+    }
+
+    private void refreshRoleEditor() {
+        if (roleEditor != null && roleEditor.isVisible()) {
+            roleEditor.refreshRelations();
+        }
     }
 
     private void showRelationEditor(final Role role, final RoleRelations relation) {
@@ -281,7 +280,7 @@ public class RoleFragment extends ModuleFragment<RoleViewModel> {
             public void saveRelation(RoleRelations relations) {
                 relationsDialog.saveRelation(relations);
                 relationsDialog.refresh();
-                roleEditor.refreshRelations();
+                refreshRoleEditor();
             }
 
             @Override
@@ -307,23 +306,19 @@ public class RoleFragment extends ModuleFragment<RoleViewModel> {
         new SimpleDialogs().showWarningActionDialog(getActivity()
                 , "Delete role will delete all related data, click ok to continue"
                 , getString(R.string.ok), null
-                , new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (i == DialogInterface.BUTTON_POSITIVE) {
-                            viewModel.confirmDelete(roleAdapter.getSelectedData());
-                            loadData();
-                        }
-                        holder.getJActionbar().cancelConfirmStatus();
-                        setDeleteMode(false);
+                , (dialogInterface, i) -> {
+                    if (i == DialogInterface.BUTTON_POSITIVE) {
+                        viewModel.confirmDelete(roleAdapter.getSelectedData());
+                        loadData();
                     }
+                    holder.getJActionbar().cancelConfirmStatus();
+                    setDeleteMode(false);
                 });
     }
 
     private void selectChapter() {
 
         Intent intent = new Intent().setClass(getActivity(), ModuleActivity.class);
-        intent.putExtra(ModuleActivity.KEY_STORY_ID, getStoryId());
         intent.putExtra(ModuleActivity.KEY_PAGE_TYPE, ModuleActivity.PAGE_TYPE_CHAPTER);
         intent.putExtra(ModuleActivity.KEY_SELECT_MODE, true);
         startActivityForResult(intent, REQUEST_CHAPTER);
@@ -332,7 +327,6 @@ public class RoleFragment extends ModuleFragment<RoleViewModel> {
     private void selectRole() {
 
         Intent intent = new Intent().setClass(getActivity(), ModuleActivity.class);
-        intent.putExtra(ModuleActivity.KEY_STORY_ID, getStoryId());
         intent.putExtra(ModuleActivity.KEY_PAGE_TYPE, ModuleActivity.PAGE_TYPE_CHARACTER);
         intent.putExtra(ModuleActivity.KEY_SELECT_MODE, true);
         startActivityForResult(intent, REQUEST_ROLE);

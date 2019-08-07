@@ -5,7 +5,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.view.View;
 
-import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.model.entity.Race;
 import com.king.app.roles.model.entity.RaceDao;
@@ -14,8 +13,6 @@ import com.king.app.roles.page.module.ModuleViewModel;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -28,8 +25,6 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class RaceViewModel extends ModuleViewModel {
 
-    private long mStoryId;
-
     public MutableLiveData<List<Race>> racesObserver;
 
     public RaceViewModel(@NonNull Application application) {
@@ -39,9 +34,8 @@ public class RaceViewModel extends ModuleViewModel {
         normalVisibility.set(View.GONE);
     }
 
-    public void loadRaces(long storyId) {
-        mStoryId = storyId;
-        queryRaces(storyId)
+    public void loadRaces() {
+        queryRaces(getStoryId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<Race>>() {
@@ -68,23 +62,20 @@ public class RaceViewModel extends ModuleViewModel {
     }
 
     private Observable<List<Race>> queryRaces(final long storyId) {
-        return Observable.create(new ObservableOnSubscribe<List<Race>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<Race>> e) throws Exception {
-                RaceDao dao = RApplication.getInstance().getDaoSession().getRaceDao();
-                List<Race> list = dao.queryBuilder()
-                        .where(RaceDao.Properties.StoryId.eq(storyId))
-                        .orderAsc(RaceDao.Properties.Sequence)
-                        .build().list();
-                e.onNext(list);
-            }
+        return Observable.create(e -> {
+            RaceDao dao = RApplication.getInstance().getDaoSession().getRaceDao();
+            List<Race> list = dao.queryBuilder()
+                    .where(RaceDao.Properties.StoryId.eq(storyId))
+                    .orderAsc(RaceDao.Properties.Sequence)
+                    .build().list();
+            e.onNext(list);
         });
     }
 
     public void insertOrUpdate(Race race) {
         RaceDao dao = RApplication.getInstance().getDaoSession().getRaceDao();
         if (race.getId() == null) {
-            race.setStoryId(mStoryId);
+            race.setStoryId(getStoryId());
             race.setSequence((int) dao.count());
         }
         dao.insertOrReplace(race);

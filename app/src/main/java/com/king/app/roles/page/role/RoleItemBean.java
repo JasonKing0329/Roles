@@ -13,7 +13,13 @@ public class RoleItemBean {
 
     private String debut;
 
-    private int relations;
+    private String relations;
+
+    private String roleName;
+
+    private String power;
+
+    private String description;
 
     public Role getRole() {
         return role;
@@ -31,11 +37,35 @@ public class RoleItemBean {
         this.debut = debut;
     }
 
-    public int getRelations() {
+    public String getRelations() {
         return relations;
     }
 
-    public void setRelations(int relations) {
+    public void setRelations(String relations) {
         this.relations = relations;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public String getPower() {
+        return power;
+    }
+
+    public void setPower(String power) {
+        this.power = power;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

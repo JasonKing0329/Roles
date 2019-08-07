@@ -10,6 +10,7 @@ import com.king.app.roles.base.IFragmentHolder;
 import com.king.app.roles.base.MvvmFragment;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.conf.AppConstants;
+import com.king.app.roles.conf.StoryType;
 import com.king.app.roles.databinding.DialogRoleEditorBinding;
 import com.king.app.roles.model.entity.Chapter;
 import com.king.app.roles.model.entity.ChapterDao;
@@ -20,6 +21,7 @@ import com.king.app.roles.model.entity.RaceDao;
 import com.king.app.roles.model.entity.Role;
 import com.king.app.roles.model.entity.RoleRelations;
 import com.king.app.roles.model.entity.RoleRelationsDao;
+import com.king.app.roles.page.story.StoryInstance;
 import com.king.app.roles.utils.ListUtil;
 import com.king.app.roles.view.adapter.TagAdapter;
 import com.king.app.roles.view.dialog.DraggableHolder;
@@ -87,6 +89,14 @@ public class RoleEditor extends MvvmFragment<DialogRoleEditorBinding, BaseViewMo
 
     @Override
     protected void onCreateData() {
+
+        if (StoryInstance.getInstance().getStory().getType() == StoryType.R_K_C_C) {
+            binding.etPower.setVisibility(View.VISIBLE);
+        }
+        else {
+            binding.etPower.setVisibility(View.GONE);
+        }
+
         if (onRoleListener != null) {
             mRole = onRoleListener.getInitKingdom();
             // 编辑模式才显示Relations

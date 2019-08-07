@@ -188,7 +188,7 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
                     editStory(position, data);
                 }
                 else {
-                    startStoryPage(data.getId());
+                    startStoryPage(data);
                 }
             });
             storyListAdapter.setSwipeMenuRecyclerView(binding.rvStories);
@@ -199,9 +199,9 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
         }
     }
 
-    private void startStoryPage(long storyId) {
+    private void startStoryPage(Story story) {
+        StoryInstance.getInstance().setStory(story);
         Intent intent = new Intent().setClass(this, StoryPageActivity.class);
-        intent.putExtra(StoryPageActivity.KEY_STORY_ID, storyId);
         startActivity(intent);
     }
 

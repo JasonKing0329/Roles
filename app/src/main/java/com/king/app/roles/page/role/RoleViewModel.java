@@ -3,6 +3,7 @@ package com.king.app.roles.page.role;
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.king.app.roles.base.RApplication;
@@ -26,13 +27,9 @@ import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -41,8 +38,6 @@ import io.reactivex.schedulers.Schedulers;
  * <p/>创建时间: 2018/4/4 13:41
  */
 public class RoleViewModel extends ModuleViewModel {
-
-    private long mStoryId;
 
     public MutableLiveData<List<RoleItemBean>> rolesObserver;
 
@@ -53,15 +48,9 @@ public class RoleViewModel extends ModuleViewModel {
         normalVisibility.set(View.GONE);
     }
 
-    public void loadRoles(long storyId) {
-        mStoryId = storyId;
-        queryRoles(storyId, AppConstants.ROLE_SORT_BY_SEQUENCE)
-                .flatMap(new Function<List<Role>, ObservableSource<List<RoleItemBean>>>() {
-                    @Override
-                    public ObservableSource<List<RoleItemBean>> apply(List<Role> roles) throws Exception {
-                        return parseRoles(roles);
-                    }
-                })
+    public void loadRoles() {
+        queryRoles(getStoryId(), AppConstants.ROLE_SORT_BY_SEQUENCE)
+                .flatMap(roles -> parseRoles(roles))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<RoleItemBean>>() {
@@ -88,48 +77,68 @@ public class RoleViewModel extends ModuleViewModel {
     }
 
     private Observable<List<Role>> queryRoles(final long storyId, final int orderType) {
-        return Observable.create(new ObservableOnSubscribe<List<Role>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<Role>> e) throws Exception {
-                RoleDao dao = RApplication.getInstance().getDaoSession().getRoleDao();
-                QueryBuilder<Role> builder = dao.queryBuilder();
-                builder.where(RoleDao.Properties.StoryId.eq(storyId));
-                if (orderType == AppConstants.ROLE_SORT_BY_NAME) {
-                    builder.orderAsc(RoleDao.Properties.Name);
-                }
-                else {
-                    builder.orderAsc(RoleDao.Properties.Sequence);
-                }
-                List<Role> list = builder
-                        .build().list();
-                e.onNext(list);
+        return Observable.create(e -> {
+            RoleDao dao = RApplication.getInstance().getDaoSession().getRoleDao();
+            QueryBuilder<Role> builder = dao.queryBuilder();
+            builder.where(RoleDao.Properties.StoryId.eq(storyId));
+            if (orderType == AppConstants.ROLE_SORT_BY_NAME) {
+                builder.orderAsc(RoleDao.Properties.Name);
             }
+            else {
+                builder.orderAsc(RoleDao.Properties.Sequence);
+            }
+            List<Role> list = builder
+                    .build().list();
+            e.onNext(list);
         });
     }
 
     private Observable<List<RoleItemBean>> parseRoles(final List<Role> list) {
-        return Observable.create(new ObservableOnSubscribe<List<RoleItemBean>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<RoleItemBean>> e) throws Exception {
-                List<RoleItemBean> roleItemBeans = new ArrayList<>();
-                RoleRelationsDao dao = RApplication.getInstance().getDaoSession().getRoleRelationsDao();
-                for (Role role:list) {
-                    RoleItemBean bean = new RoleItemBean();
-                    bean.setRole(role);
-                    bean.setDebut(getDebutText(role.getChapter()));
-
-                    QueryBuilder<RoleRelations> builder = dao.queryBuilder();
-                    int number = (int) builder
-                            .where(builder.or(RoleRelationsDao.Properties.RoleId.eq(role.getId()), RoleRelationsDao.Properties.RelationId.eq(role.getId())))
-                            .buildCount().count();
-                    bean.setRelations(number);
-
-                    roleItemBeans.add(bean);
+        return Observable.create(e -> {
+            List<RoleItemBean> roleItemBeans = new ArrayList<>();
+            RoleRelationsDao dao = RApplication.getInstance().getDaoSession().getRoleRelationsDao();
+            for (Role role:list) {
+                RoleItemBean bean = new RoleItemBean();
+                bean.setRole(role);
+                bean.setPower(role.getPower());
+                bean.setDebut(getDebutText(role.getChapter()));
+                if (TextUtils.isEmpty(role.getNickname())) {
+                    bean.setRoleName(role.getName());
+                }
+                else {
+                    bean.setRoleName(role.getName() + "(" + role.getNickname() + ")");
+                }
+                List<Race> races = role.getRaceList();
+                if (ListUtil.isEmpty(races)) {
+                    bean.setDescription(role.getDescription());
+                }
+                else {
+                    bean.setDescription(getRaceText(role) + ", " + role.getDescription());
                 }
 
-                e.onNext(roleItemBeans);
+                QueryBuilder<RoleRelations> builder = dao.queryBuilder();
+                int number = (int) builder
+                        .where(builder.or(RoleRelationsDao.Properties.RoleId.eq(role.getId()), RoleRelationsDao.Properties.RelationId.eq(role.getId())))
+                        .buildCount().count();
+                if (number > 0) {
+                    bean.setRelations(number + " relationships");
+                }
+
+                roleItemBeans.add(bean);
             }
+
+            e.onNext(roleItemBeans);
         });
+    }
+
+    private String getRaceText(Role role) {
+        List<Race> races = role.getRaceList();
+        if (races.size() > 1) {
+            return "Mix of " + races.get(0).getName() + " and " + races.get(1).getName();
+        }
+        else {
+            return races.get(0).getName();
+        }
     }
 
     private String getDebutText(Chapter chapter) {
@@ -148,7 +157,7 @@ public class RoleViewModel extends ModuleViewModel {
         RoleDao dao = RApplication.getInstance().getDaoSession().getRoleDao();
         RoleRacesDao roleRacesDao = RApplication.getInstance().getDaoSession().getRoleRacesDao();
         if (role.getId() == null) {
-            role.setStoryId(mStoryId);
+            role.setStoryId(getStoryId());
             role.setSequence((int) dao.count());
         }
         else {
@@ -219,19 +228,9 @@ public class RoleViewModel extends ModuleViewModel {
     }
 
     public void sortAndFilter(int sortType, final List<Race> races, final Kingdom kingdom) {
-        queryRoles(mStoryId, sortType)
-                .flatMap(new Function<List<Role>, ObservableSource<List<Role>>>() {
-                    @Override
-                    public ObservableSource<List<Role>> apply(List<Role> roles) throws Exception {
-                        return filterRole(roles, races, kingdom);
-                    }
-                })
-                .flatMap(new Function<List<Role>, ObservableSource<List<RoleItemBean>>>() {
-                    @Override
-                    public ObservableSource<List<RoleItemBean>> apply(List<Role> roles) throws Exception {
-                        return parseRoles(roles);
-                    }
-                })
+        queryRoles(getStoryId(), sortType)
+                .flatMap(roles -> filterRole(roles, races, kingdom))
+                .flatMap(roles -> parseRoles(roles))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<RoleItemBean>>() {
@@ -258,29 +257,26 @@ public class RoleViewModel extends ModuleViewModel {
     }
 
     private Observable<List<Role>> filterRole(final List<Role> roles, final List<Race> races, final Kingdom kingdom) {
-        return Observable.create(new ObservableOnSubscribe<List<Role>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<Role>> e) throws Exception {
-                if (ListUtil.isEmpty(races) && kingdom == null) {
-                    e.onNext(roles);
-                }
-                else {
-                    List<Role> list = new ArrayList<>();
-                    for (Role role:roles) {
-                        if (!ListUtil.isEmpty(races)) {
-                            if (!isSameRace(role.getRaceList(), races)) {
-                                continue;
-                            }
+        return Observable.create(e -> {
+            if (ListUtil.isEmpty(races) && kingdom == null) {
+                e.onNext(roles);
+            }
+            else {
+                List<Role> list = new ArrayList<>();
+                for (Role role:roles) {
+                    if (!ListUtil.isEmpty(races)) {
+                        if (!isSameRace(role.getRaceList(), races)) {
+                            continue;
                         }
-                        if (kingdom != null) {
-                            if (role.getKingdomId() != kingdom.getId()) {
-                                continue;
-                            }
-                        }
-                        list.add(role);
                     }
-                    e.onNext(list);
+                    if (kingdom != null) {
+                        if (role.getKingdomId() != kingdom.getId()) {
+                            continue;
+                        }
+                    }
+                    list.add(role);
                 }
+                e.onNext(list);
             }
         });
     }

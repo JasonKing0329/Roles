@@ -15,13 +15,6 @@ import com.king.app.roles.model.entity.Story;
 import com.king.app.roles.model.entity.StoryDao;
 import com.king.app.roles.page.module.ModuleActivity;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-
 /**
  * 描述:
  * <p/>作者：景阳
@@ -41,52 +34,24 @@ public class StoryPageViewModel extends BaseViewModel {
         super(application);
     }
 
-    public void loadStory(final long storyId) {
-        Observable.create((ObservableOnSubscribe<Story>) e -> {
-            StoryDao dao = RApplication.getInstance().getDaoSession().getStoryDao();
-            Story story = dao.queryBuilder()
-                    .where(StoryDao.Properties.Id.eq(storyId))
-                    .build().unique();
-            e.onNext(story);
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<Story>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
+    public void loadStory() {
+        mStory = StoryInstance.getInstance().getStory();
+        if (mStory.getType() == StoryType.R_K_C_C) {
+            raceVisibility.set(View.VISIBLE);
+            kingdomVisibility.set(View.VISIBLE);
+        }
+        else {
+            raceVisibility.set(View.GONE);
+            kingdomVisibility.set(View.GONE);
+        }
 
-                    @Override
-                    public void onNext(Story story) {
-                        if (story.getType() == StoryType.R_K_C_C) {
-                            raceVisibility.set(View.VISIBLE);
-                            kingdomVisibility.set(View.VISIBLE);
-                        }
-                        else {
-                            raceVisibility.set(View.GONE);
-                            kingdomVisibility.set(View.GONE);
-                        }
-
-                        mStory = story;
-                        titleText.set(story.getName());
-                        if (TextUtils.isEmpty(story.getDescription())) {
-                            descriptionText.set("No description, press to add one.");
-                        }
-                        else {
-                            descriptionText.set(story.getDescription());
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        titleText.set(mStory.getName());
+        if (TextUtils.isEmpty(mStory.getDescription())) {
+            descriptionText.set("No description, press to add one.");
+        }
+        else {
+            descriptionText.set(mStory.getDescription());
+        }
     }
 
     public void saveDescription(String content) {

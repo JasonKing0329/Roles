@@ -5,6 +5,8 @@ import android.databinding.ObservableInt;
 import android.support.annotation.NonNull;
 
 import com.king.app.roles.base.BaseViewModel;
+import com.king.app.roles.model.entity.Story;
+import com.king.app.roles.page.story.StoryInstance;
 
 /**
  * 描述:
@@ -20,5 +22,13 @@ public class ModuleViewModel extends BaseViewModel {
         super(application);
         draggableVisibility = new ObservableInt();
         normalVisibility = new ObservableInt();
+    }
+
+    public Story getStory() {
+        return StoryInstance.getInstance().getStory();
+    }
+
+    public long getStoryId() {
+        return StoryInstance.getInstance().getStory().getId();
     }
 }

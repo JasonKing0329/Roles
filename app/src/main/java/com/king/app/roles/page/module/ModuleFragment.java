@@ -20,7 +20,6 @@ import com.yanzhenjie.recyclerview.swipe.touch.OnItemStateChangedListener;
 
 public abstract class ModuleFragment<VM extends ModuleViewModel> extends MvvmFragment<FragmentModuleBinding, VM> {
 
-    protected static final String KEY_STORY_ID = "story_id";
     protected static final String KEY_SELECT_MODE = "select_mode";
 
     protected ModuleFragmentHolder holder;
@@ -96,10 +95,6 @@ public abstract class ModuleFragment<VM extends ModuleViewModel> extends MvvmFra
                 }
             }
         });
-    }
-
-    protected long getStoryId() {
-        return getArguments().getLong(KEY_STORY_ID);
     }
 
     protected boolean isSelectMode() {

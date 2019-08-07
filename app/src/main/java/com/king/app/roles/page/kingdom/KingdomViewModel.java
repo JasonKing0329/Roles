@@ -27,8 +27,6 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class KingdomViewModel extends ModuleViewModel {
 
-    private long mStoryId;
-
     public MutableLiveData<List<Kingdom>> kingdomsObserver;
 
     public KingdomViewModel(@NonNull Application application) {
@@ -38,9 +36,8 @@ public class KingdomViewModel extends ModuleViewModel {
         normalVisibility.set(View.GONE);
     }
 
-    public void loadKingdoms(long storyId) {
-        mStoryId = storyId;
-        queryKingdoms(storyId)
+    public void loadKingdoms() {
+        queryKingdoms(getStoryId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<Kingdom>>() {
@@ -83,7 +80,7 @@ public class KingdomViewModel extends ModuleViewModel {
     public void insertOrUpdate(Kingdom kingdom) {
         KingdomDao dao = RApplication.getInstance().getDaoSession().getKingdomDao();
         if (kingdom.getId() == null) {
-            kingdom.setStoryId(mStoryId);
+            kingdom.setStoryId(getStoryId());
             kingdom.setSequence((int) dao.count());
         }
         dao.insertOrReplace(kingdom);

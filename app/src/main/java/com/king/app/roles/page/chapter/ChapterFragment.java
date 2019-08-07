@@ -1,10 +1,8 @@
 package com.king.app.roles.page.chapter;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.king.app.jactionbar.OnMenuItemListener;
@@ -24,10 +22,9 @@ import java.util.List;
  */
 public class ChapterFragment extends ModuleFragment<ChapterViewModel> {
 
-    public static ChapterFragment newInstance(long storyId, boolean selectMode) {
+    public static ChapterFragment newInstance(boolean selectMode) {
         ChapterFragment fragment = new ChapterFragment();
         Bundle bundle = new Bundle();
-        bundle.putLong(KEY_STORY_ID, storyId);
         bundle.putBoolean(KEY_SELECT_MODE, selectMode);
         fragment.setArguments(bundle);
         return fragment;
@@ -58,13 +55,8 @@ public class ChapterFragment extends ModuleFragment<ChapterViewModel> {
 
     @Override
     protected void loadData() {
-        viewModel.chaptersObserver.observe(this, new Observer<List<FirstLevelItem>>() {
-            @Override
-            public void onChanged(@Nullable List<FirstLevelItem> levelItems) {
-                showChapters(levelItems);
-            }
-        });
-        viewModel.loadChapters(getStoryId());
+        viewModel.chaptersObserver.observe(this, levelItems -> showChapters(levelItems));
+        viewModel.loadChapters();
     }
 
     private void showChapters(List<FirstLevelItem> list) {
@@ -110,7 +102,7 @@ public class ChapterFragment extends ModuleFragment<ChapterViewModel> {
 
             @Override
             public long getStoryId() {
-                return getArguments().getLong(KEY_STORY_ID);
+                return viewModel.getStoryId();
             }
 
             @Override
@@ -123,12 +115,7 @@ public class ChapterFragment extends ModuleFragment<ChapterViewModel> {
                 .setContentFragment(editor);
         if (chapter != null && chapter.getId() != null) {
             builder.setShowDelete(true)
-                    .setOnDeleteListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            deleteChapter(chapter);
-                        }
-                    });
+                    .setOnDeleteListener(view -> deleteChapter(chapter));
         }
         editorDialog = builder.build();
         editorDialog.show(getChildFragmentManager(), "DraggableDialogFragment");
@@ -138,14 +125,11 @@ public class ChapterFragment extends ModuleFragment<ChapterViewModel> {
         new SimpleDialogs().showWarningActionDialog(getActivity()
                 , "Delete chapter will delete all related data, click ok to continue"
                 , getString(R.string.ok), null
-                , new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (i == DialogInterface.BUTTON_POSITIVE) {
-                            viewModel.delete(chapter);
-                            loadData();
-                            editorDialog.dismiss();
-                        }
+                , (dialogInterface, i) -> {
+                    if (i == DialogInterface.BUTTON_POSITIVE) {
+                        viewModel.delete(chapter);
+                        loadData();
+                        editorDialog.dismiss();
                     }
                 });
     }

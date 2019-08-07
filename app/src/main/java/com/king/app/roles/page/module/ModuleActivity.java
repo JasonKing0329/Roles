@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 
 import com.king.app.jactionbar.JActionbar;
-import com.king.app.jactionbar.OnBackListener;
 import com.king.app.roles.R;
 import com.king.app.roles.base.MvvmActivity;
 import com.king.app.roles.databinding.ActivityStoryModuleBinding;
@@ -21,7 +20,6 @@ import com.king.app.roles.page.role.RoleFragment;
 
 public class ModuleActivity extends MvvmActivity<ActivityStoryModuleBinding, ModuleViewModel> implements ModuleFragmentHolder {
 
-    public static final String KEY_STORY_ID = "story_id";
     public static final String KEY_SELECT_MODE = "select_mode";
     public static final String KEY_PAGE_TYPE = "key_page_type";
 
@@ -46,12 +44,7 @@ public class ModuleActivity extends MvvmActivity<ActivityStoryModuleBinding, Mod
 
     @Override
     protected void initView() {
-        binding.actionbar.setOnBackListener(new OnBackListener() {
-            @Override
-            public void onBack() {
-                onBackPressed();
-            }
-        });
+        binding.actionbar.setOnBackListener(() -> onBackPressed());
     }
 
     @Override
@@ -61,23 +54,22 @@ public class ModuleActivity extends MvvmActivity<ActivityStoryModuleBinding, Mod
 
     private void initFragment() {
         int type = getIntent().getIntExtra(KEY_PAGE_TYPE, PAGE_TYPE_RACE);
-        long storyId = getIntent().getLongExtra(KEY_STORY_ID, -1);
         boolean selectMode = getIntent().getBooleanExtra(KEY_SELECT_MODE, false);
         switch (type) {
             case PAGE_TYPE_RACE:
-                mFragment = RaceFragment.newInstance(storyId);
+                mFragment = RaceFragment.newInstance();
                 binding.actionbar.setTitle("Races");
                 break;
             case PAGE_TYPE_KINGDOM:
-                mFragment = KingdomFragment.newInstance(storyId);
+                mFragment = KingdomFragment.newInstance();
                 binding.actionbar.setTitle("Kingdoms");
                 break;
             case PAGE_TYPE_CHAPTER:
-                mFragment = ChapterFragment.newInstance(storyId, selectMode);
+                mFragment = ChapterFragment.newInstance(selectMode);
                 binding.actionbar.setTitle("Chapters");
                 break;
             case PAGE_TYPE_CHARACTER:
-                mFragment = RoleFragment.newInstance(storyId, selectMode);
+                mFragment = RoleFragment.newInstance(selectMode);
                 binding.actionbar.setTitle("Characters");
                 binding.actionbar.enableSearch();
                 break;

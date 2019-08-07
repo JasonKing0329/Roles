@@ -129,6 +129,10 @@ public abstract class ModuleAdapter<V extends ViewDataBinding, T> extends BaseBi
 
     protected abstract void onBindSubHolder(V holder, int position);
 
+    public T getData(int position) {
+        return list.get(position);
+    }
+
     public void filter(String text) {
         if (!text.equals(mKeyword)) {
             list.clear();

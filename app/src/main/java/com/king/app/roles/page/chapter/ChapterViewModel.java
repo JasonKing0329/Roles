@@ -17,11 +17,9 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -30,8 +28,6 @@ import io.reactivex.schedulers.Schedulers;
  * <p/>创建时间: 2018/4/4 13:41
  */
 public class ChapterViewModel extends ModuleViewModel {
-
-    private long mStoryId;
 
     public MutableLiveData<List<FirstLevelItem>> chaptersObserver;
 
@@ -42,15 +38,9 @@ public class ChapterViewModel extends ModuleViewModel {
         normalVisibility.set(View.VISIBLE);
     }
 
-    public void loadChapters(long storyId) {
-        mStoryId = storyId;
-        queryFirstChapters(storyId)
-                .flatMap(new Function<List<Chapter>, ObservableSource<List<FirstLevelItem>>>() {
-                    @Override
-                    public ObservableSource<List<FirstLevelItem>> apply(List<Chapter> chapters) throws Exception {
-                        return parseFirstChapters(chapters);
-                    }
-                })
+    public void loadChapters() {
+        queryFirstChapters(getStoryId())
+                .flatMap(chapters -> parseFirstChapters(chapters))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<FirstLevelItem>>() {
@@ -109,7 +99,7 @@ public class ChapterViewModel extends ModuleViewModel {
     public void insertOrUpdate(Chapter chapter) {
         ChapterDao dao = RApplication.getInstance().getDaoSession().getChapterDao();
         if (chapter.getId() == null) {
-            chapter.setStoryId(mStoryId);
+            chapter.setStoryId(getStoryId());
         }
         dao.insertOrReplace(chapter);
         dao.detachAll();

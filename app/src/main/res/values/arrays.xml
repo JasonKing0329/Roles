@@ -5,10 +5,16 @@
         <item>Level 2</item>
     </array>
     <array name="relation_type">
+        <item>Parentage</item>
+        <item>Siblings</item>
         <item>Relative</item>
-        <item>Lover</item>
-        <item>Friend</item>
         <item>Relative in law</item>
+        <item>Friend</item>
+        <item>Sex Partner</item>
+        <item>Affair</item>
+        <item>Lover</item>
+        <item>Married</item>
+        <item>Life Partner</item>
     </array>
     <array name="story_types">
         <item>Chapter + Character</item>
