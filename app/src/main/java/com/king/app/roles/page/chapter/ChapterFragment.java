@@ -2,6 +2,7 @@ package com.king.app.roles.page.chapter;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -76,8 +77,19 @@ public class ChapterFragment extends ModuleFragment<ChapterViewModel> {
             public void onEditItem(Chapter chapter, int position) {
                 editChapter(chapter);
             }
+
+            @Override
+            public void onEditSubItem(Chapter chapter, int position) {
+                editChapterContent(chapter);
+            }
         });
         binding.rvItemsNormal.setAdapter(chapterAdapter);
+    }
+
+    private void editChapterContent(Chapter chapter) {
+        Intent intent = new Intent(getContext(), EditorActivity.class);
+        intent.putExtra(EditorActivity.EXTRA_CHAPTER_ID, chapter.getId());
+        startActivity(intent);
     }
 
     @Override

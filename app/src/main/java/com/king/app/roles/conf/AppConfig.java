@@ -16,8 +16,11 @@ public class AppConfig {
 
     public static final String EXPORT_BASE = DEF_CONTENT + "/export";
     public static final String HISTORY_BASE = DEF_CONTENT + "/history";
+    public static final String CONTENT_BASE = DEF_CONTENT + "/content";
 
     public static final String[] DIRS = new String[] {
-            DEF_CONTENT, EXPORT_BASE, HISTORY_BASE
+            DEF_CONTENT, EXPORT_BASE, HISTORY_BASE, CONTENT_BASE
     };
+
+    public static final String CONTENT_EXTRA = ".rd";
 }

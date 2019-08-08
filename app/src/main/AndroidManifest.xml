@@ -63,6 +63,10 @@
             android:name=".page.module.ModuleActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomActionBarTheme"></activity>
+        <activity
+            android:name=".page.chapter.EditorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CustomActionBarTheme"></activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

@@ -11,4 +11,6 @@ public interface OnChapterItemListener {
     void onClickChapter(Chapter chapter, int positionInList);
 
     void onEditItem(Chapter chapter, int position);
+
+    void onEditSubItem(Chapter chapter, int position);
 }

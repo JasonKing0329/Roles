@@ -49,7 +49,6 @@ public class SecondLevelAdapter extends AbstractExpandableAdapterItem implements
     @Override
     public void onUpdateViews(Object model, int position) {
         super.onUpdateViews(model, position);
-        ivEdit.setVisibility(View.GONE);
         Chapter chapter = (Chapter) model;
         tvName.setText("    (" + chapter.getIndex() + ") " + chapter.getName());
         if (TextUtils.isEmpty(chapter.getDescription())) {
@@ -64,6 +63,13 @@ public class SecondLevelAdapter extends AbstractExpandableAdapterItem implements
         info.position = position;
         groupItem.setTag(info);
         groupItem.setOnClickListener(this);
+
+        ivEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onChapterItemListener.onEditSubItem(chapter, position);
+            }
+        });
     }
 
     private class ItemInfo {

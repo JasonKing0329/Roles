@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="model"
+            type="com.king.app.roles.page.chapter.EditorViewModel"/>
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.king.app.jactionbar.JActionbar
+            android:id="@+id/actionbar"
+            android:layout_width="0dp"
+            android:layout_height="?android:attr/actionBarSize"
+            android:theme="@style/EtActionSearch"
+            android:background="@color/actionbar_bg"
+            app:rippleColor="#33000000"
+            app:showIconBack="true"
+            app:titleSize="18dp"
+            app:title="@{model.chapterName}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/editor_ic_size"
+            android:background="#e3e3e3"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <ImageView
+                    android:id="@+id/iv_undo"
+                    style="@style/IvEditorIcon"
+                    android:src="@drawable/ic_undo_black_36dp" />
+                <ImageView
+                    android:id="@+id/iv_redo"
+                    style="@style/IvEditorIcon"
+                    android:src="@drawable/ic_redo_black_36dp" />
+                <ImageView
+                    android:id="@+id/iv_indent"
+                    style="@style/IvEditorIcon"
+                    android:src="@drawable/ic_format_indent_increase_black_36dp" />
+                <ImageView
+                    android:id="@+id/iv_bold"
+                    style="@style/IvEditorIcon"
+                    android:src="@drawable/ic_format_bold_black_36dp" />
+                <ImageView
+                    android:id="@+id/iv_text"
+                    style="@style/IvEditorIcon"
+                    android:src="@drawable/ic_text_format_black_36dp" />
+                <ImageView
+                    android:id="@+id/iv_color"
+                    style="@style/IvEditorIcon"
+                    android:src="@drawable/ic_color_lens_black_36dp" />
+                <ImageView
+                    android:id="@+id/iv_image"
+                    style="@style/IvEditorIcon"
+                    android:src="@drawable/ic_insert_photo_black_36dp" />
+                <ImageView
+                    android:id="@+id/iv_save_as"
+                    style="@style/IvEditorIcon"
+                    android:src="@drawable/ic_save_black_36dp" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <com.king.app.roles.view.widget.rich.RichEditor
+            android:id="@+id/editor"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/actionbar" />
+    </android.support.constraint.ConstraintLayout>
+</layout>

@@ -1,14 +1,14 @@
 package com.king.app.roles.model.entity;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.annotation.ToOne;
 
 import java.util.List;
-import org.greenrobot.greendao.DaoException;
-import org.greenrobot.greendao.annotation.NotNull;
 
 /**
  * @desc
@@ -32,6 +32,8 @@ public class Chapter {
 
     private String description;
 
+    private String file;
+
     @ToOne(joinProperty = "parentId")
     private Chapter parent;
 
@@ -49,9 +51,9 @@ public class Chapter {
     @Generated(hash = 1293412156)
     private transient Long parent__resolvedKey;
 
-    @Generated(hash = 969567867)
-    public Chapter(Long id, long storyId, int level, int index, long parentId,
-            String name, String description) {
+    @Generated(hash = 1514922719)
+    public Chapter(Long id, long storyId, int level, int index, long parentId, String name,
+            String description, String file) {
         this.id = id;
         this.storyId = storyId;
         this.level = level;
@@ -59,6 +61,7 @@ public class Chapter {
         this.parentId = parentId;
         this.name = name;
         this.description = description;
+        this.file = file;
     }
 
     @Generated(hash = 393170288)
@@ -216,6 +219,14 @@ public class Chapter {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    public String getFile() {
+        return this.file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
     }
 
     /** called by internal mechanisms, do not call yourself. */

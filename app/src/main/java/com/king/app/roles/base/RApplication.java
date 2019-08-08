@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
 import com.king.app.roles.conf.AppConfig;
+import com.king.app.roles.model.entity.ChapterDao;
 import com.king.app.roles.model.entity.DaoMaster;
 import com.king.app.roles.model.entity.DaoSession;
 import com.king.app.roles.utils.DebugLog;
@@ -88,6 +89,12 @@ public class RApplication extends Application {
 		@Override
 		public void onUpgrade(Database db, int oldVersion, int newVersion) {
 			DebugLog.e(" oldVersion=" + oldVersion + ", newVersion=" + newVersion);
+			switch (oldVersion) {
+				case 1:
+					db.execSQL("ALTER TABLE " + ChapterDao.TABLENAME + " ADD COLUMN "
+							+ ChapterDao.Properties.File.columnName + " TEXT");
+					break;
+			}
 		}
 	}
 }
