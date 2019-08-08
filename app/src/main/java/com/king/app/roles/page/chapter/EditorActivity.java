@@ -3,6 +3,7 @@ package com.king.app.roles.page.chapter;
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.PorterDuff;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
@@ -13,6 +14,7 @@ import com.king.app.roles.databinding.ActivityWritingEditorBinding;
 import com.king.app.roles.utils.ScreenUtils;
 import com.king.app.roles.view.dialog.AlertDialogFragment;
 import com.king.app.roles.view.dialog.DraggableDialogFragment;
+import com.king.app.roles.view.widget.rich.RichEditor;
 
 /**
  * Desc:
@@ -79,6 +81,16 @@ public class EditorActivity extends MvvmActivity<ActivityWritingEditorBinding, E
         binding.ivText.setOnClickListener(v -> setTextSize());
         binding.ivColor.setOnClickListener(v -> setTextColor());
         binding.ivImage.setOnClickListener(v -> selectImage());
+        binding.tvHtml.setOnClickListener(v -> {
+            if (binding.etPreview.getVisibility() == View.VISIBLE) {
+                binding.editor.setHtml(binding.etPreview.getText().toString());
+                binding.etPreview.setVisibility(View.GONE);
+            }
+            else {
+                binding.etPreview.setText(binding.editor.getHtml());
+                binding.etPreview.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void selectImage() {
