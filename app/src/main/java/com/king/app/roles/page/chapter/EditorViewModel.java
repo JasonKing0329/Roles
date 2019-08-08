@@ -3,12 +3,18 @@ package com.king.app.roles.page.chapter;
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.databinding.ObservableField;
+import android.graphics.BitmapFactory;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.model.ChapterModel;
 import com.king.app.roles.model.entity.Chapter;
+import com.king.app.roles.utils.ScreenUtils;
+
+import java.io.File;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -30,6 +36,8 @@ public class EditorViewModel extends BaseViewModel {
     public MutableLiveData<String> contentObserver = new MutableLiveData<>();
 
     public MutableLiveData<Boolean> selectFileType = new MutableLiveData<>();
+
+    public MutableLiveData<ImageBean> insertImage = new MutableLiveData<>();
 
     private ChapterModel chapterModel;
 
@@ -146,5 +154,41 @@ public class EditorViewModel extends BaseViewModel {
             }
             e.onNext(result);
         });
+    }
+
+    public void insertImageToHtml(String imagePath) {
+        //获取图片的宽高
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        BitmapFactory.decodeFile(imagePath, options);
+        int height = options.outHeight;
+        int width = options.outWidth;
+        int maxWidth = 200;// html里直接是dp
+        int maxHeight = 200;// html里直接是dp
+        ImageBean bean = new ImageBean();
+        bean.setFilePath(imagePath);
+        bean.setAlt(new File(imagePath).getName());
+        if (width > height) {
+            if (width > maxWidth) {
+                bean.setWidth(maxWidth);
+                double ratio = (double) width / (double) maxWidth;
+                bean.setHeight((int) (height / ratio));
+            }
+            else {
+                bean.setWidth(width);
+                bean.setHeight(height);
+            }
+        }
+        else {
+            if (height > maxHeight) {
+                bean.setHeight(maxHeight);
+                double ratio = (double) height / (double) maxHeight;
+                bean.setWidth((int) (width / ratio));
+            }
+            else {
+                bean.setWidth(width);
+                bean.setHeight(height);
+            }
+        }
+        insertImage.setValue(bean);
     }
 }

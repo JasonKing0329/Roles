@@ -23,4 +23,6 @@ public class AppConfig {
     };
 
     public static final String CONTENT_EXTRA = ".rd";
+
+    public static final String IMG_SELECT_ROOT = SDCARD + "/fileencrypt/img/gdb";
 }

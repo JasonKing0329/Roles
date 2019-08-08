@@ -1,7 +1,10 @@
 package com.king.app.roles.page.chapter;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -11,6 +14,7 @@ import com.king.app.jactionbar.OnConfirmListener;
 import com.king.app.roles.R;
 import com.king.app.roles.base.MvvmActivity;
 import com.king.app.roles.databinding.ActivityWritingEditorBinding;
+import com.king.app.roles.page.selector.ImageSelectorActivity;
 import com.king.app.roles.utils.ScreenUtils;
 import com.king.app.roles.view.dialog.AlertDialogFragment;
 import com.king.app.roles.view.dialog.DraggableDialogFragment;
@@ -25,6 +29,8 @@ import com.king.app.roles.view.widget.rich.RichEditor;
 public class EditorActivity extends MvvmActivity<ActivityWritingEditorBinding, EditorViewModel> {
 
     public static String EXTRA_CHAPTER_ID = "chapter_id";
+
+    private final int REQUEST_IMAGE = 101;
 
     private int mColor;
 
@@ -94,6 +100,19 @@ public class EditorActivity extends MvvmActivity<ActivityWritingEditorBinding, E
     }
 
     private void selectImage() {
+        Intent intent = new Intent(this, ImageSelectorActivity.class);
+        startActivityForResult(intent, REQUEST_IMAGE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE) {
+            if (resultCode == RESULT_OK) {
+                String imagePath = data.getStringExtra(ImageSelectorActivity.RESP_FILE_PATH);
+                viewModel.insertImageToHtml(imagePath);
+            }
+        }
     }
 
     private void setTextSize() {
@@ -151,6 +170,7 @@ public class EditorActivity extends MvvmActivity<ActivityWritingEditorBinding, E
     protected void initData() {
         viewModel.selectFileType.observe(this, result -> selectFileType());
         viewModel.contentObserver.observe(this, content -> showContent(content));
+        viewModel.insertImage.observe(this, bean -> binding.editor.insertImage("file://" + bean.getFilePath(), bean.getAlt(), bean.getWidth(), bean.getHeight()));
         viewModel.loadData(getChapterId());
     }
 
