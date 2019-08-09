@@ -4,15 +4,12 @@ import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.databinding.ObservableField;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.model.ChapterModel;
 import com.king.app.roles.model.entity.Chapter;
-import com.king.app.roles.utils.ScreenUtils;
 
 import java.io.File;
 
@@ -156,14 +153,18 @@ public class EditorViewModel extends BaseViewModel {
         });
     }
 
-    public void insertImageToHtml(String imagePath) {
+    /**
+     * 控制<img标签的宽高
+     * @param imagePath
+     * @param maxWidth html里直接是dp
+     * @param maxHeight html里直接是dp
+     */
+    public void insertImageToHtml(String imagePath, int maxWidth, int maxHeight) {
         //获取图片的宽高
         BitmapFactory.Options options = new BitmapFactory.Options();
         BitmapFactory.decodeFile(imagePath, options);
         int height = options.outHeight;
         int width = options.outWidth;
-        int maxWidth = 200;// html里直接是dp
-        int maxHeight = 200;// html里直接是dp
         ImageBean bean = new ImageBean();
         bean.setFilePath(imagePath);
         bean.setAlt(new File(imagePath).getName());

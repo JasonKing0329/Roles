@@ -95,4 +95,12 @@ public class SettingProperty {
         return getBoolean("enable_finger_print");
     }
 
+    public static void setInsertImageSize(int size) {
+        setInt("insert_image_size", size);
+    }
+
+    public static int getInsertImageSize() {
+        return getInt("insert_image_size", 200);
+    }
+
 }

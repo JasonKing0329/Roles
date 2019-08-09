@@ -2,7 +2,6 @@ package com.king.app.roles.page.chapter;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -18,7 +17,6 @@ import com.king.app.roles.page.selector.ImageSelectorActivity;
 import com.king.app.roles.utils.ScreenUtils;
 import com.king.app.roles.view.dialog.AlertDialogFragment;
 import com.king.app.roles.view.dialog.DraggableDialogFragment;
-import com.king.app.roles.view.widget.rich.RichEditor;
 
 /**
  * Desc:
@@ -110,9 +108,21 @@ public class EditorActivity extends MvvmActivity<ActivityWritingEditorBinding, E
         if (requestCode == REQUEST_IMAGE) {
             if (resultCode == RESULT_OK) {
                 String imagePath = data.getStringExtra(ImageSelectorActivity.RESP_FILE_PATH);
-                viewModel.insertImageToHtml(imagePath);
+                setImageSize(imagePath);
             }
         }
+    }
+
+    private void setImageSize(String imagePath) {
+        ImageSizeEditor editor = new ImageSizeEditor();
+        editor.setOnSizeListener((width, height) -> {
+            viewModel.insertImageToHtml(imagePath, width, height);
+        });
+        DraggableDialogFragment dialog = new DraggableDialogFragment.Builder()
+                .setTitle("设置最大宽高")
+                .setContentFragment(editor)
+                .build();
+        dialog.show(getSupportFragmentManager(), "ImageSizeEditor");
     }
 
     private void setTextSize() {
