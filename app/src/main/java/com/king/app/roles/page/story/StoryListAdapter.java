@@ -66,7 +66,7 @@ public class StoryListAdapter extends BaseBindingAdapter<AdapterStoryListBinding
 
     @Override
     protected void onBindItem(AdapterStoryListBinding binding, int position, Story bean) {
-        binding.tvName.setText(list.get(position).getName());
+        binding.setBean(bean);
         binding.ivDrag.setVisibility(isDrag ? View.VISIBLE:View.GONE);
 
         if (isSelect) {

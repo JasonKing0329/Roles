@@ -9,6 +9,7 @@ import android.os.Environment;
  */
 public class AppConfig {
     public static final String DB_NAME = "roles.db";
+    public static final String DB_JOURNAL = "roles.db-journal";
 
     public static final String SDCARD = Environment.getExternalStorageDirectory().getPath();
 

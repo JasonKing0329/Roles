@@ -1,5 +1,6 @@
 package com.king.app.roles.model;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.king.app.roles.base.RApplication;
@@ -19,7 +20,7 @@ import java.io.IOException;
  */
 public class ChapterModel {
 
-    private static final String SP_CONTENT = "chapter_content";
+    public static final String SP_CONTENT = "chapter_content";
 
     public String parseChapterFile(String file) {
         if (file == null) {
@@ -110,12 +111,12 @@ public class ChapterModel {
     }
 
     protected String getXmlContent(String key) {
-        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SP_CONTENT, 0);
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SP_CONTENT, Context.MODE_PRIVATE);
         return sp.getString(key, "");
     }
 
     protected boolean setXmlContent(String key, String value) {
-        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SP_CONTENT, 0);
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SP_CONTENT, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(key, value);
         editor.commit();

@@ -29,6 +29,13 @@
             android:textColor="@color/recycler_swipe_color_text_gray"/>
     </LinearLayout>
     <ImageView
+        android:id="@+id/iv_file"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_bookmark_red_400_24dp"/>
+    <ImageView
         android:id="@+id/iv_edit"
         android:layout_width="40dp"
         android:layout_height="40dp"

@@ -21,6 +21,7 @@ public class SecondLevelAdapter extends AbstractExpandableAdapterItem implements
     TextView tvDescription;
     LinearLayout groupItem;
     ImageView ivEdit;
+    ImageView ivFile;
 
     private OnChapterItemListener onChapterItemListener;
 
@@ -39,6 +40,7 @@ public class SecondLevelAdapter extends AbstractExpandableAdapterItem implements
         tvName = root.findViewById(R.id.tv_name);
         tvDescription = root.findViewById(R.id.tv_description);
         ivEdit = root.findViewById(R.id.iv_edit);
+        ivFile = root.findViewById(R.id.iv_file);
     }
 
     @Override
@@ -50,6 +52,12 @@ public class SecondLevelAdapter extends AbstractExpandableAdapterItem implements
     public void onUpdateViews(Object model, int position) {
         super.onUpdateViews(model, position);
         Chapter chapter = (Chapter) model;
+        if (TextUtils.isEmpty(chapter.getFile())) {
+            ivFile.setVisibility(View.GONE);
+        }
+        else {
+            ivFile.setVisibility(View.VISIBLE);
+        }
         tvName.setText("    (" + chapter.getIndex() + ") " + chapter.getName());
         if (TextUtils.isEmpty(chapter.getDescription())) {
             tvDescription.setVisibility(View.GONE);

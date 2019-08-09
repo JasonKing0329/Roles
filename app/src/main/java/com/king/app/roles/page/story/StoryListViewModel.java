@@ -8,11 +8,17 @@ import android.widget.CompoundButton;
 
 import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.RApplication;
+import com.king.app.roles.conf.AppConfig;
+import com.king.app.roles.model.ChapterModel;
 import com.king.app.roles.model.SettingProperty;
 import com.king.app.roles.model.entity.Story;
 import com.king.app.roles.model.entity.StoryDao;
-import com.king.app.roles.utils.DBExportor;
+import com.king.app.roles.utils.DBExporter;
+import com.king.app.roles.utils.FileUtil;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -201,7 +207,7 @@ public class StoryListViewModel extends BaseViewModel {
     }
 
     public void saveDatabase() {
-        copyDatabase()
+        copyData()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<Boolean>() {
@@ -227,9 +233,23 @@ public class StoryListViewModel extends BaseViewModel {
                 });
     }
 
-    private Observable<Boolean> copyDatabase() {
+    private Observable<Boolean> copyData() {
         return Observable.create(e -> {
-            DBExportor.exportAsHistory();
+            // folder
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+            String folder = sdf.format(new Date());
+            File file = new File(AppConfig.HISTORY_BASE + File.separator + folder);
+            file.mkdir();
+            // database
+            String targetDb = file.getPath() + File.separator + AppConfig.DB_NAME;
+            FileUtil.copyFile(new File(DBExporter.getDatabasePath()), new File(targetDb));
+            // preference
+            String xmlContent = ChapterModel.getContentPreference();
+            String targetContent = file.getPath() + File.separator + ChapterModel.SP_CONTENT + ".xml";
+            String xmlPref = SettingProperty.getSharedPreference();
+            String targetPref = file.getPath() + File.separator + SettingProperty.SETTING_FILE + ".xml";
+            FileUtil.copyFile(new File(xmlContent), new File(targetContent));
+            FileUtil.copyFile(new File(xmlPref), new File(targetPref));
             e.onNext(true);
         });
     }

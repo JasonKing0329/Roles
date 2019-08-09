@@ -1,7 +1,6 @@
 package com.king.app.roles.model;
 
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import com.king.app.roles.base.RApplication;
 
@@ -12,54 +11,77 @@ import com.king.app.roles.base.RApplication;
  */
 public class SettingProperty {
 
-    private static final String getString(String key) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(RApplication.getInstance());
+    public static final String SETTING_FILE = "Roles";
+
+    public static String getSharedPreference() {
+        return RApplication.getInstance().getCacheDir().getParent() + "/shared_prefs/" + SETTING_FILE + ".xml";
+    }
+
+    protected static final String getString(String key) {
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SETTING_FILE, 0);
         return sp.getString(key, "");
     }
 
-    private static final void setString(String key, String value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(RApplication.getInstance());
+    protected static final void setString(String key, String value) {
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SETTING_FILE, 0);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(key, value);
         editor.commit();
     }
 
-    private static final int getInt(String key) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(RApplication.getInstance());
+    protected static final float getFloat(String key) {
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SETTING_FILE, 0);
+        return sp.getFloat(key, 0);
+    }
+
+    protected static final void setFloat(String key, float value) {
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SETTING_FILE, 0);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putFloat(key, value);
+        editor.commit();
+    }
+
+    protected static final int getInt(String key) {
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SETTING_FILE, 0);
         return sp.getInt(key, -1);
     }
 
-    private static final int getInt(String key, int defaultValue) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(RApplication.getInstance());
+    protected static final int getInt(String key, int defaultValue) {
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SETTING_FILE, 0);
         return sp.getInt(key, defaultValue);
     }
 
-    private static final void setInt(String key, int value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(RApplication.getInstance());
+    protected static final void setInt(String key, int value) {
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SETTING_FILE, 0);
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt(key, value);
         editor.commit();
     }
 
-    private static final long getLong(String key) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(RApplication.getInstance());
-        return sp.getLong(key, -1);
+    protected static final long getLong(String key) {
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SETTING_FILE, 0);
+        return sp.getLong(key, 0);
     }
 
-    private static final void setLong(String key, long value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(RApplication.getInstance());
+    protected static final void setLong(String key, long value) {
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SETTING_FILE, 0);
         SharedPreferences.Editor editor = sp.edit();
         editor.putLong(key, value);
         editor.commit();
     }
 
-    private static final boolean getBoolean(String key) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(RApplication.getInstance());
+    protected static final boolean getBoolean(String key) {
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SETTING_FILE, 0);
         return sp.getBoolean(key, false);
     }
 
-    private static final void setBoolean(String key, boolean value) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(RApplication.getInstance());
+    protected static final boolean getBoolean(String key, boolean defaultValue) {
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SETTING_FILE, 0);
+        return sp.getBoolean(key, defaultValue);
+    }
+
+    protected static final void setBoolean(String key, boolean value) {
+        SharedPreferences sp = RApplication.getInstance().getSharedPreferences(SETTING_FILE, 0);
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean(key, value);
         editor.commit();

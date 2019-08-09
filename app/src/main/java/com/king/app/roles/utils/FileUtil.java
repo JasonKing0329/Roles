@@ -4,7 +4,11 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.conf.AppConfig;
+import com.king.app.roles.model.ChapterModel;
+import com.king.app.roles.model.SettingProperty;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -60,37 +64,81 @@ public class FileUtil {
         }
     }
 
-    public static boolean replaceDatabase(File source) {
-        if (source == null || !source.exists()) {
-            return false;
+    public static boolean deleteFile(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+            return true;
+        }
+        return false;
+    }
+
+    public static void copyFile(File sourceFile, File targetFile)
+            throws IOException {
+
+        // 新建文件输入流并对它进行缓冲
+        FileInputStream input = new FileInputStream(sourceFile);
+        BufferedInputStream inbuff = new BufferedInputStream(input);
+
+        // 新建文件输出流并对它进行缓冲
+        FileOutputStream out = new FileOutputStream(targetFile);
+        BufferedOutputStream outbuff = new BufferedOutputStream(out);
+
+        // 缓冲数组
+        byte[] b = new byte[1024 * 5];
+        int len = 0;
+        while ((len = inbuff.read(b)) != -1) {
+            outbuff.write(b, 0, len);
         }
 
-        // 删除源目录database
-        String dbPath = RApplication.getInstance().getFilesDir().getParent() + "/databases";
-        File targetFolder = new File(dbPath);
-        if (targetFolder.exists()) {
-            File[] files = targetFolder.listFiles();
-            for (File f:files) {
-                f.delete();
-            }
+        // 刷新此缓冲的输出流
+        outbuff.flush();
+
+        // 关闭流
+        inbuff.close();
+        outbuff.close();
+        out.close();
+        input.close();
+
+    }
+
+    public static void copyDirectiory(String sourceDir, String targetDir)
+            throws IOException {
+        DebugLog.e("copy from [" + sourceDir + "] to [" + targetDir + "]");
+        // 新建目标目录
+        File target = new File(targetDir);
+        if (!target.exists()) {
+            target.mkdirs();
         }
-        try {
-            InputStream in = new FileInputStream(source);
-            File file = new File(dbPath + "/" + AppConfig.DB_NAME);
-            OutputStream fileOut = new FileOutputStream(file);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = in.read(buffer))>0){
-                fileOut.write(buffer, 0, length);
+
+        // 获取源文件夹当下的文件或目录
+        File[] file = (new File(sourceDir)).listFiles();
+        if (file == null) {
+            return;
+        }
+
+        for (int i = 0; i < file.length; i++) {
+            if (file[i].isFile()) {
+                // 源文件
+                File sourceFile = file[i];
+                // 目标文件
+                File targetFile = new File(
+                        new File(targetDir).getAbsolutePath() + File.separator
+                                + file[i].getName());
+
+                FileUtil.copyFile(sourceFile, targetFile);
+
             }
 
-            fileOut.flush();
-            fileOut.close();
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+            if (file[i].isDirectory()) {
+                // 准备复制的源文件夹
+                String dir1 = sourceDir + file[i].getName();
+                // 准备复制的目标文件夹
+                String dir2 = targetDir + "/" + file[i].getName();
+
+                copyDirectiory(dir1, dir2);
+            }
         }
-        return true;
+
     }
 }

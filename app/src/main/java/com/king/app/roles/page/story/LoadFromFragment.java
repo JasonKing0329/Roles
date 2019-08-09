@@ -1,5 +1,6 @@
 package com.king.app.roles.page.story;
 
+import android.os.Build;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
@@ -8,14 +9,19 @@ import com.king.app.roles.base.BaseBindingAdapter;
 import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.IFragmentHolder;
 import com.king.app.roles.base.MvvmFragment;
+import com.king.app.roles.base.RApplication;
 import com.king.app.roles.conf.AppConfig;
 import com.king.app.roles.databinding.AdapterItemLoadfromBinding;
 import com.king.app.roles.databinding.FragmentLoadfromBinding;
+import com.king.app.roles.model.ChapterModel;
+import com.king.app.roles.model.SettingProperty;
+import com.king.app.roles.utils.DBExporter;
 import com.king.app.roles.utils.FileUtil;
 import com.king.app.roles.view.dialog.AlertDialogFragment;
 import com.king.app.roles.view.dialog.DraggableHolder;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -82,7 +88,12 @@ public class LoadFromFragment extends MvvmFragment<FragmentLoadfromBinding, Base
                     .setMessage(getString(R.string.load_from_warning_msg))
                     .setPositiveText(getString(R.string.ok))
                     .setPositiveListener((dialogInterface, i) -> {
-                        FileUtil.replaceDatabase(file);
+                        String db = file.getPath() + File.separator + AppConfig.DB_NAME;
+                        replaceDatabase(new File(db));
+                        String xmlContent = file.getPath() + File.separator + ChapterModel.SP_CONTENT + ".xml";
+                        replaceContentXml(new File(xmlContent));
+                        String xmlPref = file.getPath() + File.separator + SettingProperty.SETTING_FILE + ".xml";
+                        replacePrefXml(new File(xmlPref));
                         if (draggableHolder != null) {
                             draggableHolder.dismiss();
                         }
@@ -93,6 +104,68 @@ public class LoadFromFragment extends MvvmFragment<FragmentLoadfromBinding, Base
                     .setNegativeText(getString(R.string.cancel))
                     .show(getChildFragmentManager(), "AlertDialogFragment");
         }
+    }
+
+    public static boolean replaceDatabase(File source) {
+        if (source == null || !source.exists()) {
+            return false;
+        }
+        // 删除源目录database
+        String parent = DBExporter.getDatabaseFolder();
+        FileUtil.deleteFile(parent + File.separator + AppConfig.DB_NAME);
+        FileUtil.deleteFile(parent + File.separator + AppConfig.DB_JOURNAL);
+        try {
+            FileUtil.copyFile(source, new File(DBExporter.getDatabasePath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public static boolean replaceContentXml(File source) {
+        if (source == null || !source.exists()) {
+            return false;
+        }
+        // 删除源目录content
+        String path = ChapterModel.getContentPreference();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            // 实测如果只deleteFile，还是会读到application缓存的替换前的xml，只有把application杀掉才能更新过来
+            // 所以需要用deleteSharedPreferences
+            RApplication.getInstance().deleteSharedPreferences(ChapterModel.SP_CONTENT);
+        }
+        else {
+            // android N以前没有deleteSharedPreferences，只能deleteFile，未测过不知有没有用
+            FileUtil.deleteFile(path);
+        }
+        try {
+            FileUtil.copyFile(source, new File(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public static boolean replacePrefXml(File source) {
+        if (source == null || !source.exists()) {
+            return false;
+        }
+        // 删除源目录pref
+        String path = SettingProperty.getSharedPreference();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            // 实测如果只deleteFile，还是会读到application缓存的替换前的xml，只有把application杀掉才能更新过来
+            // 所以需要用deleteSharedPreferences
+            RApplication.getInstance().deleteSharedPreferences(SettingProperty.SETTING_FILE);
+        }
+        else {
+            // android N以前没有deleteSharedPreferences，只能deleteFile，未测过不知有没有用
+            FileUtil.deleteFile(path);
+        }
+        try {
+            FileUtil.copyFile(source, new File(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
     private class ItemAdapter extends BaseBindingAdapter<AdapterItemLoadfromBinding, File> {

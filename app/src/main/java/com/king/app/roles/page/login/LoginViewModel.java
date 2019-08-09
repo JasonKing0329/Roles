@@ -13,7 +13,7 @@ import com.king.app.roles.base.BaseViewModel;
 import com.king.app.roles.base.RApplication;
 import com.king.app.roles.conf.AppConfig;
 import com.king.app.roles.model.SettingProperty;
-import com.king.app.roles.utils.DBExportor;
+import com.king.app.roles.utils.DBExporter;
 import com.king.app.roles.utils.FileUtil;
 import com.king.app.roles.utils.MD5Util;
 
@@ -58,7 +58,7 @@ public class LoginViewModel extends BaseViewModel {
 
     public void initCreate() {
         // 每次进入导出一次数据库
-        DBExportor.execute();
+        DBExporter.execute();
         prepare();
     }
 
