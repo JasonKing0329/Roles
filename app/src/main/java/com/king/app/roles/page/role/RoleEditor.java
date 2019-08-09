@@ -101,6 +101,7 @@ public class RoleEditor extends MvvmFragment<DialogRoleEditorBinding, BaseViewMo
             mRole = onRoleListener.getInitKingdom();
             // 编辑模式才显示Relations
             if (mRole != null) {
+                mChapterId = mRole.getChapterId();
                 binding.tvRelations.setVisibility(View.VISIBLE);
                 binding.etName.setText(mRole.getName());
                 binding.etNickname.setText(mRole.getNickname());
