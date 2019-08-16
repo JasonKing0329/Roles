@@ -5,6 +5,7 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
+import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.annotation.ToOne;
 
@@ -38,6 +39,7 @@ public class Chapter {
     private Chapter parent;
 
     @ToMany(referencedJoinProperty = "parentId")
+    @OrderBy("index")
     private List<Chapter> children;
 
     /** Used to resolve relations */

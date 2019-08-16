@@ -84,6 +84,7 @@ public class ChapterFragment extends ModuleFragment<ChapterViewModel> {
             }
         });
         binding.rvItemsNormal.setAdapter(chapterAdapter);
+        chapterAdapter.expandAllParents();
     }
 
     private void editChapterContent(Chapter chapter) {
@@ -108,7 +109,7 @@ public class ChapterFragment extends ModuleFragment<ChapterViewModel> {
             @Override
             public void onSaveChapter(Chapter chapter) {
                 viewModel.insertOrUpdate(chapter);
-                loadData();
+                viewModel.loadChapters();
                 showMessageLong("Save successfully");
             }
 
@@ -140,7 +141,7 @@ public class ChapterFragment extends ModuleFragment<ChapterViewModel> {
                 , (dialogInterface, i) -> {
                     if (i == DialogInterface.BUTTON_POSITIVE) {
                         viewModel.delete(chapter);
-                        loadData();
+                        viewModel.loadChapters();
                         editorDialog.dismiss();
                     }
                 });
