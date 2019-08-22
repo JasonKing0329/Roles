@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.king.app.jactionbar.OnConfirmListener;
 import com.king.app.jactionbar.OnMenuItemListener;
 import com.king.app.jactionbar.OnSearchListener;
 import com.king.app.roles.R;
@@ -94,42 +93,27 @@ public class RoleFragment extends ModuleFragment<RoleViewModel> {
                 }
             }
         });
-        holder.getJActionbar().setOnConfirmListener(new OnConfirmListener() {
-            @Override
-            public boolean disableInstantDismissConfirm() {
-                return true;
+        holder.getJActionbar().setOnCancelListener(actionId -> {
+            switch (actionId) {
+                case R.id.menu_delete:
+                    setDeleteMode(false);
+                    break;
+                case R.id.menu_drag:
+                    setDragMode(false);
+                    break;
             }
-
-            @Override
-            public boolean disableInstantDismissCancel() {
-                return false;
+            return true;
+        });
+        holder.getJActionbar().setOnConfirmListener(actionId -> {
+            switch (actionId) {
+                case R.id.menu_delete:
+                    confirmDelete();
+                    break;
+                case R.id.menu_drag:
+                    confirmDrag();
+                    break;
             }
-
-            @Override
-            public boolean onConfirm(int actionId) {
-                switch (actionId) {
-                    case R.id.menu_delete:
-                        confirmDelete();
-                        break;
-                    case R.id.menu_drag:
-                        confirmDrag();
-                        break;
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onCancel(int actionId) {
-                switch (actionId) {
-                    case R.id.menu_delete:
-                        setDeleteMode(false);
-                        break;
-                    case R.id.menu_drag:
-                        setDragMode(false);
-                        break;
-                }
-                return true;
-            }
+            return true;
         });
 
     }

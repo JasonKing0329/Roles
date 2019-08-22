@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.king.app.jactionbar.JActionbar;
-import com.king.app.jactionbar.OnConfirmListener;
 import com.king.app.roles.R;
 import com.king.app.roles.base.MvvmActivity;
 import com.king.app.roles.base.RApplication;
@@ -67,7 +66,7 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
                     storyListAdapter.notifyDataSetChanged();
                     break;
                 case R.id.menu_edit:
-                    binding.actionbar.showConfirmStatus(menuId);
+                    binding.actionbar.showConfirmStatus(menuId, true, "Cancel");
                     isEdit = true;
                     break;
                 case R.id.menu_load_from:
@@ -78,49 +77,34 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
                     break;
             }
         });
-        actionbar.setOnConfirmListener(new OnConfirmListener() {
-            @Override
-            public boolean disableInstantDismissConfirm() {
-                return true;
+        actionbar.setOnConfirmListener(actionId -> {
+            switch (actionId) {
+                case R.id.menu_delete:
+                    doDelete();
+                    break;
+                case R.id.menu_drag:
+                    doDrag();
+                    break;
+                case R.id.menu_edit:
+                    isEdit = false;
+                    binding.actionbar.cancelConfirmStatus();
+                    break;
             }
-
-            @Override
-            public boolean disableInstantDismissCancel() {
-                return false;
+            return false;
+        });
+        actionbar.setOnCancelListener(actionId -> {
+            switch (actionId) {
+                case R.id.menu_delete:
+                    cancelDelete();
+                    break;
+                case R.id.menu_drag:
+                    cancelDrag();
+                    break;
+                case R.id.menu_edit:
+                    isEdit = false;
+                    break;
             }
-
-            @Override
-            public boolean onConfirm(int actionId) {
-                switch (actionId) {
-                    case R.id.menu_delete:
-                        doDelete();
-                        break;
-                    case R.id.menu_drag:
-                        doDrag();
-                        break;
-                    case R.id.menu_edit:
-                        isEdit = false;
-                        binding.actionbar.cancelConfirmStatus();
-                        break;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onCancel(int actionId) {
-                switch (actionId) {
-                    case R.id.menu_delete:
-                        cancelDelete();
-                        break;
-                    case R.id.menu_drag:
-                        cancelDrag();
-                        break;
-                    case R.id.menu_edit:
-                        isEdit = false;
-                        break;
-                }
-                return true;
-            }
+            return true;
         });
     }
 

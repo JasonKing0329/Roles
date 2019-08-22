@@ -9,7 +9,6 @@ import android.view.View;
 
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
-import com.king.app.jactionbar.OnConfirmListener;
 import com.king.app.roles.R;
 import com.king.app.roles.base.MvvmActivity;
 import com.king.app.roles.databinding.ActivityWritingEditorBinding;
@@ -50,28 +49,13 @@ public class EditorActivity extends MvvmActivity<ActivityWritingEditorBinding, E
         initActions();
 
         binding.actionbar.showConfirmStatus(0);
-        binding.actionbar.setOnConfirmListener(new OnConfirmListener() {
-            @Override
-            public boolean disableInstantDismissConfirm() {
-                return true;
-            }
-
-            @Override
-            public boolean disableInstantDismissCancel() {
-                return true;
-            }
-
-            @Override
-            public boolean onConfirm(int actionId) {
-                viewModel.saveContent(binding.editor.getHtml());
-                return false;
-            }
-
-            @Override
-            public boolean onCancel(int actionId) {
-                onBackPressed();
-                return false;
-            }
+        binding.actionbar.setOnConfirmListener(actionId -> {
+            viewModel.saveContent(binding.editor.getHtml());
+            return false;
+        });
+        binding.actionbar.setOnCancelListener(actionId -> {
+            onBackPressed();
+            return false;
         });
         binding.actionbar.setOnBackListener(() -> onBackPressed());
     }

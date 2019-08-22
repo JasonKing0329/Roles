@@ -51,7 +51,7 @@
             android:textColor="@color/text_sub"
             android:text="@{bean.description}"
             android:visibility="@{bean.description == null ? View.GONE:View.VISIBLE}"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="3dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintStart_toEndOf="@id/tv_char"

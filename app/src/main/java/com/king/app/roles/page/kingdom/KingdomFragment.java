@@ -3,7 +3,6 @@ package com.king.app.roles.page.kingdom;
 import android.arch.lifecycle.ViewModelProviders;
 import android.view.View;
 
-import com.king.app.jactionbar.OnConfirmListener;
 import com.king.app.roles.R;
 import com.king.app.roles.databinding.AdapterKingdomItemBinding;
 import com.king.app.roles.model.entity.Kingdom;
@@ -51,44 +50,29 @@ public class KingdomFragment extends ModuleFragment<KingdomViewModel> {
                     break;
             }
         });
-        holder.getJActionbar().setOnConfirmListener(new OnConfirmListener() {
-            @Override
-            public boolean disableInstantDismissConfirm() {
-                return false;
+        holder.getJActionbar().setOnConfirmListener(actionId -> {
+            switch (actionId) {
+                case R.id.menu_delete:
+                    confirmDelete();
+                    setDeleteMode(false);
+                    break;
+                case R.id.menu_drag:
+                    confirmDrag();
+                    setDragMode(false);
+                    break;
             }
-
-            @Override
-            public boolean disableInstantDismissCancel() {
-                return false;
+            return true;
+        });
+        holder.getJActionbar().setOnConfirmListener(actionId -> {
+            switch (actionId) {
+                case R.id.menu_delete:
+                    setDeleteMode(false);
+                    break;
+                case R.id.menu_drag:
+                    setDragMode(false);
+                    break;
             }
-
-            @Override
-            public boolean onConfirm(int actionId) {
-                switch (actionId) {
-                    case R.id.menu_delete:
-                        confirmDelete();
-                        setDeleteMode(false);
-                        break;
-                    case R.id.menu_drag:
-                        confirmDrag();
-                        setDragMode(false);
-                        break;
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onCancel(int actionId) {
-                switch (actionId) {
-                    case R.id.menu_delete:
-                        setDeleteMode(false);
-                        break;
-                    case R.id.menu_drag:
-                        setDragMode(false);
-                        break;
-                }
-                return true;
-            }
+            return true;
         });
     }
 

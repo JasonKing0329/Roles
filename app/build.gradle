@@ -7,8 +7,8 @@ android {
         applicationId "com.king.app.roles"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 35
-        versionName "3.5"
+        versionCode 36
+        versionName "3.5.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -85,7 +85,7 @@ dependencies {
     annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'
 
     implementation 'com.yanzhenjie:recyclerview-swipe:1.1.4'
-    implementation 'com.king.lib:jactionbar:1.0.8'
+    implementation 'com.king.lib:jactionbar:1.1.0'
 
     implementation 'com.github.QuadFlask:colorpicker:0.0.13'
     
