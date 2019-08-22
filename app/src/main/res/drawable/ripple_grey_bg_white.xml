@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/white_bg">
+    <!-- drawable仅仅是掩码图，将波纹限定在drawable指定的非透明区域内，透明的区域就看不到ripple -->
+    <!-- 掩码图与默认背景不能一起用，要设置背景就必须删掉id和drawable -->
+    <!--<item android:id="@android:id/mask"-->
+        <!--android:drawable="@color/white">-->
+    <item>
+        <!-- 真正的默认背景还是要在这里设置，可以是shape也可以是selector -->
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white"/>
+        </shape>
+    </item>
+</ripple>

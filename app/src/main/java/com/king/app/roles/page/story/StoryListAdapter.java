@@ -1,6 +1,9 @@
 package com.king.app.roles.page.story;
 
+import android.graphics.drawable.GradientDrawable;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
+import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -8,6 +11,7 @@ import com.king.app.roles.R;
 import com.king.app.roles.base.BaseBindingAdapter;
 import com.king.app.roles.databinding.AdapterStoryListBinding;
 import com.king.app.roles.model.entity.Story;
+import com.king.app.roles.utils.ColorUtil;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
 import java.util.ArrayList;
@@ -29,8 +33,22 @@ public class StoryListAdapter extends BaseBindingAdapter<AdapterStoryListBinding
 
     private SparseBooleanArray checkMap;
 
+    private SparseIntArray colorMap;
+
     public StoryListAdapter() {
         checkMap = new SparseBooleanArray();
+        colorMap = new SparseIntArray();
+    }
+
+    @Override
+    public void setList(List<Story> list) {
+        super.setList(list);
+        colorMap.clear();
+        if (list != null) {
+            for (int i = 0; i < list.size(); i ++) {
+                colorMap.put(i, ColorUtil.randomWhiteTextBgColor());
+            }
+        }
     }
 
     @Override
@@ -68,6 +86,18 @@ public class StoryListAdapter extends BaseBindingAdapter<AdapterStoryListBinding
     protected void onBindItem(AdapterStoryListBinding binding, int position, Story bean) {
         binding.setBean(bean);
         binding.ivDrag.setVisibility(isDrag ? View.VISIBLE:View.GONE);
+        if (TextUtils.isEmpty(bean.getName())) {
+            binding.tvChar.setText("");
+        }
+        else {
+            binding.tvChar.setText(String.valueOf(bean.getName().charAt(0)));
+        }
+        Integer color = colorMap.get(position);
+        if (color != null) {
+            GradientDrawable drawable = (GradientDrawable) binding.tvChar.getBackground();
+            drawable.setColor(color);
+            binding.tvChar.setBackground(drawable);
+        }
 
         if (isSelect) {
             binding.cbCheck.setVisibility(View.VISIBLE);

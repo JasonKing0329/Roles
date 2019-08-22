@@ -3,8 +3,11 @@ package com.king.app.roles.page.story;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.widget.GridLayoutManager;
+import android.graphics.Rect;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.king.app.jactionbar.JActionbar;
 import com.king.app.jactionbar.OnConfirmListener;
@@ -14,6 +17,7 @@ import com.king.app.roles.base.RApplication;
 import com.king.app.roles.databinding.ActivityStoryListBinding;
 import com.king.app.roles.model.entity.Story;
 import com.king.app.roles.utils.DebugLog;
+import com.king.app.roles.utils.ScreenUtils;
 import com.king.app.roles.view.dialog.DraggableDialogFragment;
 import com.king.app.roles.view.dialog.SimpleDialogs;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
@@ -121,8 +125,14 @@ public class StoryListActivity extends MvvmActivity<ActivityStoryListBinding, St
     }
 
     private void setupRecyclerView(SwipeMenuRecyclerView rvStories) {
-        GridLayoutManager manager = new GridLayoutManager(this, 2);
+        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rvStories.setLayoutManager(manager);
+        rvStories.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                outRect.bottom = ScreenUtils.dp2px(2);
+            }
+        });
         rvStories.setOnItemMoveListener(new OnItemMoveListener() {
             @Override
             public boolean onItemMove(RecyclerView.ViewHolder srcHolder, RecyclerView.ViewHolder targetHolder) {
