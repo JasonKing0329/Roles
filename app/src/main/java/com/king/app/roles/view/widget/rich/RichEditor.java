@@ -370,12 +370,18 @@ public class RichEditor extends WebView {
     }
 
     public void insertImage(String url, String alt) {
-        exec("javascript:RE.prepareInsert();");
+//        exec("javascript:RE.prepareInsert();");
+        url = url.replaceAll("'", "&apos;");
+        alt = alt.replaceAll("'", "&apos;");
         exec("javascript:RE.insertImage('" + url + "', '" + alt + "');");
     }
 
     public void insertImage(String url, String alt, int width, int height) {
 //    exec("javascript:RE.prepareInsert();");
+        // &经实际测试不需要转义，单引号无论是url还是alt都需要转义，否则无法显示
+//        url = url.replaceAll("&", "&amp;");
+        url = url.replaceAll("'", "&apos;");
+        alt = alt.replaceAll("'", "&apos;");
         exec("javascript:RE.insertImage('" + url + "', '" + alt + "', '" + width + "', '" + height + "');");
     }
 
